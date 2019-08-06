@@ -26,7 +26,7 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
       public void onCatchModeStateChanged(boolean isCatchModeOpened) {
           Bundle bundle = new Bundle();
           bundle.putBoolean(IS_OPENED, isCatchModeOpened);
-          RNAnalyticsModule.this.emit(reactContext, EVENT_NAME, bundle);
+          RNAnalyticsModule.this.emit(RNAnalyticsModule.this.reactContext, EVENT_NAME, bundle);
       }
     });
   }
