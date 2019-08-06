@@ -1,0 +1,41 @@
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+            classpath rootProject.ext.has('gradleBuildTools') ? rootProject.ext.get('gradleBuildTools') : 'com.android.tools.build:gradle:3.3.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+
+    compileSdkVersion safeExtGet('compileSdkVersion', 28)
+    //noinspection GradleDependency
+    buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
+
+    defaultConfig {
+        minSdkVersion safeExtGet('minSdkVersion', 16)
+        //noinspection OldTargetApi
+        targetSdkVersion safeExtGet('targetSdkVersion', 27)
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.facebook.react:react-native:+'
+    implementation "com.maizijf.analytics:analytics2:${safeExtGet('analyticsVersion', '2.5.1')}"
+}
+  
