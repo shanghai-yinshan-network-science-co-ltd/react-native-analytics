@@ -23,6 +23,7 @@ function onPageStart(pageId) {
     end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
+    log_time: getStrTime(now)
   };
   sendBuriedData(pageEntranceData);
 }
@@ -34,6 +35,7 @@ function onPageEnd(pageId) {
     end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
+    log_time: getStrTime(now)
   };
   sendBuriedData(pageEntranceData);
 }

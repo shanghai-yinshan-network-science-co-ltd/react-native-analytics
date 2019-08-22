@@ -28,7 +28,8 @@ function getCommenEvent(viewPath, pageId) {
     page_id: pageId,
     start_time: getStrTime(now),
     view_path: viewPath,
-    action_type: textfield_event
+    action_type: textfield_event,
+    log_time: getStrTime(now)
   };
 }
 

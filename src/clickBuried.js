@@ -215,7 +215,8 @@ function onClickEvent(viewPath) {
     end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
-    view_path: viewPath
+    view_path: viewPath,
+    log_time: getStrTime(now)
   };
   if (pageInfo) {
     clickData.page_info = pageInfo;
