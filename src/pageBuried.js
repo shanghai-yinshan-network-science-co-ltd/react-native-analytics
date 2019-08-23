@@ -1,6 +1,7 @@
 /**
  * Created by cleverdou on 17/9/18.
  */
+
 'use strict';
 
 import { getStrTime } from './utils'
@@ -10,7 +11,9 @@ import { getComponentName } from "./stack";
 import { SPLITE } from './const'
 import { AppState } from "react-native";
 import { NavigationActions } from "react-navigation";
+import {lastClickId, resetLastClickId} from "./clickBuried";
 
+let lastPageId;
 
 let currentPageId;
 
@@ -23,12 +26,17 @@ function onPageStart(pageId) {
     end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
-    log_time: getStrTime(now)
+    log_time: getStrTime(now),
+    referId: lastPageId,
+    btnId: lastClickId
   };
+  lastPageId = undefined;
+  resetLastClickId();
   sendBuriedData(pageEntranceData);
 }
 
 function onPageEnd(pageId) {
+  lastPageId = pageId;
   const now = Date.now();
   const pageEntranceData = {
     action_type: page_leave_event,

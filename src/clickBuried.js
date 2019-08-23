@@ -17,6 +17,7 @@ import { getStrTime, getComponentPathInScreen } from './utils'
 import normalizeColor from './normalizeColor'
 import { sendBuriedData } from './nativeModule'
 
+let lastClickId;
 
 let IsShowBuriedView;
 let prevBuried;
@@ -201,6 +202,7 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
 };
 
 function onClickEvent(viewPath) {
+  lastClickId = viewPath;
   const pageId = getCurrentPageId();
   if (!pageId) {
     return;
@@ -234,6 +236,10 @@ DeviceEventEmitter.addListener('RNAnalytics.toggleBuriedView',
   data => setBuried(data.isCatchModeOpened));
 
 
+function resetLastClickId() {
+  lastClickId = undefined;
+}
+
 export function setBuried(toggle) {
   IsShowBuriedView = Touchable.TOUCH_TARGET_DEBUG = toggle;
   if (!toggle && prevBuried) {
@@ -243,7 +249,7 @@ export function setBuried(toggle) {
     });
   }
 }
-
+export {lastClickId, resetLastClickId}
 
 const styles = StyleSheet.create({
   debug: {
