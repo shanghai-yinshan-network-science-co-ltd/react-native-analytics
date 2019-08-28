@@ -46,7 +46,6 @@ export let NetworkLogger = function () {
 
         log.request_type = xhr._method;
         log.request_url = xhr._url;
-        log.jwt = xhr._headers.jwt ? xhr._headers.jwt : "";
         log.request_params = data ? data : "";
 
     }
