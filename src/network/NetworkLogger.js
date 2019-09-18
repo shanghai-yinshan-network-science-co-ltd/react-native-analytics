@@ -1,5 +1,6 @@
 import NetworkInterceptor from './NetworkInterceptor'
 import {sendBuriedData} from '../nativeModule'
+import {getStrTime} from "../utils";
 
 /*
     request_type	请求类型	请求类型 取值枚举：GET POST
@@ -23,6 +24,7 @@ const DEFAULT = {
     response_data: "",
     request_consuming: "",
     action_type: "request_event",
+    log_time: getStrTime(Date.now())
 }
 
 export let NetworkLogger = function () {
@@ -57,6 +59,7 @@ export let NetworkLogger = function () {
         log.http_status = status;
         log.response_data = response;
         log.request_consuming = end_time - start_time;
+        log.log_time = getStrTime(Date.now())
 
         if (__DEV__) {
             console.log("response -> log:", JSON.stringify(log));
