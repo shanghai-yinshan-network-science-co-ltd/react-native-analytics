@@ -66,6 +66,7 @@ export function getComponentName(type) {
   return null;
 }
 
+
 function getText(children) {
   if (Array.isArray(children)) {
     let text = "";
@@ -76,17 +77,18 @@ function getText(children) {
     return text;
   }
   if (typeof children === 'object' && children) {
-    if (children.props && children.props.children) {
-      return getText(children.props.children);
+    const props = children.props || children.memoizedProps;
+    if (props && props.children) {
+      return getText(props.children);
     }
-    if (children.props) {
+    if (props) {
       const name = getComponentName(children.type)
-      if (children.props.source && name === 'Image') {
-        const source = Image.resolveAssetSource(children.props.source);
+      if (props.source && name === 'Image') {
+        const source = Image.resolveAssetSource(props.source);
         return `image(${source.uri})&&`
       }
       if (name && name.includes('TextInput')) {
-        return `textInput(placeholder:${children.props.placeholder || ""};defaultValue:${children.props.defaultValue || ""})`
+        return `textInput(placeholder:${props.placeholder || ""};defaultValue:${props.defaultValue || ""})`
       }
     }
   }
@@ -96,23 +98,21 @@ function getText(children) {
   return "";
 }
 
+function isSvg(funcString) {
+  return /default.createElement\((.+\.Pattern|.+\.Mask|.+\.RadialGradient|.+\.LinearGradient|.+\.ClipPath|.+\.Image|.+\.Defs|.+\.Symbol|.+\.Use|.+\.G|.+\.TextPath|.+\.Path|.+\.Rect|.+\.Circle|.+\.Ellipse|.+\.Line|.+\.Polygon|.+\.Polyline|.+\.TSpan|.+\.Text)/.test(funcString);
+}
+
 
 function createViewPathByFiber(component, currentComponent) {
   let fibernode = component;
+  let text;
   const fibers = [];
-  if (component.memoizedProps && component.memoizedProps.children) {
-    const text = getText(component.memoizedProps.children);
-    console.warn(text);
-  }
+  text = getText(component);
   while (fibernode) {
     if (typeof fibernode.key === 'string' && fibernode.key.includes('root-sibling')) {
       break;
     }
-    let componentName = getComponentName(fibernode.type);
-    if (componentName && !componentName.startsWith("RCT") && componentName !== "StyledNativeComponent") {
-      componentName = getSimpleComponentName(componentName);
-      fibers.unshift(fibernode.index ? componentName + "[" + fibernode.index + "]" : componentName);
-    }
+    fibers.unshift(fibernode.index ? fibernode.tag + "[" + fibernode.index + "]" : fibernode.tag);
     if (typeof fibernode.key === 'string' && fibernode.key.includes('scene_id')) {
       break;
     }
@@ -121,7 +121,10 @@ function createViewPathByFiber(component, currentComponent) {
     }
     fibernode = fibernode.return;
   }
-  return fibers.join("-");
+  return {
+    path: fibers.join("-"),
+    description: text
+  };
 }
 
 

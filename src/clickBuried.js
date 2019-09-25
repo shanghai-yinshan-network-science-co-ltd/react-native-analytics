@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React from "react";
 import { getViewPathByComponent, getComponentName } from './stack'
-import { getCurrentPageId ,getCurrentPageComponent} from './pageBuried'
+import { getCurrentPageId, getCurrentPageComponent } from './pageBuried'
 import { click_event } from './eventTypeConst'
 import { getStrTime, getComponentPathInScreen } from './utils'
 import normalizeColor from './normalizeColor'
@@ -180,11 +180,11 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
         }
       }
       //获取点击信息进行埋点
-      let viewPath = getViewPathByComponent(this._reactInternalFiber,getCurrentPageComponent());
+      let { path: viewPath, description } = getViewPathByComponent(this._reactInternalFiber, getCurrentPageComponent());
       if (!((this._reactInternalFiber.return && this._reactInternalFiber.return.stateNode instanceof TextInput) || viewPath.endsWith('TextInput-TouchableWithoutFeedback'))) {
         if (hostNode !== viewPath) {
           hostNode = viewPath;
-          onClickEvent(hostNode);
+          onClickEvent(hostNode, description);
           const id = setImmediate(() => {
             hostNode = undefined;
             clearImmediate(id);
@@ -200,8 +200,7 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
   original_performSideEffectsForTransition.bind(this)(...args);
 };
 
-function onClickEvent(viewPath) {
-  lastClickId = viewPath;
+function onClickEvent(viewPath, description) {
   const pageId = getCurrentPageId();
   if (!pageId) {
     return;
@@ -211,6 +210,7 @@ function onClickEvent(viewPath) {
   if (pages.length > 0) {
     viewPath = pages[pages.length - 1] + "-" + viewPath;
   }
+  lastClickId = viewPath;
   const clickData = {
     action_type: click_event,
     end_time: getStrTime(now),
@@ -222,6 +222,9 @@ function onClickEvent(viewPath) {
   if (pageInfo) {
     clickData.page_info = pageInfo;
     pageInfo = undefined;
+  }
+  if (description) {
+    clickData.page_info = clickData.page_info ? { ...clickData.page_info, description } : { description };
   }
   sendBuriedData(clickData);
 }
@@ -248,7 +251,8 @@ export function setBuried(toggle) {
     });
   }
 }
-export {lastClickId, resetLastClickId}
+
+export { lastClickId, resetLastClickId }
 
 const styles = StyleSheet.create({
   debug: {

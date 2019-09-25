@@ -73,8 +73,7 @@ function getActiveRouteName(navigationState, router) {
     return getActiveRouteName(route, router);
   }
   const component = router.getComponentForRouteName(route.routeName);
-  const componentName = getComponentName(component);
-  return { name: route.routeName + SPLITE + componentName, component };
+  return { name: route.routeName, component };
 }
 
 

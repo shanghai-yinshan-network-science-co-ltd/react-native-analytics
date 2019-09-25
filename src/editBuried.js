@@ -5,7 +5,7 @@
 import React from 'react'
 import { TextInput, Clipboard } from 'react-native'
 import { sendBuriedData } from './nativeModule'
-import { getCurrentPageId,getCurrentPageComponent } from "./pageBuried";
+import { getCurrentPageId, getCurrentPageComponent } from "./pageBuried";
 import { getStrTime } from "./utils";
 import { getViewPathByComponent } from "./stack";
 
@@ -47,7 +47,7 @@ TextInput.prototype.componentWillMount = function (...args) {
   };
   this._sendEditBuriedData = function (editData, opType) {
     const _pageId = getCurrentPageId();
-    let viewPath = getViewPathByComponent(this._reactInternalFiber,getCurrentPageComponent());
+    let { path: viewPath, description } = getViewPathByComponent(this._reactInternalFiber, getCurrentPageComponent());
     if (opType === "inputEnd" || opType === "inputStart") {
       const text = editData;
       const data = getCommenEvent(viewPath, _pageId);
@@ -55,7 +55,8 @@ TextInput.prototype.componentWillMount = function (...args) {
         data.page_info = {
           textLength: text ? text.length : 0,
           opType,
-          sessionId: this._sessionId
+          sessionId: this._sessionId,
+          description
         };
         sendBuriedData(data);
       }
@@ -70,7 +71,8 @@ TextInput.prototype.componentWillMount = function (...args) {
                 newTextLength: editData.newTextLength,
                 oldTextLength: editData.oldTextLength,
                 opType,
-                sessionId: this._sessionId
+                sessionId: this._sessionId,
+                description
               };
               sendBuriedData(data);
             }
