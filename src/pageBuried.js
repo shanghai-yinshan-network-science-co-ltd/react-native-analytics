@@ -11,15 +11,17 @@ import { getComponentName } from "./stack";
 import { SPLITE } from './const'
 import { AppState } from "react-native";
 import { NavigationActions } from "react-navigation";
-import {lastClickId, resetLastClickId} from "./clickBuried";
+import { lastClickId, resetLastClickId } from "./clickBuried";
 
 let lastPageId;
 
 let currentPageId;
+let currentComponent;
 
 
-function onPageStart(pageId) {
+function onPageStart(pageId, component) {
   currentPageId = pageId;
+  currentComponent = component;
   const now = Date.now();
   const pageEntranceData = {
     action_type: page_entrance_event,
@@ -53,7 +55,7 @@ function handleAppStateChange(nextAppState) {
   if (nextAppState.match(/inactive|background/)) {
     onPageEnd(currentPageId);
   } else {
-    onPageStart(currentPageId);
+    onPageStart(currentPageId, currentComponent);
   }
 }
 
@@ -72,7 +74,7 @@ function getActiveRouteName(navigationState, router) {
   }
   const component = router.getComponentForRouteName(route.routeName);
   const componentName = getComponentName(component);
-  return route.routeName + SPLITE + componentName;
+  return { name: route.routeName + SPLITE + componentName, component };
 }
 
 
@@ -84,8 +86,8 @@ export function createOnNavigationStateChange(AppContainer) {
       if (!init) {
         AppState.addEventListener('change', handleAppStateChange);
         init = true;
-        const currentScreen = getActiveRouteName(stateForAction, AppContainer.router);
-        onPageStart(currentScreen);
+        const { name: currentScreen, component } = getActiveRouteName(stateForAction, AppContainer.router);
+        onPageStart(currentScreen, component);
       }
     }
     return stateForAction;
@@ -93,11 +95,11 @@ export function createOnNavigationStateChange(AppContainer) {
 
 
   return (prevState, currentState, action) => {
-    const currentScreen = getActiveRouteName(currentState, AppContainer.router);
-    const prevScreen = getActiveRouteName(prevState, AppContainer.router);
+    const { name: currentScreen, component } = getActiveRouteName(currentState, AppContainer.router);
+    const { name: prevScreen } = getActiveRouteName(prevState, AppContainer.router);
     if (prevScreen !== currentScreen) {
       onPageEnd(prevScreen);
-      onPageStart(currentScreen);
+      onPageStart(currentScreen, component);
     }
   }
 }
@@ -107,3 +109,7 @@ export function getCurrentPageId() {
   return currentPageId;
 }
 
+
+export function getCurrentPageComponent() {
+  return currentComponent;
+}

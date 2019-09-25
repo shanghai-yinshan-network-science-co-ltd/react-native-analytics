@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React from "react";
 import { getViewPathByComponent, getComponentName } from './stack'
-import { getCurrentPageId } from './pageBuried'
+import { getCurrentPageId ,getCurrentPageComponent} from './pageBuried'
 import { click_event } from './eventTypeConst'
 import { getStrTime, getComponentPathInScreen } from './utils'
 import normalizeColor from './normalizeColor'
@@ -180,8 +180,7 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
         }
       }
       //获取点击信息进行埋点
-      let viewPath = getViewPathByComponent(this._reactInternalFiber);
-      viewPath = getComponentPathInScreen(viewPath, getCurrentPageId());
+      let viewPath = getViewPathByComponent(this._reactInternalFiber,getCurrentPageComponent());
       if (!((this._reactInternalFiber.return && this._reactInternalFiber.return.stateNode instanceof TextInput) || viewPath.endsWith('TextInput-TouchableWithoutFeedback'))) {
         if (hostNode !== viewPath) {
           hostNode = viewPath;

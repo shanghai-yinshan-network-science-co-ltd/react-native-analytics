@@ -5,6 +5,8 @@
 'use strict';
 
 
+import { Image } from "react-native";
+
 var hasSymbol = "function" === typeof Symbol && Symbol.for,
   REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for("react.element") : 60103,
   REACT_PORTAL_TYPE = hasSymbol ? Symbol.for("react.portal") : 60106,
@@ -64,14 +66,58 @@ export function getComponentName(type) {
   return null;
 }
 
-function createViewPathByFiber(component) {
+function getText(children) {
+  if (Array.isArray(children)) {
+    let text = "";
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      text += getText(child);
+    }
+    return text;
+  }
+  if (typeof children === 'object' && children) {
+    if (children.props && children.props.children) {
+      return getText(children.props.children);
+    }
+    if (children.props) {
+      const name = getComponentName(children.type)
+      if (children.props.source && name === 'Image') {
+        const source = Image.resolveAssetSource(children.props.source);
+        return `image(${source.uri})&&`
+      }
+      if (name && name.includes('TextInput')) {
+        return `textInput(placeholder:${children.props.placeholder || ""};defaultValue:${children.props.defaultValue || ""})`
+      }
+    }
+  }
+  if (typeof children === 'string') {
+    return children + "&&";
+  }
+  return "";
+}
+
+
+function createViewPathByFiber(component, currentComponent) {
   let fibernode = component;
   const fibers = [];
+  if (component.memoizedProps && component.memoizedProps.children) {
+    const text = getText(component.memoizedProps.children);
+    console.warn(text);
+  }
   while (fibernode) {
+    if (typeof fibernode.key === 'string' && fibernode.key.includes('root-sibling')) {
+      break;
+    }
     let componentName = getComponentName(fibernode.type);
     if (componentName && !componentName.startsWith("RCT") && componentName !== "StyledNativeComponent") {
       componentName = getSimpleComponentName(componentName);
       fibers.unshift(fibernode.index ? componentName + "[" + fibernode.index + "]" : componentName);
+    }
+    if (typeof fibernode.key === 'string' && fibernode.key.includes('scene_id')) {
+      break;
+    }
+    if (fibernode.type === currentComponent) {
+      break;
     }
     fibernode = fibernode.return;
   }
@@ -129,7 +175,7 @@ function getSimpleComponentName(componentName) {
 // };
 
 
-export function getViewPathByComponent(component) {
-  return createViewPathByFiber(component);
+export function getViewPathByComponent(component, currentComponent) {
+  return createViewPathByFiber(component, currentComponent);
 }
 
