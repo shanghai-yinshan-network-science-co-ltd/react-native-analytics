@@ -12,6 +12,7 @@ import {
   typeViewEvent,
   page_leave_event,
 } from './eventTypeConst';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import {sendBuriedData} from './nativeModule';
 import {getComponentName} from './stack';
 import {SPLITE} from './const';
@@ -116,7 +117,9 @@ export function createAnalyticsAppContainer(AppContainer) {
     );
   }
 
-  return forwardRef(AnalyticsAppContainer);
+  const container = forwardRef(AnalyticsAppContainer);
+  hoistNonReactStatics(container, AppContainer);
+  return container;
 }
 
 export function getCurrentPageId() {
