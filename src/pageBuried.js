@@ -4,20 +4,25 @@
 
 'use strict';
 
-import { getStrTime } from './utils'
-import { other_event, page_entrance_event, typeViewEvent, page_leave_event } from './eventTypeConst'
-import { sendBuriedData } from "./nativeModule";
-import { getComponentName } from "./stack";
-import { SPLITE } from './const'
-import { AppState } from "react-native";
-import { NavigationActions } from "react-navigation";
-import { lastClickId, resetLastClickId } from "./clickBuried";
+import React, {forwardRef, useImperativeHandle, useRef} from 'react';
+import {getStrTime} from './utils';
+import {
+  other_event,
+  page_entrance_event,
+  typeViewEvent,
+  page_leave_event,
+} from './eventTypeConst';
+import {sendBuriedData} from './nativeModule';
+import {getComponentName} from './stack';
+import {SPLITE} from './const';
+import {AppState} from 'react-native';
+import {NavigationActions} from 'react-navigation';
+import {lastClickId, resetLastClickId} from './clickBuried';
 
 let lastPageId;
 
 let currentPageId;
 let currentComponent;
-
 
 function onPageStart(pageId, component) {
   currentPageId = pageId;
@@ -30,7 +35,7 @@ function onPageStart(pageId, component) {
     start_time: getStrTime(now),
     log_time: getStrTime(now),
     referId: lastPageId,
-    btnId: lastClickId
+    btnId: lastClickId,
   };
   lastPageId = undefined;
   resetLastClickId();
@@ -45,11 +50,10 @@ function onPageEnd(pageId) {
     end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
-    log_time: getStrTime(now)
+    log_time: getStrTime(now),
   };
   sendBuriedData(pageEntranceData);
 }
-
 
 function handleAppStateChange(nextAppState) {
   if (nextAppState.match(/inactive|background/)) {
@@ -60,7 +64,6 @@ function handleAppStateChange(nextAppState) {
 }
 
 let init = false;
-
 
 function getActiveRouteName(navigationState, router) {
   if (!navigationState) {
@@ -73,41 +76,52 @@ function getActiveRouteName(navigationState, router) {
     return getActiveRouteName(route, router);
   }
   const component = router.getComponentForRouteName(route.routeName);
-  return { name: route.routeName, component };
+  return {name: route.routeName, component};
 }
 
-
-export function createOnNavigationStateChange(AppContainer) {
+export function createAnalyticsAppContainer(AppContainer) {
   const getStateForAction = AppContainer.router.getStateForAction;
-  AppContainer.router.getStateForAction = function (action, state) {
+  AppContainer.router.getStateForAction = function(action, state) {
     const stateForAction = getStateForAction(action, state);
     if (action.type === NavigationActions.INIT) {
       if (!init) {
         AppState.addEventListener('change', handleAppStateChange);
         init = true;
-        const { name: currentScreen, component } = getActiveRouteName(stateForAction, AppContainer.router);
+        const {name: currentScreen, component} = getActiveRouteName(
+            stateForAction, AppContainer.router);
         onPageStart(currentScreen, component);
       }
     }
     return stateForAction;
   };
 
-
-  return (prevState, currentState, action) => {
-    const { name: currentScreen, component } = getActiveRouteName(currentState, AppContainer.router);
-    const { name: prevScreen } = getActiveRouteName(prevState, AppContainer.router);
+  function onNavigationStateChange(prevState, currentState, action) {
+    const {name: currentScreen, component} = getActiveRouteName(currentState,
+        AppContainer.router);
+    const {name: prevScreen} = getActiveRouteName(prevState,
+        AppContainer.router);
     if (prevScreen !== currentScreen) {
       onPageEnd(prevScreen);
       onPageStart(currentScreen, component);
     }
   }
-}
 
+  function AnalyticsAppContainer(props, ref) {
+    const _ref = useRef();
+    useImperativeHandle(ref, () => _ref.current);
+    return (
+        <AppContainer
+            ref={_ref}
+            onNavigationStateChange={onNavigationStateChange} {...props} />
+    );
+  }
+
+  return forwardRef(AnalyticsAppContainer);
+}
 
 export function getCurrentPageId() {
   return currentPageId;
 }
-
 
 export function getCurrentPageComponent() {
   return currentComponent;

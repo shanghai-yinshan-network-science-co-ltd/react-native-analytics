@@ -7,15 +7,15 @@ import {
   View,
   DeviceEventEmitter,
   TextInput,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
-import React from "react";
-import { getViewPathByComponent, getComponentName } from './stack'
-import { getCurrentPageId, getCurrentPageComponent } from './pageBuried'
-import { click_event } from './eventTypeConst'
-import { getStrTime, getComponentPathInScreen } from './utils'
-import normalizeColor from './normalizeColor'
-import { sendBuriedData } from './nativeModule'
+import React from 'react';
+import {getViewPathByComponent, getComponentName} from './stack';
+import {getCurrentPageId, getCurrentPageComponent} from './pageBuried';
+import {click_event} from './eventTypeConst';
+import {getStrTime, getComponentPathInScreen} from './utils';
+import normalizeColor from './normalizeColor';
+import {sendBuriedData} from './nativeModule';
 
 let lastClickId;
 
@@ -27,20 +27,18 @@ let pageInfo;
 const originalRenderDebugView = Touchable.renderDebugView;
 const original_performSideEffectsForTransition = Touchable.Mixin._performSideEffectsForTransition;
 
-
 class BuriedView extends React.Component {
-
 
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {};
   }
 
   render() {
-    let { hitSlop, color } = this.props;
+    let {hitSlop, color} = this.props;
 
     const debugHitSlopStyle = {};
-    hitSlop = hitSlop || { top: 0, bottom: 0, left: 0, right: 0 };
+    hitSlop = hitSlop || {top: 0, bottom: 0, left: 0, right: 0};
     for (const key in hitSlop) {
       debugHitSlopStyle[key] = -hitSlop[key];
     }
@@ -49,25 +47,24 @@ class BuriedView extends React.Component {
       return null;
     }
     const hexColor =
-      '#' + ('00000000' + normalizedColor.toString(16)).substr(-8);
+        '#' + ('00000000' + normalizedColor.toString(16)).substr(-8);
     return (
-      IsShowBuriedView ? (this.state.selected ? (
-        <View
-          pointerEvents="none"
-          style={[
-            styles.debug,
-            {
-              borderColor: hexColor.slice(0, -2) + '55', // More opaque
-              backgroundColor: hexColor.slice(0, -2) + '0F', // Less opaque
-              ...debugHitSlopStyle,
-            },
-          ]}
-        />
-      ) : null) : originalRenderDebugView({ color, hitSlop })
+        IsShowBuriedView ? (this.state.selected ? (
+            <View
+                pointerEvents="none"
+                style={[
+                  styles.debug,
+                  {
+                    borderColor: hexColor.slice(0, -2) + '55', // More opaque
+                    backgroundColor: hexColor.slice(0, -2) + '0F', // Less opaque
+                    ...debugHitSlopStyle,
+                  },
+                ]}
+            />
+        ) : null) : originalRenderDebugView({color, hitSlop})
     );
   }
 }
-
 
 /**
  * 查找无痕埋点的点击显示框
@@ -94,7 +91,6 @@ function findBuriedViewByFiber(touchableView) {
   }
 }
 
-
 function findBuriedView(touchableView) {
   if (!touchableView) {
     return;
@@ -102,43 +98,46 @@ function findBuriedView(touchableView) {
   return findBuriedViewByFiber(touchableView);
 }
 
-
 /**
  * 查找有点击事件的Text
  * @param component
  * @return {*}
  */
 function getTextInstance(component) {
-  if (getComponentName(component._reactInternalFiber.type) === 'TouchableText') {
-    return component
+  if (getComponentName(component._reactInternalFiber.type) ===
+      'TouchableText') {
+    return component;
   }
-  if (component._reactInternalFiber._renderedComponent && getComponentName(component._reactInternalFiber._renderedComponent.type) === 'TouchableText') {
+  if (component._reactInternalFiber._renderedComponent && getComponentName(
+      component._reactInternalFiber._renderedComponent.type) ===
+      'TouchableText') {
     return component._reactInternalFiber._renderedComponent.getPublicInstance();
   }
-  if (component._reactInternalFiber.child && getComponentName(component._reactInternalFiber.child.type) === 'TouchableText') {
+  if (component._reactInternalFiber.child &&
+      getComponentName(component._reactInternalFiber.child.type) ===
+      'TouchableText') {
     return component._reactInternalFiber.child.stateNode;
   }
 }
 
 //覆盖react原本的调试view
-Touchable.renderDebugView = function ({ color, hitSlop }) {
-  return (<BuriedView hitSlop={hitSlop} color={color} key={Date.now() + ""} />)
+Touchable.renderDebugView = function({color, hitSlop}) {
+  return (<BuriedView hitSlop={hitSlop} color={color} key={Date.now() + ''} />);
 };
 
 //对点击事件进行代理
-Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = Touchable.Mixin._performSideEffectsForTransition = function (...args) {
-
+Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = Touchable.Mixin._performSideEffectsForTransition = function(...args) {
 
   const orginalHandlePress = this.touchableHandlePress;
 
-  this.touchableHandlePress = function (e) {
+  this.touchableHandlePress = function(e) {
     if (this) {
       //展示点击框
       if (IsShowBuriedView) {
         let text;
         if (prevBuried instanceof BuriedView) {
           prevBuried.setState({
-            selected: false
+            selected: false,
           });
         }
         if (prevBuried && prevBuried._reactInternalFiber) {
@@ -146,12 +145,13 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
           if (text) {
             text.state.responseHandlers = {
               ...text.state.responseHandlers,
-              style: [{
-                borderColor: 'transparent', // More opaque
-                borderWidth: 0,
-                borderStyle: 'solid',
-                backgroundColor: 'transparent', // Less opaque
-              }, prevBuriedStyle]
+              style: [
+                {
+                  borderColor: 'transparent', // More opaque
+                  borderWidth: 0,
+                  borderStyle: 'solid',
+                  backgroundColor: 'transparent', // Less opaque
+                }, prevBuriedStyle],
             };
             text.setState({});
           }
@@ -162,35 +162,27 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
         if (text) {
           text.state.responseHandlers = {
             ...text.state.responseHandlers,
-            style: [{
-              borderColor: 'black', // More opaque
-              backgroundColor: '#ffff0F', // Less opaque
-            }, prevBuriedStyle]
+            style: [
+              {
+                borderColor: 'black', // More opaque
+                backgroundColor: '#ffff0F', // Less opaque
+              }, prevBuriedStyle],
           };
           text.setState({});
 
         } else {
-          Touchable.renderDebugView = ({ color, hitSlop }) => {
+          Touchable.renderDebugView = ({color, hitSlop}) => {
             return (
-              <BuriedView ref={(ref) => prevBuried = ref} hitSlop={hitSlop} color={color} key={Date.now() + ""} />)
+                <BuriedView ref={(ref) => prevBuried = ref} hitSlop={hitSlop}
+                            color={color} key={Date.now() + ''} />);
           };
           this.setState({}, () => prevBuried.setState({
-            selected: true
+            selected: true,
           }));
         }
       }
       //获取点击信息进行埋点
-      let { path: viewPath, description } = getViewPathByComponent(this._reactInternalFiber, getCurrentPageComponent());
-      if (!((this._reactInternalFiber.return && this._reactInternalFiber.return.stateNode instanceof TextInput) || viewPath.endsWith('TextInput-TouchableWithoutFeedback'))) {
-        if (hostNode !== viewPath) {
-          hostNode = viewPath;
-          onClickEvent(hostNode, description);
-          const id = setImmediate(() => {
-            hostNode = undefined;
-            clearImmediate(id);
-          });
-        }
-      }
+      clickEvent(this);
     }
     //执行原始回调
     if (!IsShowBuriedView) {
@@ -200,15 +192,32 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
   original_performSideEffectsForTransition.bind(this)(...args);
 };
 
+export function clickEvent(instance) {
+  let {path: viewPath, description} = getViewPathByComponent(
+      instance._reactInternalFiber, getCurrentPageComponent());
+  if (!((instance._reactInternalFiber.return &&
+      instance._reactInternalFiber.return.stateNode instanceof TextInput) ||
+      viewPath.endsWith('TextInput-TouchableWithoutFeedback'))) {
+    if (hostNode !== viewPath) {
+      hostNode = viewPath;
+      onClickEvent(hostNode, description);
+      const id = setImmediate(() => {
+        hostNode = undefined;
+        clearImmediate(id);
+      });
+    }
+  }
+}
+
 function onClickEvent(viewPath, description) {
   const pageId = getCurrentPageId();
   if (!pageId) {
     return;
   }
   const now = Date.now();
-  const pages = pageId.split("-");
+  const pages = pageId.split('-');
   if (pages.length > 0) {
-    viewPath = pages[pages.length - 1] + "-" + viewPath;
+    viewPath = pages[pages.length - 1] + '-' + viewPath;
   }
   lastClickId = viewPath;
   const clickData = {
@@ -217,26 +226,26 @@ function onClickEvent(viewPath, description) {
     page_id: pageId,
     start_time: getStrTime(now),
     view_path: viewPath,
-    log_time: getStrTime(now)
+    log_time: getStrTime(now),
   };
   if (pageInfo) {
     clickData.page_info = pageInfo;
     pageInfo = undefined;
   }
   if (description) {
-    clickData.page_info = clickData.page_info ? { ...clickData.page_info, description } : { description };
+    clickData.page_info = clickData.page_info ?
+        {...clickData.page_info, description} :
+        {description};
   }
   sendBuriedData(clickData);
 }
-
 
 export function setClickPageInfo(_pageInfo) {
   pageInfo = _pageInfo;
 }
 
 DeviceEventEmitter.addListener('RNAnalytics.toggleBuriedView',
-  data => setBuried(data.isCatchModeOpened));
-
+    data => setBuried(data.isCatchModeOpened));
 
 function resetLastClickId() {
   lastClickId = undefined;
@@ -247,12 +256,12 @@ export function setBuried(toggle) {
   if (!toggle && prevBuried) {
     const buriedView = findBuriedView(prevBuried._reactInternalFiber);
     buriedView && buriedView.setState({
-      selected: false
+      selected: false,
     });
   }
 }
 
-export { lastClickId, resetLastClickId }
+export {lastClickId, resetLastClickId};
 
 const styles = StyleSheet.create({
   debug: {
