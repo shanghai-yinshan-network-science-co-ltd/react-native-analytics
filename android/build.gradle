@@ -37,5 +37,5 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    api "com.maizijf.analytics:analytics2:${safeExtGet('analyticsVersion', '2.5.4')}"
+    api "com.maizijf.analytics:analytics2:${safeExtGet('analyticsVersion', '+')}"
 }
