@@ -29,49 +29,48 @@ const DEFAULT = {
 
 export let NetworkLogger = function () {
 
-    const log = {...DEFAULT};
-
-    let start_time;
-    let end_time;
-
-    function onRequestHeaderCallback(header, value, xhr) {
-
+    function onOpen(method, url, xhr) {
+        xhr._log = {...DEFAULT};
     }
 
-    function onOpen(method, url, xhr) {
-
+    function onRequestHeaderCallback(header, value, xhr) {
     }
 
     function onSend(data, xhr) {
 
-        start_time = new Date().getTime();
+        xhr._log.start_time = new Date().getTime();
 
-        log.request_type = xhr._method;
-        log.request_url = xhr._url;
-        log.request_params = data ? data : "";
+        xhr._log.request_type = xhr._method;
+        xhr._log.request_url = xhr._url;
+
+        if (typeof data === 'object'){
+            data = JSON.stringify(data);
+        }
+
+        xhr._log.request_params = data ? data : "";
 
     }
 
-    function onResponse(status, timeout, response) {
+    function onResponse(status, timeout, response, responseURL, responseType, xhr) {
 
-        end_time = new Date().getTime();
+        xhr._log.end_time = new Date().getTime();
 
-        log.http_status = status;
-        log.response_data = response;
-        log.request_consuming = end_time - start_time;
-        log.log_time = getStrTime(Date.now())
+        xhr._log.http_status = status;
+        xhr._log.response_data = response;
+        xhr._log.request_consuming = xhr._log.end_time - xhr._log.start_time;
+        xhr._log.log_time = getStrTime(Date.now())
 
         if (__DEV__) {
-            console.log("response -> log:", JSON.stringify(log));
+            console.log("response -> log:", JSON.stringify(xhr._log));
         }
 
         // 发送数据到Native
-        sendBuriedData(log);
+        sendBuriedData(xhr._log);
     }
 
     // register our monkey-patch
-    NetworkInterceptor.setRequestHeaderCallback(onRequestHeaderCallback())
-    NetworkInterceptor.setOpenCallback(onOpen())
+    NetworkInterceptor.setRequestHeaderCallback(onRequestHeaderCallback)
+    NetworkInterceptor.setOpenCallback(onOpen)
     NetworkInterceptor.setSendCallback(onSend)
     NetworkInterceptor.setResponseCallback(onResponse)
     NetworkInterceptor.enableInterception()
