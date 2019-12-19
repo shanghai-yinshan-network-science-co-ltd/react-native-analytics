@@ -13,7 +13,7 @@ import React from 'react';
 import {getViewPathByComponent, getComponentName} from './stack';
 import {getCurrentPageId, getCurrentPageComponent} from './pageBuried';
 import {click_event} from './eventTypeConst';
-import {getStrTime, getComponentPathInScreen} from './utils';
+import {getStrTime} from './utils';
 import normalizeColor from './normalizeColor';
 import {sendBuriedData} from './nativeModule';
 
@@ -222,7 +222,6 @@ function onClickEvent(viewPath, description) {
   lastClickId = viewPath;
   const clickData = {
     action_type: click_event,
-    end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
     view_path: viewPath,

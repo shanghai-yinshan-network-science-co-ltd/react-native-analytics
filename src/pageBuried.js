@@ -31,7 +31,6 @@ function onPageStart(pageId, component) {
   const now = Date.now();
   const pageEntranceData = {
     action_type: page_entrance_event,
-    end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
     log_time: getStrTime(now),
@@ -48,7 +47,6 @@ function onPageEnd(pageId) {
   const now = Date.now();
   const pageEntranceData = {
     action_type: page_leave_event,
-    end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
     log_time: getStrTime(now),

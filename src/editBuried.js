@@ -24,7 +24,6 @@ function getCommenEvent(viewPath, pageId) {
     viewPath = pages[pages.length - 1] + "-" + viewPath;
   }
   return {
-    end_time: getStrTime(now),
     page_id: pageId,
     start_time: getStrTime(now),
     view_path: viewPath,
