@@ -193,14 +193,14 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
 };
 
 export function clickEvent(instance) {
-  let {path: viewPath, description} = getViewPathByComponent(
+  let {path: viewPath, description,vId} = getViewPathByComponent(
       instance._reactInternalFiber, getCurrentPageComponent());
   if (!((instance._reactInternalFiber.return &&
       instance._reactInternalFiber.return.stateNode instanceof TextInput) ||
       viewPath.endsWith('TextInput-TouchableWithoutFeedback'))) {
     if (hostNode !== viewPath) {
       hostNode = viewPath;
-      onClickEvent(hostNode, description);
+      onClickEvent({viewPath:hostNode, description,vId});
       const id = setImmediate(() => {
         hostNode = undefined;
         clearImmediate(id);
@@ -209,7 +209,7 @@ export function clickEvent(instance) {
   }
 }
 
-function onClickEvent(viewPath, description) {
+function onClickEvent({viewPath, description,vId}) {
   const pageId = getCurrentPageId();
   if (!pageId) {
     return;
@@ -226,6 +226,7 @@ function onClickEvent(viewPath, description) {
     start_time: getStrTime(now),
     view_path: viewPath,
     log_time: getStrTime(now),
+    widget_id: vId,
   };
   if (pageInfo) {
     clickData.page_info = pageInfo;

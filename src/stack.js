@@ -77,7 +77,7 @@ function getText(children) {
     return text;
   }
   if (typeof children === 'object' && children) {
-    const props = children.props || children.memoizedProps;
+    const props = children.props || children.pendingProps ||children.memoizedProps;
     if (props && props.children) {
       return getText(props.children);
     }
@@ -108,7 +108,16 @@ function createViewPathByFiber(component, currentComponent) {
   let text;
   const fibers = [];
   text = getText(component);
+  let vId;
+  let i = 0;
   while (fibernode) {
+    const props = component.props || component.pendingProps ||component.memoizedProps || {};
+    if (!vId && props.vId) {
+      vId = props.vId;
+    }
+    if (!vId) {
+      i++;
+    }
     if (typeof fibernode.key === 'string' && fibernode.key.includes('root-sibling')) {
       break;
     }
@@ -121,9 +130,13 @@ function createViewPathByFiber(component, currentComponent) {
     }
     fibernode = fibernode.return;
   }
+  if (i > 0) {
+    console.warn(`vId "${vId}" is not in the current operation component, please confirm it is correct`)
+  }
   return {
     path: fibers.join("-"),
-    description: text
+    description: text,
+    vId
   };
 }
 

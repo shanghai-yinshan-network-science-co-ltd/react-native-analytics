@@ -25,7 +25,7 @@ const DEFAULT = {
     request_consuming: "",
     action_type: "request_event",
     log_time: getStrTime(Date.now())
-}
+};
 
 export let NetworkLogger = function () {
 
@@ -38,7 +38,7 @@ export let NetworkLogger = function () {
 
     function onSend(data, xhr) {
 
-        xhr._log.start_time = new Date().getTime();
+        xhr._log.start_time = getStrTime(Date.now());
 
         xhr._log.request_type = xhr._method;
         xhr._log.request_url = xhr._url;
@@ -53,10 +53,14 @@ export let NetworkLogger = function () {
 
     function onResponse(status, timeout, response, responseURL, responseType, xhr) {
 
-        xhr._log.end_time = new Date().getTime();
+        xhr._log.end_time = getStrTime(Date.now());
 
         xhr._log.http_status = status;
-        xhr._log.response_data = response;
+        if (response&&(response.length>1024*2)) {
+            xhr._log.response_data = "[filter]";
+        }else {
+            xhr._log.response_data = response;
+        }
         xhr._log.request_consuming = xhr._log.end_time - xhr._log.start_time;
         xhr._log.log_time = getStrTime(Date.now());
         xhr._log.request_id = xhr.getResponseHeader('X_REQUEST_ID');

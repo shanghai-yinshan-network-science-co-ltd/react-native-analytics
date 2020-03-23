@@ -12,7 +12,6 @@ var responseCallback;
 
 var isInterceptorEnabled = false;
 
-
 const NetworkInterceptor = {
 
     setOpenCallback(callback) {

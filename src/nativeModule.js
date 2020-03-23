@@ -15,7 +15,7 @@ export function openLog(isLog) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export  function sendBuriedData(data) {
+export function sendBuriedData(data) {
     if (isOpenLog) {
         console.log(data);
     }
@@ -24,3 +24,13 @@ export  function sendBuriedData(data) {
         RNAnalytics.sendBuriedData(JSON.stringify(data));
     }
 }
+
+export function setUserId(userId) {
+    NativeModules.setUserId(userId);
+}
+
+
+export function clearUserId() {
+    NativeModules.clearUserId();
+}
+

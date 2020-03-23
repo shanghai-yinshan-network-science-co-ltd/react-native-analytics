@@ -14,7 +14,7 @@ const originalcomponentWillReceiveProps = TextInput.prototype.componentWillRecei
 const originalcomponentWillUnmount = TextInput.prototype.componentWillUnmount;
 const textfield_event = 'textfield_event';
 
-function getCommenEvent(viewPath, pageId) {
+function getCommenEvent(viewPath, pageId,vId) {
   if (!pageId) {
     return;
   }
@@ -28,7 +28,8 @@ function getCommenEvent(viewPath, pageId) {
     start_time: getStrTime(now),
     view_path: viewPath,
     action_type: textfield_event,
-    log_time: getStrTime(now)
+    log_time: getStrTime(now),
+    widget_id: vId,
   };
 }
 
@@ -46,10 +47,10 @@ TextInput.prototype.componentWillMount = function (...args) {
   };
   this._sendEditBuriedData = function (editData, opType) {
     const _pageId = getCurrentPageId();
-    let { path: viewPath, description } = getViewPathByComponent(this._reactInternalFiber, getCurrentPageComponent());
+    let { path: viewPath, description ,vId} = getViewPathByComponent(this._reactInternalFiber, getCurrentPageComponent());
     if (opType === "inputEnd" || opType === "inputStart") {
       const text = editData;
-      const data = getCommenEvent(viewPath, _pageId);
+      const data = getCommenEvent(viewPath, _pageId,vId);
       if (data) {
         data.page_info = {
           textLength: text ? text.length : 0,
@@ -64,7 +65,7 @@ TextInput.prototype.componentWillMount = function (...args) {
         .then((content) => {
           // console.log(editData);
           if (content.length > 1 && editData.diff === content) {
-            const data = getCommenEvent(viewPath, _pageId);
+            const data = getCommenEvent(viewPath, _pageId,vId);
             if (data) {
               data.page_info = {
                 newTextLength: editData.newTextLength,

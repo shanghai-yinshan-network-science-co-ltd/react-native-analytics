@@ -1,8 +1,8 @@
 
 package com.reactlibrary;
 
-import com.facebook.react.bridge.Callback;
 import android.os.Bundle;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -10,9 +10,10 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.maizijf.analytics.MZLogAgent;
-import com.maizijf.analytics.manager.debugtool.DebugMenuView;
-import com.maizijf.analytics.manager.debugtool.DebugViewManager;
+
+import cn.yinshantech.analytics.MZLogAgent;
+import cn.yinshantech.analytics.manager.debugtool.DebugMenuView;
+import cn.yinshantech.analytics.manager.debugtool.DebugViewManager;
 
 public class RNAnalyticsModule extends ReactContextBaseJavaModule {
 
@@ -40,6 +41,16 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
         MZLogAgent.saveRNEvent(data);
     }
 
+    @ReactMethod
+    public void setUserId(String userId) {
+        MZLogAgent.setUserId(userId);
+    }
+
+    @ReactMethod
+    public void clearUserId() {
+        MZLogAgent.clearUserId();
+    }
+
 
     private void emit(ReactContext context, String event, Bundle bundle) {
         if (bundle == null) {
@@ -51,6 +62,8 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
                    .emit(event, params);
         }
     }
+
+
 
   @Override
   public String getName() {

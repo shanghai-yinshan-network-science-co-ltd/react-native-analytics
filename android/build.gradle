@@ -33,9 +33,16 @@ android {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'http://47.103.128.182:3333/repository/maven-public/'
+        credentials {
+            username 'admin'
+            password 'admin132'
+        }
+    }
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    api "com.maizijf.analytics:analytics2:${safeExtGet('analyticsVersion', '+')}"
+    api "cn.yinshantech.analytics:analytics2:${safeExtGet('analyticsVersion', '+')}"
 }
