@@ -103,7 +103,7 @@ function isSvg(funcString) {
 }
 
 
-function createViewPathByFiber(component, currentComponent) {
+function createViewPathByFiber(component,pageId) {
   let fibernode = component;
   let text;
   const fibers = [];
@@ -125,12 +125,14 @@ function createViewPathByFiber(component, currentComponent) {
     if (typeof fibernode.key === 'string' && fibernode.key.includes('scene_id')) {
       break;
     }
-    if (fibernode.type === currentComponent) {
+    if (props.hasOwnProperty('navigation') && props.hasOwnProperty('route') && props.route.hasOwnProperty('key') && props.route.name === pageId) {
       break;
     }
     fibernode = fibernode.return;
   }
-  if (i > 0) {
+  if (!vId) {
+    console.warn(`vId is not set in the current operation component`)
+  }else if (i > 0) {
     console.warn(`vId "${vId}" is not in the current operation component, please confirm it is correct`)
   }
   return {
@@ -191,7 +193,7 @@ function getSimpleComponentName(componentName) {
 // };
 
 
-export function getViewPathByComponent(component, currentComponent) {
-  return createViewPathByFiber(component, currentComponent);
+export function getViewPathByComponent(component,pageId) {
+  return createViewPathByFiber(component,pageId);
 }
 

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {getViewPathByComponent, getComponentName} from './stack';
-import {getCurrentPageId, getCurrentPageComponent} from './pageBuried';
+import {getCurrentPageId} from './pageBuried';
 import {click_event} from './eventTypeConst';
 import {getStrTime} from './utils';
 import normalizeColor from './normalizeColor';
@@ -194,7 +194,7 @@ Touchable.Mixin.withoutDefaultFocusAndBlur._performSideEffectsForTransition = To
 
 export function clickEvent(instance) {
   let {path: viewPath, description,vId} = getViewPathByComponent(
-      instance._reactInternalFiber, getCurrentPageComponent());
+      instance._reactInternalFiber, getCurrentPageId());
   if (!((instance._reactInternalFiber.return &&
       instance._reactInternalFiber.return.stateNode instanceof TextInput) ||
       viewPath.endsWith('TextInput-TouchableWithoutFeedback'))) {

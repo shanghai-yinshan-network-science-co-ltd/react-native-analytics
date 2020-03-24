@@ -4,30 +4,22 @@
 
 'use strict';
 
-import React, {forwardRef, useImperativeHandle, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {getStrTime} from './utils';
 import {
-  other_event,
   page_entrance_event,
-  typeViewEvent,
   page_leave_event,
 } from './eventTypeConst';
-import hoistNonReactStatics from 'hoist-non-react-statics';
 import {sendBuriedData} from './nativeModule';
-import {getComponentName} from './stack';
-import {SPLITE} from './const';
 import {AppState} from 'react-native';
-import {NavigationActions} from 'react-navigation';
 import {lastClickId, resetLastClickId} from './clickBuried';
 
 let lastPageId;
 
 let currentPageId;
-let currentComponent;
 
-function onPageStart(pageId, component) {
+function onPageStart(pageId) {
   currentPageId = pageId;
-  currentComponent = component;
   const now = Date.now();
   const pageEntranceData = {
     action_type: page_entrance_event,
@@ -58,72 +50,56 @@ function handleAppStateChange(nextAppState) {
   if (nextAppState.match(/inactive|background/)) {
     onPageEnd(currentPageId);
   } else {
-    onPageStart(currentPageId, currentComponent);
+    onPageStart(currentPageId);
   }
 }
 
-let init = false;
 
-function getActiveRouteName(navigationState, router) {
-  if (!navigationState) {
-    return null;
-  }
-  const route = navigationState.routes[navigationState.index];
-  // dive into nested navigators
-  if (route.routes) {
-    router = router.childRouters[route.routeName];
-    return getActiveRouteName(route, router);
-  }
-  const component = router.getComponentForRouteName(route.routeName);
-  return {name: route.routeName, component};
-}
+const getActiveRouteName = state => {
+  const route = state.routes[state.index];
 
-export function createAnalyticsAppContainer(AppContainer) {
-  const getStateForAction = AppContainer.router.getStateForAction;
-  AppContainer.router.getStateForAction = function(action, state) {
-    const stateForAction = getStateForAction(action, state);
-    if (action.type === NavigationActions.INIT) {
-      if (!init) {
-        AppState.addEventListener('change', handleAppStateChange);
-        init = true;
-        const {name: currentScreen, component} = getActiveRouteName(
-            stateForAction, AppContainer.router);
-        onPageStart(currentScreen, component);
-      }
+  if (route.state) {
+    return getActiveRouteName(route.state);
+  }
+
+  return route.name;
+};
+
+export function useAnalyticsScreen() {
+  const routeNameRef = React.useRef();
+  const navigationRef = React.useRef(null);
+  useEffect(() => {
+    const state = navigationRef.current.getRootState();
+    routeNameRef.current = getActiveRouteName(state);
+    onPageStart(routeNameRef.current);
+    requestAnimationFrame(() => AppState.addEventListener('change', handleAppStateChange));
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange);
+    };
+  }, []);
+
+
+  const onStateChange = useCallback(state => {
+    const previousRouteName = routeNameRef.current;
+    const currentRouteName = getActiveRouteName(state);
+
+    if (previousRouteName !== currentRouteName) {
+      // The line below uses the @react-native-firebase/analytics tracker
+      // Change this line to use another Mobile analytics SDK
+      onPageEnd(previousRouteName);
+      onPageStart(currentRouteName)
     }
-    return stateForAction;
+
+    // Save the current route name for later comparision
+    routeNameRef.current = currentRouteName;
+  }, []);
+  return {
+    navigationRef,
+    onStateChange,
   };
-
-  function onNavigationStateChange(prevState, currentState, action) {
-    const {name: currentScreen, component} = getActiveRouteName(currentState,
-        AppContainer.router);
-    const {name: prevScreen} = getActiveRouteName(prevState,
-        AppContainer.router);
-    if (prevScreen !== currentScreen) {
-      onPageEnd(prevScreen);
-      onPageStart(currentScreen, component);
-    }
-  }
-
-  function AnalyticsAppContainer(props, ref) {
-    const _ref = useRef();
-    useImperativeHandle(ref, () => _ref.current);
-    return (
-        <AppContainer
-            ref={_ref}
-            onNavigationStateChange={onNavigationStateChange} {...props} />
-    );
-  }
-
-  const container = forwardRef(AnalyticsAppContainer);
-  hoistNonReactStatics(container, AppContainer);
-  return container;
 }
+
 
 export function getCurrentPageId() {
   return currentPageId;
-}
-
-export function getCurrentPageComponent() {
-  return currentComponent;
 }
