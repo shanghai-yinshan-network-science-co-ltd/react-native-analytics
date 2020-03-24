@@ -111,7 +111,7 @@ function createViewPathByFiber(component,pageId) {
   let vId;
   let i = 0;
   while (fibernode) {
-    const props = component.props || component.pendingProps ||component.memoizedProps || {};
+    const props = fibernode.props || fibernode.pendingProps ||fibernode.memoizedProps || {};
     if (!vId && props.vId) {
       vId = props.vId;
     }
