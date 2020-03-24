@@ -79,20 +79,26 @@ export function useAnalyticsScreen() {
   }, []);
 
 
-  const onStateChange = useCallback(state => {
-    const previousRouteName = routeNameRef.current;
-    const currentRouteName = getActiveRouteName(state);
+  const onStateChange = useCallback(() => {
+    requestAnimationFrame(() => {
+      const previousRouteName = routeNameRef.current;
+      let currentRouteName = '';
+      if (navigationRef.current) {
+        currentRouteName = getActiveRouteName(navigationRef.current.getRootState())
+      }
+      if (previousRouteName !== currentRouteName) {
+        // The line below uses the @react-native-firebase/analytics tracker
+        // Change this line to use another Mobile analytics SDK
+        onPageEnd(previousRouteName);
+        onPageStart(currentRouteName)
+      }
 
-    if (previousRouteName !== currentRouteName) {
-      // The line below uses the @react-native-firebase/analytics tracker
-      // Change this line to use another Mobile analytics SDK
-      onPageEnd(previousRouteName);
-      onPageStart(currentRouteName)
-    }
+      // Save the current route name for later comparision
+      routeNameRef.current = currentRouteName;
+    });
 
-    // Save the current route name for later comparision
-    routeNameRef.current = currentRouteName;
   }, []);
+
   return {
     navigationRef,
     onStateChange,
