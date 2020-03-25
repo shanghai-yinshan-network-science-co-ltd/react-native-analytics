@@ -64,10 +64,6 @@ export let NetworkLogger = function () {
         xhr._log.request_consuming = xhr._log.end_time - xhr._log.start_time;
         xhr._log.log_time = getStrTime(Date.now());
         xhr._log.request_id = xhr.getResponseHeader('X_REQUEST_ID');
-        if (__DEV__) {
-            console.log("response -> log:", JSON.stringify(xhr._log));
-        }
-
         // 发送数据到Native
         sendBuriedData(xhr._log);
     }
