@@ -20,7 +20,9 @@ export function sendBuriedData(data) {
         console.log(data);
     }
     if (RNAnalytics) {
-        data.page_info = data.page_info && JSON.stringify(data.page_info);
+        if (data.page_info) {
+            data.page_info = JSON.stringify(data.page_info);
+        }
         RNAnalytics.sendBuriedData(JSON.stringify(data));
     }
 }

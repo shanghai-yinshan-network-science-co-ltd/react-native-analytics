@@ -18,7 +18,7 @@ let lastPageId;
 
 let currentPageId;
 
-function onPageStart(pageId) {
+function onPageStart(pageId,isAppStateChange) {
   currentPageId = pageId;
   const now = Date.now();
   const pageEntranceData = {
@@ -29,12 +29,17 @@ function onPageStart(pageId) {
     referId: lastPageId,
     btnId: lastClickId,
   };
+  if (isAppStateChange) {
+    pageEntranceData.page_info = {
+      isAppStateChange
+    }
+  }
   lastPageId = undefined;
   resetLastClickId();
   sendBuriedData(pageEntranceData);
 }
 
-function onPageEnd(pageId) {
+function onPageEnd(pageId,isAppStateChange) {
   lastPageId = pageId;
   const now = Date.now();
   const pageEntranceData = {
@@ -43,14 +48,19 @@ function onPageEnd(pageId) {
     start_time: getStrTime(now),
     log_time: getStrTime(now),
   };
+  if (isAppStateChange) {
+    pageEntranceData.page_info = {
+      isAppStateChange
+    }
+  }
   sendBuriedData(pageEntranceData);
 }
 
 function handleAppStateChange(nextAppState) {
   if (nextAppState.match(/inactive|background/)) {
-    onPageEnd(currentPageId);
+    onPageEnd(currentPageId,true);
   } else {
-    onPageStart(currentPageId);
+    onPageStart(currentPageId,true);
   }
 }
 
