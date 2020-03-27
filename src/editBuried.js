@@ -9,8 +9,8 @@ import { getCurrentPageId, getCurrentPageComponent } from "./pageBuried";
 import { getStrTime } from "./utils";
 import { getViewPathByComponent } from "./stack";
 
-const originalcomponentWillMount = TextInput.prototype.componentWillMount;
-const originalcomponentWillReceiveProps = TextInput.prototype.componentWillReceiveProps;
+const originalcomponentWillMount = TextInput.prototype.UNSAFE_componentWillMount;
+const originalcomponentWillReceiveProps = TextInput.prototype.UNSAFE_componentWillReceiveProps;
 const originalcomponentWillUnmount = TextInput.prototype.componentWillUnmount;
 const textfield_event = 'textfield_event';
 
@@ -33,7 +33,7 @@ function getCommenEvent(viewPath, pageId,vId) {
   };
 }
 
-TextInput.prototype.componentWillMount = function (...args) {
+TextInput.prototype.UNSAFE_componentWillMount = function (...args) {
   originalcomponentWillMount && originalcomponentWillMount.bind(this)(...args);
   const originalOnChage = this._onChange;
   const originalOnBlur = this._onBlur;
@@ -138,7 +138,7 @@ TextInput.prototype.componentWillUnmount = function (...args) {
   }
 };
 
-TextInput.prototype.componentWillReceiveProps = function (nextProps, ...args) {
+TextInput.prototype.UNSAFE_componentWillReceiveProps = function (nextProps, ...args) {
   originalcomponentWillMount && originalcomponentWillReceiveProps.bind(this)(nextProps, ...args);
   // if (nextProps.selection !== this.props.selection) {
   //     this._$selection = nextProps.selection;
