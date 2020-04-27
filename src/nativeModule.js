@@ -26,11 +26,11 @@ export function sendBuriedData(data) {
 }
 
 export function setUserId(userId) {
-    NativeModules.setUserId(userId);
+    RNAnalytics.setUserId(userId);
 }
 
 
 export function clearUserId() {
-    NativeModules.clearUserId();
+    RNAnalytics.clearUserId();
 }
 
