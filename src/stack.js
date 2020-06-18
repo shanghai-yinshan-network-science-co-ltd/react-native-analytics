@@ -6,6 +6,7 @@
 
 
 import { Image } from "react-native";
+import {isWarning} from './config'
 
 var hasSymbol = "function" === typeof Symbol && Symbol.for,
   REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for("react.element") : 60103,
@@ -130,11 +131,14 @@ function createViewPathByFiber(component,pageId) {
     }
     fibernode = fibernode.return;
   }
-  if (!vId) {
-    console.warn(`vId is not set in the current operation component`)
-  }else if (i > 0) {
-    console.warn(`vId "${vId}" is not in the current operation component, please confirm it is correct`)
+  if(isWarning()){
+    if (!vId) {
+      console.warn(`vId is not set in the current operation component`)
+    }else if (i > 0) {
+      console.warn(`vId "${vId}" is not in the current operation component, please confirm it is correct`)
+    }
   }
+
   return {
     path: fibers.join("-"),
     description: text,
