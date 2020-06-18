@@ -47,6 +47,11 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void saveBusinessEvent(String businessName){
+        MZLogAgent.saveBusinessEvent(businessName);
+    }
+
+    @ReactMethod
     public void clearUserId() {
         MZLogAgent.clearUserId();
     }
