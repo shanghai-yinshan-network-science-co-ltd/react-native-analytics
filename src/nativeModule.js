@@ -36,3 +36,7 @@ export function clearUserId() {
     RNAnalytics.clearUserId();
 }
 
+export function saveBusinessEvent(businessName) {
+    RNAnalytics.saveBusinessEvent(businessName);
+}
+
