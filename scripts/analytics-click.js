@@ -33,7 +33,7 @@ function transformer(content) {
   content = insertStr(
     content,
     content.indexOf('import'),
-    "import {clickEvent} from 'react-native-analytics/src/clickBuried';\n",
+    "import {clickEvent} from 'react-native-analytics';\n",
   );
   const pressIndex = content.search(/this.props.onPress\(\w*\);/);
   if (pressIndex === -1) {
