@@ -2,26 +2,23 @@
  * Created by cleverdou on 17/9/19.
  */
 'use strict';
-import React from 'react'
-import { TextInput, Clipboard } from 'react-native'
-import { sendBuriedData } from './nativeModule'
-import { getCurrentPageId} from "./pageBuried";
-import { getStrTime } from "./utils";
-import { getViewPathByComponent } from "./stack";
+import React from 'react';
+import {sendBuriedData} from './nativeModule';
+import {getCurrentPageId} from './pageBuried';
+import {getStrTime} from './utils';
+import {getViewPathByComponent} from './stack';
+import Clipboard from '@react-native-clipboard/clipboard';
 
-const originalcomponentWillMount = TextInput.prototype.UNSAFE_componentWillMount;
-const originalcomponentWillReceiveProps = TextInput.prototype.UNSAFE_componentWillReceiveProps;
-const originalcomponentWillUnmount = TextInput.prototype.componentWillUnmount;
 const textfield_event = 'textfield_event';
 
-function getCommenEvent(viewPath, pageId,vId) {
+function getCommenEvent(viewPath, pageId, vId) {
   if (!pageId) {
     return;
   }
   const now = Date.now();
-  const pages = pageId.split("-");
+  const pages = pageId.split('-');
   if (pages.length > 0) {
-    viewPath = pages[pages.length - 1] + "-" + viewPath;
+    viewPath = pages[pages.length - 1] + '-' + viewPath;
   }
   return {
     page_id: pageId,
@@ -33,117 +30,132 @@ function getCommenEvent(viewPath, pageId,vId) {
   };
 }
 
-TextInput.prototype.UNSAFE_componentWillMount = function (...args) {
-  originalcomponentWillMount && originalcomponentWillMount.bind(this)(...args);
-  const originalOnChage = this._onChange;
-  const originalOnBlur = this._onBlur;
-  const originalOnFocus = this._onFocus;
-  const originalOnSelectionChange = this._onSelectionChange;
-  this._$selection = this.props.selection;
-  const text = this._$onChangeText = this.props.value || this.props.defaultValue || "";
-  this._$selection = {
-    start: text.length,
-    end: text.length,
+
+let TextInput;
+
+
+class HookTextInput extends React.Component {
+
+  _$onChangeText = '';
+  _prevChangeText = '';
+
+  _onChangeText = (text) => {
+    this._prevChangeText = this._$onChangeText;
+    this._$onChangeText = text;
+    this.props.onChangeText && this.props.onChangeText(text);
   };
-  this._sendEditBuriedData = function (editData, opType) {
+
+  _onTextInput = async (e) => {
+    const {text} = e.nativeEvent;
+    this.props.onTextInput && this.props.onTextInput(e);
+    const clipboardText = await Clipboard.getString();
+    if (text === clipboardText) {
+      this._sendEditBuriedData({
+        newTextLength: this._$onChangeText.length,
+        oldTextLength: this._prevChangeText.length,
+      }, 'paste');
+    }
+  };
+
+  _onBlur = (...args) => {
+    // console.log('blur', event.nativeEvent);
+    if (this._isInput) {
+      this._isInput = false;
+      let text = this.props.value || this._$onChangeText ||
+          this.props.defaultValue || '';
+      this._sendEditBuriedData(text, 'inputEnd');
+    }
+    this.props.onFocus && this.props.onBlur(...args);
+  };
+  _onEndEditing = (...args) => {
+    // console.log('blur', event.nativeEvent);
+    if (this._isInput) {
+      this._isInput = false;
+      let text = this.props.value || this._$onChangeText ||
+          this.props.defaultValue || '';
+      this._sendEditBuriedData(text, 'inputEnd');
+    }
+    this.props.onEndEditing && this.props.onEndEditing(...args);
+  };
+
+  _onFocus = (...args) => {
+    // console.log('focus', event.nativeEvent);
+    this._isInput = true;
+    let text = this.props.value || this._$onChangeText ||
+        this.props.defaultValue || '';
+    this._sessionId = Date.now();
+    this._sendEditBuriedData(text, 'inputStart');
+    this.props.onFocus && this.props.onFocus(...args);
+  };
+
+  _sendEditBuriedData = (editData, opType) => {
     const _pageId = getCurrentPageId();
-    let { path: viewPath, description ,vId} = getViewPathByComponent(this._reactInternalFiber, getCurrentPageId());
-    if (opType === "inputEnd" || opType === "inputStart") {
+    let {path: viewPath, description, vId} = getViewPathByComponent(
+        this._reactInternals, getCurrentPageId());
+    if (opType === 'inputEnd' || opType === 'inputStart') {
       const text = editData;
-      const data = getCommenEvent(viewPath, _pageId,vId);
+      const data = getCommenEvent(viewPath, _pageId, vId);
       if (data) {
         data.page_info = {
           textLength: text ? text.length : 0,
           opType,
           sessionId: this._sessionId,
-          description
+          description,
         };
         sendBuriedData(data);
       }
-    } else if (opType === "paste") {
-      Clipboard.getString()
-        .then((content) => {
-          // console.log(editData);
-          if (content.length > 1 && editData.diff === content) {
-            const data = getCommenEvent(viewPath, _pageId,vId);
-            if (data) {
-              data.page_info = {
-                newTextLength: editData.newTextLength,
-                oldTextLength: editData.oldTextLength,
-                opType,
-                sessionId: this._sessionId,
-                description
-              };
-              sendBuriedData(data);
-            }
-          }
-        });
+    } else if (opType === 'paste') {
+      const data = getCommenEvent(viewPath, _pageId, vId);
+      if (data) {
+        data.page_info = {
+          newTextLength: editData.newTextLength,
+          oldTextLength: editData.oldTextLength,
+          opType,
+          sessionId: this._sessionId,
+          description,
+        };
+        sendBuriedData(data);
+      }
     }
-  }.bind(this);
-  this._onChange = function (e) {
-    // console.log('_onChange', e.nativeEvent);
-    let newText = e.nativeEvent.text || "";
-    const newTextLength = newText.length;
-    const oldTextLength = this._$onChangeText.length;
-    let selection = Math.abs(e.timeStamp - this._$selectionTimeStamp) < 100 ? this._prevSelection : this._$selection;
-    if (selection.start === selection.end && newText.length > this._$onChangeText.length) {
-      const length = newText.length - this._$onChangeText.length;
-      const diff = newText.substr(selection.start, length);
-      this._sendEditBuriedData({ diff, newTextLength, oldTextLength }, "paste")
-    } else if (selection.start !== selection.end) {
-      const prefix = this._$onChangeText.substring(0, selection.start < selection.end ? selection.start : selection.end);
-      const suffix = this._$onChangeText.substring(selection.start < selection.end ? selection.end : selection.start, this._$onChangeText.length);
-      const diff = newText.substring(prefix.length, newText.length - suffix.length);
-      this._sendEditBuriedData({ diff, newTextLength, oldTextLength }, "paste")
+  };
+
+  componentWillUnmount() {
+    if (this._isInput) {
+      let text = this.props.value || this._$onChangeText ||
+          this.props.defaultValue || '';
+      this._sendEditBuriedData(text, 'inputEnd');
+      this._isInput = false;
     }
-    this._$onChangeText = this.props.value || newText;
-    originalOnChage && originalOnChage(e);
-  }.bind(this);
-  this._onSelectionChange = function (e) {
-    // console.log('_onSelectionChange', e.nativeEvent);
-    // this._$selection = this.props.selection || e.nativeEvent.selection;
-    this._prevSelection = this._$selection;
-    this._$selection = e.nativeEvent.selection;
-    this._$selectionTimeStamp = e.timeStamp;
-    originalOnSelectionChange && originalOnSelectionChange(e);
-  }.bind(this);
-  this._onBlur = function (event) {
-    // console.log('blur', event.nativeEvent);
-    this._isInput = false;
-    let text = this.props.value || this._$onChangeText || this.props.defaultValue || "";
-    this._sendEditBuriedData(text, "inputEnd");
-    originalOnBlur && originalOnBlur(event);
-  }.bind(this);
-  this._onFocus = function (event) {
-    // console.log('focus', event.nativeEvent);
-    this._isInput = true;
-    let text = this.props.value || this._$onChangeText || this.props.defaultValue || "";
-    this._sessionId = Date.now();
-    this._sendEditBuriedData(text, "inputStart");
-    this._$onChangeText = text;
-    this._$selection = {
-      start: text.length,
-      end: text.length
-    };
-    originalOnFocus && originalOnFocus(event);
-  }.bind(this);
-};
-
-TextInput.prototype.componentWillUnmount = function (...args) {
-  originalcomponentWillUnmount && originalcomponentWillUnmount.bind(this)(...args);
-  if (this._isInput) {
-    let text = this.props.value || this._$onChangeText || this.props.defaultValue || "";
-    this._sendEditBuriedData(text, "inputEnd");
-    this._isInput = false;
   }
-};
 
-TextInput.prototype.UNSAFE_componentWillReceiveProps = function (nextProps, ...args) {
-  originalcomponentWillMount && originalcomponentWillReceiveProps.bind(this)(nextProps, ...args);
-  // if (nextProps.selection !== this.props.selection) {
-  //     this._$selection = nextProps.selection;
-  // }
-  if (nextProps.value !== this.props.value) {
-    this._$onChangeText = nextProps.value;
+  render() {
+    const {forwardedRef, ...rest} = this.props;
+
+    return (
+        <TextInput
+            ref={forwardedRef}
+            {...rest}
+            onChangeText={this._onChangeText}
+            onTextInput={this._onTextInput}
+            onFocus={this._onFocus}
+            onBlur={this._onBlur}
+            onEndEditing={this._onEndEditing}
+        />
+    );
   }
-};
+}
+
+
+
+export function createTextInput(OTextInput){
+
+
+  TextInput = OTextInput;
+
+  return React.forwardRef((props, ref) => {
+
+    return <HookTextInput {...props} forwardedRef={ref} />;
+  });
+
+}
+

@@ -8,30 +8,50 @@
 import { Image } from "react-native";
 import {isWarning} from './config'
 
-var hasSymbol = "function" === typeof Symbol && Symbol.for,
-  REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for("react.element") : 60103,
-  REACT_PORTAL_TYPE = hasSymbol ? Symbol.for("react.portal") : 60106,
-  REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for("react.fragment") : 60107,
-  REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for("react.strict_mode") : 60108,
-  REACT_PROFILER_TYPE = hasSymbol ? Symbol.for("react.profiler") : 60114,
-  REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for("react.provider") : 60109,
-  REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for("react.context") : 60110,
-  REACT_CONCURRENT_MODE_TYPE = hasSymbol
-    ? Symbol.for("react.concurrent_mode")
-    : 60111,
-  REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for("react.forward_ref") : 60112,
-  REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for("react.suspense") : 60113,
-  REACT_MEMO_TYPE = hasSymbol ? Symbol.for("react.memo") : 60115,
-  REACT_LAZY_TYPE = hasSymbol ? Symbol.for("react.lazy") : 60116,
-  MAYBE_ITERATOR_SYMBOL = "function" === typeof Symbol && Symbol.iterator;
+var ReactSharedInternals =
+        React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
+    REACT_ELEMENT_TYPE = 60103,
+    REACT_PORTAL_TYPE = 60106,
+    REACT_FRAGMENT_TYPE = 60107,
+    REACT_STRICT_MODE_TYPE = 60108,
+    REACT_PROFILER_TYPE = 60114,
+    REACT_PROVIDER_TYPE = 60109,
+    REACT_CONTEXT_TYPE = 60110,
+    REACT_FORWARD_REF_TYPE = 60112,
+    REACT_SUSPENSE_TYPE = 60113,
+    REACT_SUSPENSE_LIST_TYPE = 60120,
+    REACT_MEMO_TYPE = 60115,
+    REACT_LAZY_TYPE = 60116,
+    REACT_BLOCK_TYPE = 60121,
+    REACT_DEBUG_TRACING_MODE_TYPE = 60129,
+    REACT_OFFSCREEN_TYPE = 60130,
+    REACT_LEGACY_HIDDEN_TYPE = 60131;
+if ("function" === typeof Symbol && Symbol.for) {
+  var symbolFor = Symbol.for;
+  REACT_ELEMENT_TYPE = symbolFor("react.element");
+  REACT_PORTAL_TYPE = symbolFor("react.portal");
+  REACT_FRAGMENT_TYPE = symbolFor("react.fragment");
+  REACT_STRICT_MODE_TYPE = symbolFor("react.strict_mode");
+  REACT_PROFILER_TYPE = symbolFor("react.profiler");
+  REACT_PROVIDER_TYPE = symbolFor("react.provider");
+  REACT_CONTEXT_TYPE = symbolFor("react.context");
+  REACT_FORWARD_REF_TYPE = symbolFor("react.forward_ref");
+  REACT_SUSPENSE_TYPE = symbolFor("react.suspense");
+  REACT_SUSPENSE_LIST_TYPE = symbolFor("react.suspense_list");
+  REACT_MEMO_TYPE = symbolFor("react.memo");
+  REACT_LAZY_TYPE = symbolFor("react.lazy");
+  REACT_BLOCK_TYPE = symbolFor("react.block");
+  symbolFor("react.scope");
+  REACT_DEBUG_TRACING_MODE_TYPE = symbolFor("react.debug_trace_mode");
+  REACT_OFFSCREEN_TYPE = symbolFor("react.offscreen");
+  REACT_LEGACY_HIDDEN_TYPE = symbolFor("react.legacy_hidden");
+}
 
-export function getComponentName(type) {
+function getComponentName(type) {
   if (null == type) return null;
   if ("function" === typeof type) return type.displayName || type.name || null;
   if ("string" === typeof type) return type;
   switch (type) {
-    case REACT_CONCURRENT_MODE_TYPE:
-      return "ConcurrentMode";
     case REACT_FRAGMENT_TYPE:
       return "Fragment";
     case REACT_PORTAL_TYPE:
@@ -42,27 +62,32 @@ export function getComponentName(type) {
       return "StrictMode";
     case REACT_SUSPENSE_TYPE:
       return "Suspense";
+    case REACT_SUSPENSE_LIST_TYPE:
+      return "SuspenseList";
   }
   if ("object" === typeof type)
     switch (type.$$typeof) {
       case REACT_CONTEXT_TYPE:
-        // return "Context.Consumer";
-        return null;
+        return (type.displayName || "Context") + ".Consumer";
       case REACT_PROVIDER_TYPE:
-        // return "Context.Provider";
-        return null;
+        return (type._context.displayName || "Context") + ".Provider";
       case REACT_FORWARD_REF_TYPE:
         var innerType = type.render;
         innerType = innerType.displayName || innerType.name || "";
         return (
-          type.displayName ||
-          ("" !== innerType ? "ForwardRef(" + innerType + ")" : "ForwardRef")
+            type.displayName ||
+            ("" !== innerType ? "ForwardRef(" + innerType + ")" : "ForwardRef")
         );
       case REACT_MEMO_TYPE:
         return getComponentName(type.type);
+      case REACT_BLOCK_TYPE:
+        return getComponentName(type._render);
       case REACT_LAZY_TYPE:
-        if ((type = 1 === type._status ? type._result : null))
-          return getComponentName(type);
+        innerType = type._payload;
+        type = type._init;
+        try {
+          return getComponentName(type(innerType));
+        } catch (x) {}
     }
   return null;
 }

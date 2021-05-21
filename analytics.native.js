@@ -1,4 +1,4 @@
-import {setBuried, setClickPageInfo, clickEvent} from './src/clickBuried';
+import {setBuried,createHookTouchable,clickEvent} from './src/clickBuried';
 import {getCurrentPageId, useAnalyticsScreen} from './src/pageBuried';
 import {
   openLog,
@@ -6,7 +6,7 @@ import {
   setUserId,
   saveBusinessEvent,
 } from './src/nativeModule';
-import './src/editBuried';
+import {createTextInput} from './src/editBuried';
 import {NetworkLogger} from './src/network/NetworkLogger';
 import {setWarning} from './src/config';
 
@@ -16,10 +16,11 @@ export {
   setUserId,
   useAnalyticsScreen,
   getCurrentPageId,
-  setClickPageInfo,
   setBuried,
   NetworkLogger,
   setWarning,
   saveBusinessEvent,
   clickEvent,
+  createTextInput,
+  createHookTouchable,
 };

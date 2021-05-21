@@ -18,10 +18,6 @@ function getCurrentPageId() {
   console.warn('react-native-analytics web no impl');
 }
 
-function setClickPageInfo() {
-  console.warn('react-native-analytics web no impl');
-}
-
 function setBuried() {
   console.warn('react-native-analytics web no impl');
 }
@@ -42,14 +38,23 @@ function clickEvent() {
   console.warn('react-native-analytics web no impl');
 }
 
+function createTextInput() {
+  console.warn('react-native-analytics web no impl');
+}
+
+function createHookTouchable() {
+  console.warn('react-native-analytics web no impl');
+}
+
 export {
+  createHookTouchable,
+  createTextInput,
   clickEvent,
   openLog,
   clearUserId,
   setUserId,
   useAnalyticsScreen,
   getCurrentPageId,
-  setClickPageInfo,
   setBuried,
   NetworkLogger,
   setWarning,
