@@ -79,6 +79,15 @@ function transformerReactNative(content) {
   return content;
 }
 
-common.modifyFile(GestureButtons, transformer);
-common.modifyFile(GenericTouchable, transformer);
+let hasGesture;
+try {
+  const gesture = require('react-native-gesture-handler');
+  hasGesture = true;
+}catch (e) {
+
+}
+if (hasGesture){
+  common.modifyFile(GestureButtons, transformer);
+  common.modifyFile(GenericTouchable, transformer);
+}
 common.modifyFile(reactnativeIndex, transformerReactNative);
