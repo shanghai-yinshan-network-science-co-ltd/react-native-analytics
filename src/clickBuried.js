@@ -71,15 +71,19 @@ export function createHookTouchable(Touchable) {
 
   class HookTouchable extends React.Component {
 
-    _onPress = (...args) => {
-      clickEvent(this, {type: 'press', ...this.props.pageInfo});
-      this.props.onPress && this.props.onPress(...args);
-    };
+    constructor(props, context) {
+      super(props, context);
 
-    _onLongPress = (...args) => {
-      clickEvent(this, {type: 'longPress', ...this.props.pageInfo});
-      this.props.onLongPress && this.props.onLongPress(...args);
-    };
+      this._onPress = function(...args){
+        clickEvent(this, {type: 'press', ...this.props.pageInfo});
+        this.props.onPress && this.props.onPress(...args);
+      }.bind(this);
+
+      this._onLongPress = function(...args){
+        clickEvent(this, {type: 'longPress', ...this.props.pageInfo});
+        this.props.onLongPress && this.props.onLongPress(...args);
+      }.bind(this);
+    }
 
     render() {
       const {forwardedRef, ...rest} = this.props;
