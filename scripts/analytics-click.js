@@ -73,7 +73,7 @@ function transformerReactNative(content) {
   ].forEach((value)=>{
     content = content.replace(
         `require('${value}')`,
-        `require('react-native-analytics').createHookTouchable(require('${value}}'))`,
+        `require('react-native-analytics').createHookTouchable(require('${value}'))`,
     );
   })
   return content;
