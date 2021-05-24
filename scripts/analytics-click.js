@@ -1,12 +1,18 @@
 'use strict';
 
 const path = require('path');
+const fs= require("fs")
 const common = require('./hookCommon');
 
+let GestureFiles;
 let GestureButtons;
 let GenericTouchable;
 let reactnativeIndex;
 if (__dirname.search('node_modules') === -1) {
+  GestureFiles = path.resolve(
+      __dirname,
+      '../node_modules/react-native-gesture-handler',
+  );
   GestureButtons = path.resolve(
       __dirname,
       '../node_modules/react-native-gesture-handler/GestureButtons.js',
@@ -20,6 +26,10 @@ if (__dirname.search('node_modules') === -1) {
       '../node_modules/react-native/index.js',
   );
 } else {
+  GestureFiles = path.resolve(
+      __dirname,
+      '../../react-native-gesture-handler',
+  );
   GestureButtons = path.resolve(
       __dirname,
       '../../react-native-gesture-handler/GestureButtons.js',
@@ -79,13 +89,7 @@ function transformerReactNative(content) {
   return content;
 }
 
-let hasGesture;
-try {
-  const gesture = require('react-native-gesture-handler');
-  hasGesture = true;
-}catch (e) {
-
-}
+const hasGesture = fs.existsSync(GestureFiles);
 if (hasGesture){
   common.modifyFile(GestureButtons, transformer);
   common.modifyFile(GenericTouchable, transformer);

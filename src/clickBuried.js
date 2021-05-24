@@ -86,10 +86,10 @@ export function createHookTouchable(Touchable) {
 
       return (
           <Touchable
-              onPress={this._onPress}
-              onLongPress={this._onLongPress}
               ref={forwardedRef}
               {...rest}
+              onPress={this._onPress}
+              onLongPress={this._onLongPress}
           />
       );
     }
