@@ -4,7 +4,7 @@
  */
 'use strict';
 
-
+import React from 'react';
 import { Image } from "react-native";
 import {isWarning} from './config'
 
