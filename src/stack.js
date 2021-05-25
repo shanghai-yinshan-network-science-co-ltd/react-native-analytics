@@ -2,15 +2,12 @@
 /**
  * Created by cleverdou on 17/9/12.
  */
-'use strict';
+"use strict";
 
-import React from 'react';
 import { Image } from "react-native";
-import {isWarning} from './config'
+import { isWarning } from "./config";
 
-var ReactSharedInternals =
-        React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
-    REACT_ELEMENT_TYPE = 60103,
+var REACT_ELEMENT_TYPE = 60103,
     REACT_PORTAL_TYPE = 60106,
     REACT_FRAGMENT_TYPE = 60107,
     REACT_STRICT_MODE_TYPE = 60108,
@@ -87,49 +84,47 @@ function getComponentName(type) {
         type = type._init;
         try {
           return getComponentName(type(innerType));
-        } catch (x) {}
+        } catch (x) {
+        }
     }
   return null;
 }
 
-
-function getText(children) {
-  if (Array.isArray(children)) {
-    let text = "";
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      text += getText(child);
+function getText(fiberNode,key="start") {
+  if (fiberNode.child) {
+    let text = getText(fiberNode.child,key+":0");
+    let sibling = fiberNode.child.sibling;
+    let i = 1;
+    while (sibling){
+      text += getText(sibling,key+":"+ i++);
+      sibling = sibling.sibling;
     }
     return text;
   }
-  if (typeof children === 'object' && children) {
-    const props = children.props || children.pendingProps ||children.memoizedProps;
-    if (props && props.children) {
-      return getText(props.children);
+  const props = fiberNode.props || fiberNode.pendingProps ||
+      fiberNode.memoizedProps;
+  if (typeof props === "string") {
+    return props + "&&";
+  } else {
+    const name = getComponentName(fiberNode.type);
+    if (props.source && name && name.includes("Image")) {
+      const source = Image.resolveAssetSource(props.source);
+      return `image(${source.uri})&&`;
     }
-    if (props) {
-      const name = getComponentName(children.type)
-      if (props.source && name === 'Image') {
-        const source = Image.resolveAssetSource(props.source);
-        return `image(${source.uri})&&`
-      }
-      if (name && name.includes('TextInput')) {
-        return `textInput(placeholder:${props.placeholder || ""};defaultValue:${props.defaultValue || ""})`
-      }
+    if (name && name.includes("TextInput")) {
+      return `textInput(placeholder:${props.placeholder ||
+      ""};defaultValue:${props.defaultValue || ""})`;
     }
-  }
-  if (typeof children === 'string') {
-    return children + "&&";
   }
   return "";
 }
 
 function isSvg(funcString) {
-  return /default.createElement\((.+\.Pattern|.+\.Mask|.+\.RadialGradient|.+\.LinearGradient|.+\.ClipPath|.+\.Image|.+\.Defs|.+\.Symbol|.+\.Use|.+\.G|.+\.TextPath|.+\.Path|.+\.Rect|.+\.Circle|.+\.Ellipse|.+\.Line|.+\.Polygon|.+\.Polyline|.+\.TSpan|.+\.Text)/.test(funcString);
+  return /default.createElement\((.+\.Pattern|.+\.Mask|.+\.RadialGradient|.+\.LinearGradient|.+\.ClipPath|.+\.Image|.+\.Defs|.+\.Symbol|.+\.Use|.+\.G|.+\.TextPath|.+\.Path|.+\.Rect|.+\.Circle|.+\.Ellipse|.+\.Line|.+\.Polygon|.+\.Polyline|.+\.TSpan|.+\.Text)/.test(
+      funcString);
 }
 
-
-function createViewPathByFiber(component,pageId) {
+function createViewPathByFiber(component, pageId) {
   let fibernode = component;
   let text;
   const fibers = [];
@@ -137,92 +132,48 @@ function createViewPathByFiber(component,pageId) {
   let vId;
   let i = 0;
   while (fibernode) {
-    const props = fibernode.props || fibernode.pendingProps ||fibernode.memoizedProps || {};
+    const props = fibernode.props || fibernode.pendingProps ||
+        fibernode.memoizedProps || {};
     if (!vId && props.vId) {
       vId = props.vId;
     }
     if (!vId) {
       i++;
     }
-    if (typeof fibernode.key === 'string' && fibernode.key.includes('root-sibling')) {
+    if (typeof fibernode.key === "string" &&
+        fibernode.key.includes("root-sibling")) {
       break;
     }
-    fibers.unshift(fibernode.index ? fibernode.tag + "[" + fibernode.index + "]" : fibernode.tag);
-    if (typeof fibernode.key === 'string' && fibernode.key.includes('scene_id')) {
+    fibers.unshift(fibernode.index ?
+        fibernode.tag + "[" + fibernode.index + "]" :
+        fibernode.tag);
+    if (typeof fibernode.key === "string" &&
+        fibernode.key.includes("scene_id")) {
       break;
     }
-    if (props.hasOwnProperty('navigation') && props.hasOwnProperty('route') && props.route.hasOwnProperty('key') && props.route.name === pageId) {
+    if (props.hasOwnProperty("navigation") && props.hasOwnProperty("route") &&
+        props.route.hasOwnProperty("key") && props.route.name === pageId) {
       break;
     }
     fibernode = fibernode.return;
   }
-  if(isWarning()){
+  if (isWarning()) {
     if (!vId) {
-      console.warn(`vId is not set in the current operation component`)
-    }else if (i > 0) {
-      console.warn(`vId "${vId}" is not in the current operation component, please confirm it is correct`)
+      console.warn(`vId is not set in the current operation component`);
+    } else if (i > 0) {
+      console.warn(
+          `vId "${vId}" is not in the current operation component, please confirm it is correct`);
     }
   }
 
   return {
     path: fibers.join("-"),
     description: text,
-    vId
+    vId,
   };
 }
 
-
-function getSimpleComponentName(componentName) {
-  if (!componentName) {
-    componentName = '';
-  }
-  componentName = componentName.startsWith('topsecret-') ? componentName.slice(10) : componentName;
-  switch (componentName) {
-    case 'TouchableOpacity':
-      componentName = 'TO';
-      break;
-    case 'RCTView':
-      componentName = 'RV';
-      break;
-    case 'TouchableHighlight':
-      componentName = 'TH';
-      break;
-    case 'View':
-      componentName = 'V';
-      break;
-  }
-  return componentName;
-}
-
-// function createViewPath(component) {
-//     let hierarchy = [];
-//     traverseParentTreeUp(hierarchy, component);
-//     // hierarchy = hierarchy.map(function (component) {
-//     //
-//     // });
-//     return hierarchy.length > 0 && hierarchy.join('-');
-// }
-
-
-// export function getInspectorDataByComponent(component) {
-//
-//
-//     let componentHierarchy = getOwnerHierarchy(component), instance = lastNotNativeInstance(componentHierarchy),
-//         hierarchy = createHierarchy(componentHierarchy), props = getHostProps(instance),
-//         hostNode = instance.getHostNode();
-//     let viewPath = createViewPath(component);
-//     return {
-//         hierarchy: hierarchy,
-//         props: props,
-//         selection: componentHierarchy.indexOf(instance),
-//         componentHierarchy: componentHierarchy,
-//         instance,
-//         hostNode
-//     };
-// };
-
-
-export function getViewPathByComponent(component,pageId) {
-  return createViewPathByFiber(component,pageId);
+export function getViewPathByComponent(component, pageId) {
+  return createViewPathByFiber(component, pageId);
 }
 

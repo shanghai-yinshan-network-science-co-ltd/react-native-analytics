@@ -73,7 +73,6 @@ export function createHookTouchable(Touchable) {
 
     constructor(props, context) {
       super(props, context);
-
       this._onPress = function(...args){
         clickEvent(this, {type: 'press', ...this.props.pageInfo});
         this.props.onPress && this.props.onPress(...args);
