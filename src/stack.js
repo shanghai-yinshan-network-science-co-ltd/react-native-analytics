@@ -90,13 +90,12 @@ function getComponentName(type) {
   return null;
 }
 
-function getText(fiberNode,key="start") {
+function getText(fiberNode) {
   if (fiberNode.child) {
-    let text = getText(fiberNode.child,key+":0");
+    let text = getText(fiberNode.child);
     let sibling = fiberNode.child.sibling;
-    let i = 1;
     while (sibling){
-      text += getText(sibling,key+":"+ i++);
+      text += getText(sibling);
       sibling = sibling.sibling;
     }
     return text;
