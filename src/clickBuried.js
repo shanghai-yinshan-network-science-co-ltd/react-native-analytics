@@ -16,7 +16,7 @@ let hostNode;
 
 export function clickEvent(instance, pageInfo) {
   let {path: viewPath, description, vId} = getViewPathByComponent(
-      instance._reactInternals, getCurrentPageId());
+      instance._reactInternals||instance._reactInternalFiber, getCurrentPageId());
   if (hostNode !== viewPath) {
       hostNode = viewPath;
       onClickEvent({viewPath: hostNode, description, vId, pageInfo});

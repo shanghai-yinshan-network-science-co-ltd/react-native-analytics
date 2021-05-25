@@ -91,7 +91,7 @@ class HookTextInput extends React.Component {
   _sendEditBuriedData = (editData, opType) => {
     const _pageId = getCurrentPageId();
     let {path: viewPath, description, vId} = getViewPathByComponent(
-        this._reactInternals, getCurrentPageId());
+        this._reactInternals||this._reactInternalFiber, getCurrentPageId());
     if (opType === 'inputEnd' || opType === 'inputStart') {
       const text = editData;
       const data = getCommenEvent(viewPath, _pageId, vId);
