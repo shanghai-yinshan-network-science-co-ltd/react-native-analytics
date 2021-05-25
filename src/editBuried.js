@@ -66,7 +66,7 @@ class HookTextInput extends React.Component {
           this.props.defaultValue || '';
       this._sendEditBuriedData(text, 'inputEnd');
     }
-    this.props.onFocus && this.props.onBlur(...args);
+    this.props.onBlur && this.props.onBlur(...args);
   };
   _onEndEditing = (...args) => {
     // console.log('blur', event.nativeEvent);
