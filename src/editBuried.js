@@ -9,6 +9,7 @@ import {getStrTime} from './utils';
 import {getViewPathByComponent} from './stack';
 import Clipboard from '@react-native-clipboard/clipboard';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import memoizeOne from 'memoize-one';
 
 const textfield_event = 'textfield_event';
 
@@ -31,9 +32,7 @@ function getCommenEvent(viewPath, pageId, vId) {
   };
 }
 
-
 let TextInput;
-
 
 class HookTextInput extends React.Component {
 
@@ -92,7 +91,7 @@ class HookTextInput extends React.Component {
   _sendEditBuriedData = (editData, opType) => {
     const _pageId = getCurrentPageId();
     let {path: viewPath, description, vId} = getViewPathByComponent(
-        this._reactInternals||this._reactInternalFiber, getCurrentPageId());
+        this._reactInternals || this._reactInternalFiber, getCurrentPageId());
     if (opType === 'inputEnd' || opType === 'inputStart') {
       const text = editData;
       const data = getCommenEvent(viewPath, _pageId, vId);
@@ -146,16 +145,15 @@ class HookTextInput extends React.Component {
   }
 }
 
-
-
-export function createTextInput(OTextInput){
-
+export const createTextInput = memoizeOne(function (OTextInput) {
 
   TextInput = OTextInput;
 
   return hoistNonReactStatics(React.forwardRef((props, ref) => {
 
     return <HookTextInput {...props} forwardedRef={ref} />;
-  }),OTextInput);
-}
+  }), OTextInput);
+});
+
+
 

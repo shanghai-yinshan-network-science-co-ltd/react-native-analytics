@@ -1,6 +1,6 @@
 {
   "name": "react-native-analytics",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "hoist-non-react-statics": "^3.3.2"
+    "hoist-non-react-statics": "^3.3.2",
+    "memoize-one": "^5.2.1"
   },
   "peerDependencies": {
     "react-native": "^0.63.0",

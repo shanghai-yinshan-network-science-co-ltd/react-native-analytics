@@ -10,6 +10,7 @@ import {click_event} from './eventTypeConst';
 import {getStrTime} from './utils';
 import {sendBuriedData} from './nativeModule';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import memoizeOne from 'memoize-one';
 
 let lastClickId;
 
@@ -68,7 +69,10 @@ export function setBuried(toggle) {
 
 export {lastClickId, resetLastClickId};
 
-export function createHookTouchable(Touchable) {
+
+
+
+export const createHookTouchable = memoizeOne(function (Touchable) {
 
   class HookTouchable extends React.Component {
 
@@ -104,5 +108,4 @@ export function createHookTouchable(Touchable) {
     return <HookTouchable {...props} forwardedRef={ref} />;
   }),Touchable);
 
-}
-
+});
