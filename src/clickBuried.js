@@ -9,6 +9,7 @@ import {getCurrentPageId} from './pageBuried';
 import {click_event} from './eventTypeConst';
 import {getStrTime} from './utils';
 import {sendBuriedData} from './nativeModule';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
 let lastClickId;
 
@@ -98,10 +99,10 @@ export function createHookTouchable(Touchable) {
     }
   }
 
-  return React.forwardRef((props, ref) => {
+  return hoistNonReactStatics(React.forwardRef((props, ref) => {
 
     return <HookTouchable {...props} forwardedRef={ref} />;
-  });
+  }),Touchable);
 
 }
 

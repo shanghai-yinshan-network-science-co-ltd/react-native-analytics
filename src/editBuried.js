@@ -8,6 +8,7 @@ import {getCurrentPageId} from './pageBuried';
 import {getStrTime} from './utils';
 import {getViewPathByComponent} from './stack';
 import Clipboard from '@react-native-clipboard/clipboard';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
 const textfield_event = 'textfield_event';
 
@@ -152,10 +153,9 @@ export function createTextInput(OTextInput){
 
   TextInput = OTextInput;
 
-  return React.forwardRef((props, ref) => {
+  return hoistNonReactStatics(React.forwardRef((props, ref) => {
 
     return <HookTextInput {...props} forwardedRef={ref} />;
-  });
-
+  }),OTextInput);
 }
 
