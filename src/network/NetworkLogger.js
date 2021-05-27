@@ -59,7 +59,11 @@ export let NetworkLogger = function () {
         if (response&&(response.length>1024*2)) {
             xhr._log.response_data = "[filter]";
         }else {
-            xhr._log.response_data = response;
+            if (typeof response === 'string'){
+                xhr._log.response_data = response;
+            }else {
+                xhr._log.response_data = "Blob";
+            }
         }
         xhr._log.request_consuming = xhr._log.end_time - xhr._log.start_time;
         xhr._log.log_time = getStrTime(Date.now());
