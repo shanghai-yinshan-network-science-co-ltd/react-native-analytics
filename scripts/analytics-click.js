@@ -71,7 +71,7 @@ function transformerReactNative(content) {
       `require('react-native-analytics').createTextInput(require('./Libraries/Components/TextInput/TextInput'))`,
   );
   content = content.replace(
-      `require('./Libraries/Components/Pressable/Pressable')`,
+      `require('./Libraries/Components/Pressable/Pressable').default`,
       `require('react-native-analytics').createHookTouchable(require('./Libraries/Components/Pressable/Pressable').default)`,
   );
   [
