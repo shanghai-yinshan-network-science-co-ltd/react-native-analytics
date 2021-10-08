@@ -3,8 +3,9 @@
  */
 'use strict';
 
+import 'react-native-gesture-handler-proxy'
 import * as gestures from 'react-native-gesture-handler-proxy'
-import {createHookTouchable} from '../clickBuried';
+import {createHookTouchable} from './clickBuried';
 
 
 export * from 'react-native-gesture-handler-proxy'
