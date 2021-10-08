@@ -1,6 +1,9 @@
 'use strict';
 
 const fs = require('fs');
+const packagejson = require('../package.json')
+
+const MODIFIED_TEXT = `/*ANALYTICS MODIFIED-v${packagejson.version}`
 
 /**
  * 返回functionBody执行的函数
@@ -28,7 +31,7 @@ module.exports.anonymousJsFunctionCall = function(functionBody, theNameOfThis) {
  */
 module.exports.modifyFile = function(filePath, transfomer) {
   const content = fs.readFileSync(filePath, 'utf8');
-  if (content.includes('/*ANALYTICS MODIFIED ')) {
+  if (content.includes(MODIFIED_TEXT)) {
     console.log(`filePath: ${filePath} has modified`);
     return;
   }
@@ -37,7 +40,7 @@ module.exports.modifyFile = function(filePath, transfomer) {
   try {
     modifiedContent = transfomer(content);
     modifiedContent =
-      modifiedContent + '\n/*ANALYTICS MODIFIED ' + new Date() + ' */';
+      modifiedContent + '\n'+MODIFIED_TEXT+' ' + new Date() + ' */';
     fs.writeFileSync(filePath, modifiedContent, 'utf8');
   } catch (e) {
     fs.renameSync(`${filePath}_bak`, filePath);
@@ -50,7 +53,7 @@ module.exports.modifyFile = function(filePath, transfomer) {
  */
 module.exports.resetFile = function(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
-  if (!content.includes('/*ANALYTICS MODIFIED ')) {
+  if (!content.includes(MODIFIED_TEXT)) {
     console.log(`filePath: ${filePath} does not modified by gio, and return`);
     return;
   }
