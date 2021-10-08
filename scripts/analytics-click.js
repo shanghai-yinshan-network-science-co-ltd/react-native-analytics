@@ -26,6 +26,7 @@ function transformerReactNative(content) {
       `require('react-native-analytics').createHookTouchable(require('./Libraries/Components/Pressable/Pressable').default)`,
   );
   [
+    './Libraries/Text/Text',
     './Libraries/Components/Touchable/TouchableHighlight',
     './Libraries/Components/Touchable/TouchableNativeFeedback',
     './Libraries/Components/Touchable/TouchableOpacity',
