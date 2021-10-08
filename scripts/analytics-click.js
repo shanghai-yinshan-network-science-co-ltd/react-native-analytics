@@ -1,68 +1,19 @@
 'use strict';
 
 const path = require('path');
-const fs= require("fs")
 const common = require('./hookCommon');
 
-let GestureFiles;
-let GestureButtons;
-let GenericTouchable;
 let reactnativeIndex;
 if (__dirname.search('node_modules') === -1) {
-  GestureFiles = path.resolve(
-      __dirname,
-      '../node_modules/react-native-gesture-handler',
-  );
-  GestureButtons = path.resolve(
-      __dirname,
-      '../node_modules/react-native-gesture-handler/GestureButtons.js',
-  );
-  GenericTouchable = path.resolve(
-      __dirname,
-      '../node_modules/react-native-gesture-handler/touchables/GenericTouchable.js',
-  );
   reactnativeIndex = path.resolve(
       __dirname,
       '../node_modules/react-native/index.js',
   );
 } else {
-  GestureFiles = path.resolve(
-      __dirname,
-      '../../react-native-gesture-handler',
-  );
-  GestureButtons = path.resolve(
-      __dirname,
-      '../../react-native-gesture-handler/GestureButtons.js',
-  );
-  GenericTouchable = path.resolve(
-      __dirname,
-      '../../react-native-gesture-handler/touchables/GenericTouchable.js',
-  );
   reactnativeIndex = path.resolve(
       __dirname,
       '../../react-native/index.js',
   );
-}
-
-function insertStr(source, start, newStr) {
-  return source.slice(0, start) + newStr + source.slice(start);
-}
-
-function transformer(content) {
-  content = insertStr(
-      content,
-      content.indexOf('import'),
-      'import {clickEvent} from \'react-native-analytics\';\n',
-  );
-  const pressIndex = content.search(/this.props.onPress\(\w*\);/);
-  if (pressIndex === -1) {
-    throw 'pressIndex is -1';
-  }
-  content = content.replace(
-      /(this.props.onPress\(\w*\);)/,
-      `$1\n${common.anonymousJsFunctionCall('clickEvent(this);\n')}`,
-  );
-  return content;
 }
 
 function transformerReactNative(content) {
@@ -89,9 +40,4 @@ function transformerReactNative(content) {
   return content;
 }
 
-const hasGesture = fs.existsSync(GestureFiles);
-if (hasGesture){
-  common.modifyFile(GestureButtons, transformer);
-  common.modifyFile(GenericTouchable, transformer);
-}
 common.modifyFile(reactnativeIndex, transformerReactNative);
