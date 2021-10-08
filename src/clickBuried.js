@@ -80,12 +80,12 @@ export const createHookTouchable = memoizeOne(function (Touchable) {
       super(props, context);
       this._onPress = function(...args){
         clickEvent(this, {type: 'press', ...this.props.pageInfo});
-        this.props.onPress && this.props.onPress(...args);
+        this.props.onPress(...args);
       }.bind(this);
 
       this._onLongPress = function(...args){
         clickEvent(this, {type: 'longPress', ...this.props.pageInfo});
-        this.props.onLongPress && this.props.onLongPress(...args);
+        this.props.onLongPress(...args);
       }.bind(this);
     }
 
@@ -96,16 +96,17 @@ export const createHookTouchable = memoizeOne(function (Touchable) {
           <Touchable
               ref={forwardedRef}
               {...rest}
-              onPress={this._onPress}
-              onLongPress={this._onLongPress}
+              onPress={this.props.onPress && this._onPress}
+              onLongPress={this.props.onLongPress && this._onLongPress}
           />
       );
     }
   }
 
-  return hoistNonReactStatics(React.forwardRef((props, ref) => {
+  const component =  hoistNonReactStatics(React.forwardRef((props, ref) => {
 
     return <HookTouchable {...props} forwardedRef={ref} />;
   }),Touchable);
-
+  component.propTypes = Touchable.propTypes;
+  return component
 });
