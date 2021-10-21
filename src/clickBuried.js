@@ -10,7 +10,6 @@ import {click_event} from './eventTypeConst';
 import {getStrTime} from './utils';
 import {sendBuriedData} from './nativeModule';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import memoizeOne from 'memoize-one';
 
 let lastClickId;
 
@@ -18,14 +17,15 @@ let hostNode;
 
 export function clickEvent(instance, pageInfo) {
   let {path: viewPath, description, vId} = getViewPathByComponent(
-      instance._reactInternals||instance._reactInternalFiber, getCurrentPageId());
+      instance._reactInternals || instance._reactInternalFiber,
+      getCurrentPageId());
   if (hostNode !== viewPath) {
-      hostNode = viewPath;
-      onClickEvent({viewPath: hostNode, description, vId, pageInfo});
-      const id = setImmediate(() => {
-        hostNode = undefined;
-        clearImmediate(id);
-      });
+    hostNode = viewPath;
+    onClickEvent({viewPath: hostNode, description, vId, pageInfo});
+    const id = setImmediate(() => {
+      hostNode = undefined;
+      clearImmediate(id);
+    });
   }
 
 }
@@ -69,21 +69,24 @@ export function setBuried(toggle) {
 
 export {lastClickId, resetLastClickId};
 
+const paths = new Map();
 
+export const createHookTouchable = function(path, Touchable) {
 
-
-export const createHookTouchable = memoizeOne(function (Touchable) {
+  if (paths.has(path)) {
+    return paths.get(paths);
+  }
 
   class HookTouchable extends React.Component {
 
     constructor(props, context) {
       super(props, context);
-      this._onPress = function(...args){
+      this._onPress = function(...args) {
         clickEvent(this, {type: 'press', ...this.props.pageInfo});
         this.props.onPress(...args);
       }.bind(this);
 
-      this._onLongPress = function(...args){
+      this._onLongPress = function(...args) {
         clickEvent(this, {type: 'longPress', ...this.props.pageInfo});
         this.props.onLongPress(...args);
       }.bind(this);
@@ -103,10 +106,11 @@ export const createHookTouchable = memoizeOne(function (Touchable) {
     }
   }
 
-  const component =  hoistNonReactStatics(React.forwardRef((props, ref) => {
+  const component = hoistNonReactStatics(React.forwardRef((props, ref) => {
 
     return <HookTouchable {...props} forwardedRef={ref} />;
-  }),Touchable);
+  }), Touchable);
   component.propTypes = Touchable.propTypes;
-  return component
-});
+  paths.set(path, component);
+  return component;
+};

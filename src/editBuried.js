@@ -9,7 +9,6 @@ import {getStrTime} from './utils';
 import {getViewPathByComponent} from './stack';
 import Clipboard from '@react-native-clipboard/clipboard';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import memoizeOne from 'memoize-one';
 
 const textfield_event = 'textfield_event';
 
@@ -145,15 +144,25 @@ class HookTextInput extends React.Component {
   }
 }
 
-export const createTextInput = memoizeOne(function (OTextInput) {
+const paths = new Map();
+
+export const createTextInput = function(path, OTextInput) {
+
+  if (paths.has(path)) {
+    return paths.get(path);
+  }
 
   TextInput = OTextInput;
 
-  return hoistNonReactStatics(React.forwardRef((props, ref) => {
+  const hookComponent = hoistNonReactStatics(React.forwardRef((props, ref) => {
 
     return <HookTextInput {...props} forwardedRef={ref} />;
   }), OTextInput);
-});
+
+  paths.set(path, hookComponent);
+
+  return hookComponent;
+};
 
 
 

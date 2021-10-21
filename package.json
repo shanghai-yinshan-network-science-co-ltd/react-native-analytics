@@ -12,8 +12,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "hoist-non-react-statics": "^3.3.2",
-    "memoize-one": "^5.2.1"
+    "hoist-non-react-statics": "^3.3.2"
   },
   "peerDependencies": {
     "react-native": "^0.63.0",
