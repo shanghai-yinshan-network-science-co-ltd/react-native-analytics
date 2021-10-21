@@ -10,10 +10,10 @@ import {createHookTouchable} from './src/clickBuried';
 
 export * from 'react-native-gesture-handler-proxy'
 
-export const TouchableOpacity = createHookTouchable(gestures.TouchableOpacity)
-export const TouchableNativeFeedback = createHookTouchable(gestures.TouchableNativeFeedback)
-export const TouchableWithoutFeedback = createHookTouchable(gestures.TouchableWithoutFeedback)
-export const TouchableHighlight = createHookTouchable(gestures.TouchableHighlight)
-export const BaseButton = createHookTouchable(gestures.BaseButton)
-export const RectButton = createHookTouchable(gestures.RectButton)
-export const BorderlessButton = createHookTouchable(gestures.BorderlessButton)
+export const TouchableOpacity = createHookTouchable('g-TouchableOpacity',gestures.TouchableOpacity)
+export const TouchableNativeFeedback = createHookTouchable('g-TouchableNativeFeedback',gestures.TouchableNativeFeedback)
+export const TouchableWithoutFeedback = createHookTouchable('g-TouchableWithoutFeedback',gestures.TouchableWithoutFeedback)
+export const TouchableHighlight = createHookTouchable('g-TouchableHighlight',gestures.TouchableHighlight)
+export const BaseButton = createHookTouchable('g-BaseButton',gestures.BaseButton)
+export const RectButton = createHookTouchable('g-RectButton',gestures.RectButton)
+export const BorderlessButton = createHookTouchable('g-BorderlessButton',gestures.BorderlessButton)
