@@ -74,7 +74,7 @@ const paths = new Map();
 export const createHookTouchable = function(path, Touchable) {
 
   if (paths.has(path)) {
-    return paths.get(paths);
+    return paths.get(path);
   }
 
   class HookTouchable extends React.Component {
