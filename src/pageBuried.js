@@ -13,6 +13,9 @@ import {
 import {sendBuriedData} from './nativeModule';
 import {AppState} from 'react-native';
 import {lastClickId, resetLastClickId} from './clickBuried';
+import {
+  useNavigationContainerRef,
+} from '@react-navigation/native';
 
 let lastPageId;
 
@@ -69,53 +72,44 @@ function handleAppStateChange(nextAppState) {
 }
 
 
-const getActiveRouteName = state => {
-  const route = state.routes[state.index];
-
-  if (route.state) {
-    return getActiveRouteName(route.state);
-  }
-
-  return route.name;
-};
-
 export function useAnalyticsScreen() {
-  const routeNameRef = React.useRef();
-  const navigationRef = React.useRef(null);
+  const navigationRef = useNavigationContainerRef();
+  const routeNameRef = useRef();
+
+
   useEffect(() => {
-    const state = navigationRef.current.getRootState();
-    routeNameRef.current = getActiveRouteName(state);
-    onPageStart(routeNameRef.current);
-    requestAnimationFrame(() => AppState.addEventListener('change', handleAppStateChange));
+    const subscription = AppState.addEventListener('change', handleAppStateChange)
     return () => {
-      AppState.removeEventListener('change', handleAppStateChange);
+      subscription.remove()
     };
   }, []);
 
 
   const onStateChange = useCallback(() => {
-    requestAnimationFrame(() => {
-      const previousRouteName = routeNameRef.current;
-      let currentRouteName = '';
-      if (navigationRef.current) {
-        currentRouteName = getActiveRouteName(navigationRef.current.getRootState())
-      }
-      if (previousRouteName !== currentRouteName) {
-        // The line below uses the @react-native-firebase/analytics tracker
-        // Change this line to use another Mobile analytics SDK
-        onPageEnd(previousRouteName);
-        onPageStart(currentRouteName)
-      }
+    const previousRouteName = routeNameRef.current;
+    const currentRouteName = navigationRef.getCurrentRoute().name;
 
-      // Save the current route name for later comparision
-      routeNameRef.current = currentRouteName;
-    });
+    if (previousRouteName !== currentRouteName) {
+      // The line below uses the expo-firebase-analytics tracker
+      // https://docs.expo.io/versions/latest/sdk/firebase-analytics/
+      // Change this line to use another Mobile analytics SDK
+      onPageEnd(previousRouteName);
+      onPageStart(currentRouteName)
+    }
+
+    // Save the current route name for later comparison
+    routeNameRef.current = currentRouteName;
 
   }, []);
+
+  const onReady = useCallback(() => {
+    routeNameRef.current = navigationRef.getCurrentRoute().name;
+  },[])
 
   return {
     navigationRef,
     onStateChange,
+    onReady
   };
 }
 
