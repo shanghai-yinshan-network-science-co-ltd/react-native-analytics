@@ -4,7 +4,7 @@
 
 'use strict';
 
-import React, {useEffect,useCallback} from 'react';
+import React, {useEffect,useCallback,useRef} from 'react';
 import {getFormatTimeZ, getStrTime} from './utils';
 import {
   page_entrance_event,
