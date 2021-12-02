@@ -4,33 +4,14 @@
 'use strict';
 
 
+import dayjs from 'dayjs';
+
 export function getStrTime(ticks) {
-  const tm = new Date(ticks);
-  const year = tm.getFullYear();
-  let month = tm.getMonth() + 1;
-  let day = tm.getDate();
-  let hour = tm.getHours();
-  let min = tm.getMinutes();
-  let sec = tm.getSeconds();
-  const mil = tm.getMilliseconds();
+  return dayjs(new Date(ticks)).format("YYYY-MM-DD HH:mm:ss.SSS");
+}
 
-  if (hour < 10) {
-    hour = '0' + hour;
-  }
-  if (month < 10) {
-    month = '0' + month;
-  }
-  if (day < 10) {
-    day = '0' + day;
-  }
-  if (min < 10) {
-    min = '0' + min;
-  }
-  if (sec < 10) {
-    sec = '0' + sec;
-  }
-
-  return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec + "." + mil;
+export function getFormatTimeZ(time){
+  return dayjs(new Date(time)).format("YYYY-MM-DDTHH:mm:ss.SSSZZ");
 }
 
 

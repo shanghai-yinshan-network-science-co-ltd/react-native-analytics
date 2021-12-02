@@ -7,7 +7,7 @@ import React from 'react';
 import {getViewPathByComponent, getComponentName} from './stack';
 import {getCurrentPageId} from './pageBuried';
 import {click_event} from './eventTypeConst';
-import {getStrTime} from './utils';
+import {getFormatTimeZ, getStrTime} from './utils';
 import {sendBuriedData} from './nativeModule';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
@@ -45,8 +45,10 @@ function onClickEvent({viewPath, description, vId, pageInfo}) {
     action_type: click_event,
     page_id: pageId,
     start_time: getStrTime(now),
+    start_time_z: getFormatTimeZ(now),
     view_path: viewPath,
     log_time: getStrTime(now),
+    log_time_z: getFormatTimeZ(now),
     widget_id: vId,
   };
   if (pageInfo) {

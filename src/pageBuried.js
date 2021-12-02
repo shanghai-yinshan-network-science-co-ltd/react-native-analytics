@@ -5,7 +5,7 @@
 'use strict';
 
 import React, {useEffect,useCallback} from 'react';
-import {getStrTime} from './utils';
+import {getFormatTimeZ, getStrTime} from './utils';
 import {
   page_entrance_event,
   page_leave_event,
@@ -26,6 +26,8 @@ function onPageStart(pageId,isAppStateChange) {
     page_id: pageId,
     start_time: getStrTime(now),
     log_time: getStrTime(now),
+    start_time_z: getFormatTimeZ(now),
+    log_time_z: getFormatTimeZ(now),
     referId: lastPageId,
     btnId: lastClickId,
   };
@@ -47,6 +49,8 @@ function onPageEnd(pageId,isAppStateChange) {
     page_id: pageId,
     start_time: getStrTime(now),
     log_time: getStrTime(now),
+    start_time_z: getFormatTimeZ(now),
+    log_time_z: getFormatTimeZ(now),
   };
   if (isAppStateChange) {
     pageEntranceData.page_info = {

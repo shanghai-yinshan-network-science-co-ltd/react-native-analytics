@@ -1,6 +1,6 @@
 import NetworkInterceptor from './NetworkInterceptor'
 import {sendBuriedData} from '../nativeModule'
-import {getStrTime} from "../utils";
+import {getFormatTimeZ, getStrTime} from '../utils';
 
 /*
     request_type	请求类型	请求类型 取值枚举：GET POST
@@ -24,7 +24,8 @@ const DEFAULT = {
     response_data: "",
     request_consuming: "",
     action_type: "request_event",
-    log_time: getStrTime(Date.now())
+    log_time: getStrTime(Date.now()),
+    log_time_z: getFormatTimeZ(Date.now())
 };
 
 export let NetworkLogger = function () {
@@ -39,6 +40,7 @@ export let NetworkLogger = function () {
     function onSend(data, xhr) {
 
         xhr._log.start_time = getStrTime(Date.now());
+        xhr._log.start_time_z = getFormatTimeZ(Date.now());
 
         xhr._log.request_type = xhr._method;
         xhr._log.request_url = xhr._url;
@@ -54,6 +56,7 @@ export let NetworkLogger = function () {
     function onResponse(status, timeout, response, responseURL, responseType, xhr) {
 
         xhr._log.end_time = getStrTime(Date.now());
+        xhr._log.end_time_z = getFormatTimeZ(Date.now());
 
         xhr._log.http_status = status;
         if (response&&(response.length>1024*2)) {
@@ -67,6 +70,7 @@ export let NetworkLogger = function () {
         }
         xhr._log.request_consuming = xhr._log.end_time - xhr._log.start_time;
         xhr._log.log_time = getStrTime(Date.now());
+        xhr._log.log_time_z = getFormatTimeZ(Date.now());
         xhr._log.request_id = xhr.getResponseHeader('X_REQUEST_ID');
         // 发送数据到Native
         sendBuriedData(xhr._log);

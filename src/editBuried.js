@@ -5,7 +5,7 @@
 import React from 'react';
 import {sendBuriedData} from './nativeModule';
 import {getCurrentPageId} from './pageBuried';
-import {getStrTime} from './utils';
+import {getFormatTimeZ, getStrTime} from './utils';
 import {getViewPathByComponent} from './stack';
 import Clipboard from '@react-native-clipboard/clipboard';
 import hoistNonReactStatics from 'hoist-non-react-statics';
@@ -24,9 +24,11 @@ function getCommenEvent(viewPath, pageId, vId) {
   return {
     page_id: pageId,
     start_time: getStrTime(now),
+    start_time_z: getFormatTimeZ(now),
     view_path: viewPath,
     action_type: textfield_event,
     log_time: getStrTime(now),
+    log_time_z: getFormatTimeZ(now),
     widget_id: vId,
   };
 }
