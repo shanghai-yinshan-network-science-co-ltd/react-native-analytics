@@ -34,7 +34,7 @@ android {
 repositories {
     mavenCentral()
     maven {
-        url 'http://47.103.128.182:3333/repository/maven-public/'
+        url 'http://3.1.218.126:8081/repository/maven-public/'
         credentials {
             username 'admin'
             password 'admin132'
