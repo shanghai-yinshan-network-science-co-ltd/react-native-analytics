@@ -104,6 +104,7 @@ export function useAnalyticsScreen() {
 
   const onReady = useCallback(() => {
     routeNameRef.current = navigationRef.getCurrentRoute().name;
+    onPageStart(routeNameRef.current)
   },[])
 
   return {

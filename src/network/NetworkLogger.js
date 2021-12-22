@@ -72,6 +72,10 @@ export let NetworkLogger = function () {
         xhr._log.log_time = getStrTime(Date.now());
         xhr._log.log_time_z = getFormatTimeZ(Date.now());
         xhr._log.request_id = xhr.getResponseHeader('X_REQUEST_ID');
+
+        if (/^http:\/\/localhost:\d+\/symbolicate/.test(responseURL)){
+            return;
+        }
         // 发送数据到Native
         sendBuriedData(xhr._log);
     }
