@@ -47,6 +47,10 @@ export let NetworkLogger = function () {
             data = JSON.stringify(data);
         }
 
+        if (typeof data === 'string' && data.length > 1024){
+            data = '["$filter$"]'
+        }
+
         xhr._log.request_params = data ? data : "";
 
     }
