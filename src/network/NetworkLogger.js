@@ -50,7 +50,7 @@ export let NetworkLogger = function () {
         }
 
         if (typeof data === 'string' && data.length > 1024){
-            data = "[filter]"
+            data = '["$filter$"]'
         }
 
         xhr._log.request_params = data ? data : "";
