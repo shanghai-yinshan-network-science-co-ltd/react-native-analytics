@@ -1,8 +1,8 @@
 'use strict';
 
-const originalXHROpen = XMLHttpRequest.prototype.open;
-const originalXHRSend = XMLHttpRequest.prototype.send;
-const originalXHRSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+let originalXHROpen;
+let originalXHRSend;
+let originalXHRSetRequestHeader;
 
 var openCallback;
 var sendCallback;
@@ -39,6 +39,9 @@ const NetworkInterceptor = {
     },
 
     enableInterception() {
+        originalXHROpen = originalXHROpen || XMLHttpRequest.prototype.open;
+        originalXHRSend = originalXHRSend || XMLHttpRequest.prototype.send;
+        originalXHRSetRequestHeader = originalXHRSetRequestHeader || XMLHttpRequest.prototype.setRequestHeader;
         if (isInterceptorEnabled) {
             return;
         }
@@ -109,9 +112,9 @@ const NetworkInterceptor = {
             return;
         }
         isInterceptorEnabled = false;
-        XMLHttpRequest.prototype.send = originalXHRSend;
-        XMLHttpRequest.prototype.open = originalXHROpen;
-        XMLHttpRequest.prototype.setRequestHeader = originalXHRSetRequestHeader;
+        XMLHttpRequest.prototype.send = originalXHRSend || XMLHttpRequest.prototype.send;
+        XMLHttpRequest.prototype.open = originalXHROpen || XMLHttpRequest.prototype.open;;
+        XMLHttpRequest.prototype.setRequestHeader = originalXHRSetRequestHeader || XMLHttpRequest.prototype.setRequestHeader;
         responseCallback = null;
         openCallback = null;
         sendCallback = null;
