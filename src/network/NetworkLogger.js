@@ -1,6 +1,7 @@
 import NetworkInterceptor from './NetworkInterceptor'
 import {sendBuriedData} from '../nativeModule'
 import {getFormatTimeZ, getStrTime} from '../utils';
+import {getCurrentPageId} from '../pageBuried';
 
 /*
     request_type	请求类型	请求类型 取值枚举：GET POST
@@ -41,6 +42,7 @@ export let NetworkLogger = function () {
 
         xhr._log.start_time = getStrTime(Date.now());
         xhr._log.start_time_z = getFormatTimeZ(Date.now());
+        xhr._log.page_id = getCurrentPageId();
 
         xhr._log.request_type = xhr._method;
         xhr._log.request_url = xhr._url;
