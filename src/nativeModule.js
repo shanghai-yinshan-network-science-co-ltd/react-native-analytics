@@ -38,7 +38,7 @@ export function clearUserId() {
     RNAnalytics.clearUserId();
 }
 
-export function saveBusinessEvent(businessName,infoData) {
+export function saveBusinessEvent(businessName,{infoData,needExtraData}) {
 
     const now = Date.now();
 
@@ -49,7 +49,8 @@ export function saveBusinessEvent(businessName,infoData) {
         log_time: getStrTime(now),
         log_time_z: getFormatTimeZ(now),
         event_name: businessName,
-        page_info: infoData
+        page_info: infoData,
+        needExtraData
     };
     sendBuriedData(data);
 }
