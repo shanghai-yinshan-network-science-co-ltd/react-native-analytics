@@ -5,6 +5,8 @@
 
 
 import { NativeModules } from 'react-native';
+import {business_event} from './eventTypeConst';
+import {getFormatTimeZ, getStrTime} from './utils';
 
 const { RNAnalytics } = NativeModules;
 
@@ -36,7 +38,19 @@ export function clearUserId() {
     RNAnalytics.clearUserId();
 }
 
-export function saveBusinessEvent(businessName) {
-    RNAnalytics.saveBusinessEvent(businessName);
+export function saveBusinessEvent(businessName,infoData) {
+
+    const now = Date.now();
+
+    const data = {
+        action_type: business_event,
+        start_time: getStrTime(now),
+        start_time_z: getFormatTimeZ(now),
+        log_time: getStrTime(now),
+        log_time_z: getFormatTimeZ(now),
+        event_name: businessName,
+        page_info: infoData
+    };
+    sendBuriedData(data);
 }
 
