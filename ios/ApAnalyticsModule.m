@@ -1,15 +1,15 @@
+//
+//  ApAnalyticsModule.m
+//  adapundi
+//
+//  Created by liang zeng on 2022/3/10.
+//
 
-#import "RNAnalytics.h"
+#import "ApAnalyticsModule.h"
 #import "ApLogManager.h"
 
-@implementation RNAnalytics
-
-- (dispatch_queue_t)methodQueue
-{
-    return dispatch_get_main_queue();
-}
-RCT_EXPORT_MODULE()
-
+@implementation ApAnalyticsModule
+RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(sendBuriedData:(NSString *)data)
 {
@@ -42,4 +42,3 @@ RCT_EXPORT_METHOD(setLatitude:(NSString *)latitude setLongitude:(NSString *)long
 
 
 @end
-  

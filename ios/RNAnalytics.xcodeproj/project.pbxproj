@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B1C9887427E9B07700AC808B /* ApLogManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C9886A27E9B07600AC808B /* ApLogManager.m */; };
+		B1C9887527E9B07700AC808B /* ApNeworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C9886E27E9B07700AC808B /* ApNeworkManager.m */; };
+		B1C9887627E9B07700AC808B /* ApAnalyticsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C9886F27E9B07700AC808B /* ApAnalyticsModule.m */; };
+		B1C9887727E9B07700AC808B /* ApAnalyticsUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C9887127E9B07700AC808B /* ApAnalyticsUtil.m */; };
+		B1C9887827E9B07700AC808B /* ApAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C9887227E9B07700AC808B /* ApAnalytics.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNAnalytics.m */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +29,16 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNAnalytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNAnalytics.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1C9886A27E9B07600AC808B /* ApLogManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApLogManager.m; sourceTree = "<group>"; };
+		B1C9886B27E9B07600AC808B /* ApNeworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApNeworkManager.h; sourceTree = "<group>"; };
+		B1C9886C27E9B07600AC808B /* ApAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApAnalytics.h; sourceTree = "<group>"; };
+		B1C9886D27E9B07600AC808B /* ApLogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApLogManager.h; sourceTree = "<group>"; };
+		B1C9886E27E9B07700AC808B /* ApNeworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApNeworkManager.m; sourceTree = "<group>"; };
+		B1C9886F27E9B07700AC808B /* ApAnalyticsModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApAnalyticsModule.m; sourceTree = "<group>"; };
+		B1C9887027E9B07700AC808B /* ApAnalyticsUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApAnalyticsUtil.h; sourceTree = "<group>"; };
+		B1C9887127E9B07700AC808B /* ApAnalyticsUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApAnalyticsUtil.m; sourceTree = "<group>"; };
+		B1C9887227E9B07700AC808B /* ApAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApAnalytics.m; sourceTree = "<group>"; };
+		B1C9887327E9B07700AC808B /* ApAnalyticsModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApAnalyticsModule.h; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* RNAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNAnalytics.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNAnalytics.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -50,6 +65,16 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				B1C9886C27E9B07600AC808B /* ApAnalytics.h */,
+				B1C9887227E9B07700AC808B /* ApAnalytics.m */,
+				B1C9887327E9B07700AC808B /* ApAnalyticsModule.h */,
+				B1C9886F27E9B07700AC808B /* ApAnalyticsModule.m */,
+				B1C9887027E9B07700AC808B /* ApAnalyticsUtil.h */,
+				B1C9887127E9B07700AC808B /* ApAnalyticsUtil.m */,
+				B1C9886D27E9B07600AC808B /* ApLogManager.h */,
+				B1C9886A27E9B07600AC808B /* ApLogManager.m */,
+				B1C9886B27E9B07600AC808B /* ApNeworkManager.h */,
+				B1C9886E27E9B07700AC808B /* ApNeworkManager.m */,
 				B3E7B5881CC2AC0600A0062D /* RNAnalytics.h */,
 				B3E7B5891CC2AC0600A0062D /* RNAnalytics.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
@@ -95,6 +120,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
@@ -112,7 +138,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1C9887527E9B07700AC808B /* ApNeworkManager.m in Sources */,
+				B1C9887827E9B07700AC808B /* ApAnalytics.m in Sources */,
+				B1C9887627E9B07700AC808B /* ApAnalyticsModule.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNAnalytics.m in Sources */,
+				B1C9887727E9B07700AC808B /* ApAnalyticsUtil.m in Sources */,
+				B1C9887427E9B07700AC808B /* ApLogManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +235,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-				"$(inherited)",
+					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
 					"$(SRCROOT)/../../react-native/React/**",

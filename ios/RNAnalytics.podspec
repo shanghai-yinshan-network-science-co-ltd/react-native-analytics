@@ -15,10 +15,12 @@ Pod::Spec.new do |s|
   s.source_files  = "RNAnalytics/**/*.{h,m}"
   s.requires_arc = true
 
-
   s.dependency "React"
+  s.dependency "AFNetworking"
+  s.dependency "GZIP"
+  s.dependency "FMDB"
+
   #s.dependency "others"
 
 end
 
-  
