@@ -11,6 +11,9 @@
   ],
   "author": "",
   "license": "",
+  "devDependencies": {
+    "pod-install": "^0.1.0"
+  },
   "dependencies": {
     "hoist-non-react-statics": "^3.3.2",
     "dayjs": "^1.10.7"
