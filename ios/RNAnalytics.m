@@ -1,6 +1,7 @@
 
 #import "RNAnalytics.h"
 #import "ApLogManager.h"
+#import "ApNeworkManager.h"
 
 @implementation RNAnalytics
 
@@ -13,7 +14,9 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(sendBuriedData:(NSString *)data)
 {
-  [[ApLogManager sharedInstance] addActionLog:data];
+  if([[ApNeworkManager sharedInstance] checkUploadEnable]){
+    [[ApLogManager sharedInstance] addActionLog:data];
+  }
 }
 
 
@@ -25,7 +28,7 @@ RCT_EXPORT_METHOD(setUserId:(NSString *)useId)
 
 RCT_EXPORT_METHOD(saveBusinessEvent:(NSString *)event)
 {
-  
+
 }
 
 
@@ -42,4 +45,4 @@ RCT_EXPORT_METHOD(setLatitude:(NSString *)latitude setLongitude:(NSString *)long
 
 
 @end
-  
+

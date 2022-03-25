@@ -32,6 +32,13 @@
   return _instance;
 }
 
+- (BOOL)checkUploadEnable{
+   if(serverUrl && apiKey){
+      return true;
+   }
+   return false;
+}
+
 //配置服务器地址和Apikey
 - (void)configServer:(NSString *)server apiKey:(NSString *)key{
     serverUrl = server;
@@ -44,7 +51,7 @@
   NSData *zipData = [data gzippedData];
   NSString *parameters = [zipData base64EncodedStringWithOptions:0];
 
-  
+
   [[self sessionManage] POST:serverUrl parameters:@{@"content":parameters} headers:nil progress:^(NSProgress * _Nonnull uploadProgress) {
     NSLog(@"uploadProgress-->%@",uploadProgress);
   } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -76,14 +83,14 @@
     if(!_sessionManage){
         AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
         manager.operationQueue.maxConcurrentOperationCount = 1;
-        
+
         manager.requestSerializer = [AFJSONRequestSerializer serializer]; // 上传普通格式
         manager.requestSerializer.timeoutInterval = 30.0f;
-        
+
         [manager.requestSerializer setValue:apiKey forHTTPHeaderField:@"x-api-key"];
         manager.responseSerializer = [AFJSONResponseSerializer serializer];
         manager.responseSerializer.acceptableContentTypes=[[NSSet alloc] initWithObjects:@"application/xml", @"text/xml",@"text/html", @"application/json",@"text/plain",nil];
-        
+
       _sessionManage =  manager;
     }
     return _sessionManage;
