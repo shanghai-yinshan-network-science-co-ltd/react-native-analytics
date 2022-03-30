@@ -14,9 +14,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(sendBuriedData:(NSString *)data)
 {
-  if([[ApNeworkManager sharedInstance] checkUploadEnable]){
     [[ApLogManager sharedInstance] addActionLog:data];
-  }
 }
 
 

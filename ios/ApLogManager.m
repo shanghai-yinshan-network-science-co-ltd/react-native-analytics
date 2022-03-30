@@ -110,7 +110,11 @@
   if(self.isSending){
     return;
   }
-  
+
+  if(![[ApNeworkManager sharedInstance] checkUploadEnable]){
+     return;
+  }
+
   NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:[self.util getRealTimeDeviceData:self.runId]];
   NSString *deviceInfo = [self getDeviceLogInfo:self.runId];
   NSDictionary *deviceInfoDic = [ApAnalyticsUtil dictionaryWithJsonString:deviceInfo];
