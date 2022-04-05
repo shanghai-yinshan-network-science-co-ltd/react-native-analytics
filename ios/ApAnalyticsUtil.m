@@ -53,10 +53,10 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   if(self = [super init]){
     [self accelerometerPull];
     [self configIdfa];
-    
+
     //设置可以访问电池信息
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:YES];
-    
+
   }
   return self;
 }
@@ -69,12 +69,12 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
     NSLog(@"加速计不可用");
     return;
   }
-  
+
   if (![self.motionManager isGyroAvailable]) {
     NSLog(@"陀螺仪不可用");
     return;
   }
-  
+
   // 3.开始更新
   [self.motionManager startAccelerometerUpdates];
 }
@@ -115,11 +115,11 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   NSDictionary *proxySettings =  (__bridge NSDictionary *)(CFNetworkCopySystemProxySettings());
   NSArray *proxies = (__bridge NSArray *)(CFNetworkCopyProxiesForURL((__bridge CFURLRef _Nonnull)([NSURL URLWithString:@"http://www.baidu.com"]), (__bridge CFDictionaryRef _Nonnull)(proxySettings)));
   NSDictionary *settings = [proxies objectAtIndex:0];
-  
+
   NSLog(@"host=%@", [settings objectForKey:(NSString *)kCFProxyHostNameKey]);
   NSLog(@"port=%@", [settings objectForKey:(NSString *)kCFProxyPortNumberKey]);
   NSLog(@"type=%@", [settings objectForKey:(NSString *)kCFProxyTypeKey]);
-  
+
   if ([[settings objectForKey:(NSString *)kCFProxyTypeKey] isEqualToString:@"kCFProxyTypeNone"]){
     //没有设置代理
     return NO;
@@ -154,7 +154,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *temp_addr = NULL;
     int success = 0;
-    
+
     // retrieve the current interfaces - returns 0 on success
     success = getifaddrs(&interfaces);
     if (success == 0)
@@ -175,16 +175,16 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         temp_addr = temp_addr->ifa_next;
       }
     }
-    
+
     // Free memory
     freeifaddrs(interfaces);
   }
-  
+
   if (_vpnFlag != flag)
   {
     // reset flag
     _vpnFlag = flag;
-    
+
     // post notification
     __weak __typeof(self)weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -193,7 +193,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
                                                           object:strongSelf];
     });
   }
-  
+
   return flag;
 }
 
@@ -249,7 +249,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   NSInteger KB = 1024;
   NSInteger MB = KB*KB;
   NSInteger GB = MB*KB;
-  
+
   if (fileSize < 10)  {
     return @"0 B";
   }else if (fileSize < KB) {
@@ -275,7 +275,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   if ([[NSFileManager defaultManager] fileExistsAtPath:@"User/Applications/"]) {
     isJail = YES;
   }
-  
+
   NSArray *jailbreak_tool_paths = @[
     @"/Applications/Cydia.app",
     @"/Library/MobileSubstrate/MobileSubstrate.dylib",
@@ -283,20 +283,20 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
     @"/usr/sbin/sshd",
     @"/etc/apt"
   ];
-  
+
   /// 判断这些文件是否存在，只要有存在的，就可以认为手机已经越狱了。
   for (int i=0; i<jailbreak_tool_paths.count; i++) {
     if ([[NSFileManager defaultManager] fileExistsAtPath:jailbreak_tool_paths[i]]) {
       isJail = YES;
     }
   }
-  
+
   return isJail;
 }
 
 //获取网络状态
 + (NSString *)getNetWorkInfo{
-  
+
   return  @"";
   NSString *networktype = @"";
   NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@"statusBar"] valueForKey:@"foregroundView"]subviews];
@@ -307,28 +307,28 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
       break;
     }
   }
-  
+
   switch ([[dataNetworkItemView valueForKey:@"dataNetworkType"]integerValue]) {
     case 0:
       networktype = @"无服务";
       break;
-      
+
     case 1:
       networktype = @"2G";
       break;
-      
+
     case 2:
       networktype = @"3G";
       break;
-      
+
     case 3:
       networktype = @"4G";
       break;
-      
+
     case 4:
       networktype = @"LTE";
       break;
-      
+
     case 5:
       networktype = @"Wi-Fi";
       break;
@@ -347,7 +347,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   //    NSString *mnc = [carrier mobileNetworkCode]; // 网络码 如：01
   //    NSString *isoCountryCode = [carrier isoCountryCode]; // cn
   //    BOOL allowsVOIP = [carrier allowsVOIP];// YES
-  return carrierName;
+    return carrierName ? carrierName : @"";
 };
 
 //更新经纬度
@@ -362,7 +362,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   struct ifaddrs *interfaces = NULL;
   struct ifaddrs *XZHDX_addr = NULL;
   int success = 0;
-  
+
   // retrieve the current interfaces - returns 0 on success
   success = getifaddrs(&interfaces);
   if (success == 0) {
@@ -376,14 +376,14 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
           address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)XZHDX_addr->ifa_addr)->sin_addr)];
         }
       }
-      
+
       XZHDX_addr = XZHDX_addr->ifa_next;
     }
   }
-  
+
   // Free memory
   freeifaddrs(interfaces);
-  
+
   return address;
 }
 
@@ -397,7 +397,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   {
     return NSNotFound;
   }
-  
+
   return ((vm_page_size * vmStats.free_count + vm_page_size * vmStats.inactive_count));
 }
 
@@ -413,7 +413,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   uname(&systemInfo);
   // 获取设备标识Identifier
   NSString *platform = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
-  
+
   // iPhone
   if ([platform isEqualToString:@"iPhone1,1"]) return @"iPhone 2G";
   if ([platform isEqualToString:@"iPhone1,2"]) return @"iPhone 3G";
@@ -456,7 +456,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   if ([platform isEqualToString:@"iPhone14,2"]) return @"iPhone 13";
   if ([platform isEqualToString:@"iPhone14,3"]) return @"iPhone 13 Pro";
   if ([platform isEqualToString:@"iPhone14,4"]) return @"iPhone 13 Pro Max";
-  
+
   // iPod
   if ([platform isEqualToString:@"iPod1,1"])  return @"iPod Touch 1";
   if ([platform isEqualToString:@"iPod2,1"])  return @"iPod Touch 2";
@@ -465,7 +465,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   if ([platform isEqualToString:@"iPod5,1"])  return @"iPod Touch 5";
   if ([platform isEqualToString:@"iPod7,1"])  return @"iPod Touch 6";
   if ([platform isEqualToString:@"iPod9,1"])  return @"iPod Touch 7";
-  
+
   // iPad
   if ([platform isEqualToString:@"iPad1,1"])  return @"iPad 1";
   if ([platform isEqualToString:@"iPad2,1"])  return @"iPad 2";
@@ -520,11 +520,11 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   if ([platform isEqualToString:@"iPad11,2"])  return @"iPad mini 5";
   if ([platform isEqualToString:@"iPad11,3"])  return @"iPad Air 3";
   if ([platform isEqualToString:@"iPad11,4"])  return @"iPad Air 3";
-  
+
   // 其他
   if ([platform isEqualToString:@"i386"])   return @"iPhone Simulator";
   if ([platform isEqualToString:@"x86_64"])  return @"iPhone Simulator";
-  
+
   return platform;
 }
 
@@ -567,23 +567,23 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   [dic setObject:@"" forKey:@"applist"];
   [dic setObject:@"" forKey:@"bluetooth_list"];
   [dic setObject:@"" forKey:@"cid"];
-  
+
   [dic setObject:@"" forKey:@"cpu_cur_freq"];
   [dic setObject:@"" forKey:@"cpu_max_freq"];
   [dic setObject:@"" forKey:@"cpu_min_freq"];
   [dic setObject:@"" forKey:@"cpu_name"];
-  
+
   [dic setObject:@"app_log" forKey:@"data_type"];
   [dic setObject:@"15" forKey:@"data_version"];
-  
+
   [dic setObject:@"" forKey:@"deviceId"];
   [dic setObject:@"" forKey:@"deviceId2"];
-  
+
   [dic setObject:[ApAnalyticsUtil getTotalDiskSize] forKey:@"disk_avail"];
   [dic setObject:[ApAnalyticsUtil getAvailableDiskSize] forKey:@"disk_total"];
-  
+
   [dic setObject:@"" forKey:@"do_not_disturb"];
-  
+
   [dic setObject:@"" forKey:@"iccid"];
   [dic setObject:@"" forKey:@"iccid2"];
   [dic setObject:@"" forKey:@"imei"];
@@ -591,67 +591,67 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   [dic setObject:@"" forKey:@"imsi"];
   [dic setObject:@"" forKey:@"imsi2"];
   [dic setObject:@"" forKey:@"instance_id"];
-  
+
   [dic setObject:@"" forKey:@"lineNumber"];
-  
+
   [dic setObject:[NSNumber numberWithBool:[ApAnalyticsUtil isJailBreak]] forKey:@"isRoot"];
   [dic setObject:[NSNumber numberWithBool:[self getProxyStatus]] forKey:@"isWifiProxy"];
   [dic setObject:[NSNumber numberWithBool:[self isVPNOn]] forKey:@"isVpnUsed"];
-  
+
   [dic setObject:[ApAnalyticsUtil getCarrierInfo] forKey:@"isp_info"];
   [dic setObject:@"" forKey:@"lac"];
-  
+
   [dic setObject:@"" forKey:@"lineNumber"];
   [dic setObject:[ApAnalyticsUtil IPAddress] forKey:@"ipv4"];
-  
+
   [dic setObject:@"" forKey:@"ip"];
-  
+
   NSArray*languageArray = [NSLocale preferredLanguages];
   NSString*language = [languageArray objectAtIndex:0];
   [dic setObject:language forKey:@"locale"];
-  
+
   [dic setObject:@"HIGH" forKey:@"location_type"];
-  
+
   [dic setObject:@"" forKey:@"wifiMac"];
   [dic setObject:@"" forKey:@"mcc"];
   [dic setObject:@"" forKey:@"mcc2"];
   [dic setObject:@"" forKey:@"meid"];
   [dic setObject:@"" forKey:@"meid2"];
-  
+
   [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getAvailableMemorySize]] forKey:@"mem_avail"];
   [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getTotalMemorySize]]forKey:@"men_total"];
-  
+
   [dic setObject:@"" forKey:@"mnc"];
   [dic setObject:@"" forKey:@"mnc2"];
   [dic setObject:@"" forKey:@"nativePhoneNum"];
   [dic setObject:@"" forKey:@"nativePhoneNum2"];
-  
+
   [dic setObject:[ApAnalyticsUtil getNetWorkInfo] forKey:@"networktype"];
   [dic setObject:@"ios" forKey:@"os"];
   [dic setObject:[[UIDevice currentDevice] systemVersion] forKey:@"sysVersion"];
-  
+
   [dic setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] forKey:@"package_name"];
   [dic setObject:@"iphone" forKey:@"phone_brand"];
   [dic setObject:[ApAnalyticsUtil getDeviceModel] forKey:@"model"];
-  
+
   [dic setObject:@"" forKey:@"pid"];
   [dic setObject:@"7" forKey:@"platform_id"];
   [dic setObject:@"adapundi" forKey:@"platform_name"];
-  
+
   [dic setObject:@"" forKey:@"providersName"];
   [dic setObject:@"" forKey:@"providersName2"];
-  
+
   [dic setObject:@"" forKey:@"routerMac"];
   [dic setObject:@"" forKey:@"routerName"];
-  
+
   [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.width] forKey:@"screen_width"];
   [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.height] forKey:@"screen_height"];
-  
+
   [dic setObject:@"" forKey:@"sdk_version"];
   [dic setObject:@"" forKey:@"serial_number"];
   [dic setObject:@"" forKey:@"user_uuid"];
   [dic setObject:@"" forKey:@"wifi_list"];
-  
+
   return [dic copy];
 }
 
@@ -664,17 +664,17 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   [dic setObject:[NSString stringWithFormat:@"%.f",  [[UIDevice currentDevice] batteryLevel] * 100] forKey:@"BatteryCapacityScale"];
   [dic setObject:[UIPasteboard generalPasteboard].string ? [UIPasteboard generalPasteboard].string : @"" forKey:@"clipboard_with_text"];
   [dic setObject:[self getGyroData] forKey:@"gyro_info"];
-  
+
   [dic setObject:self.latitude ? self.latitude : @"" forKey:@"latitude"];
   [dic setObject:self.longitude ? self.longitude : @"" forKey:@"longitude"];
-  
+
   NSDate* date = [NSDate dateWithTimeIntervalSinceNow:0];
   NSTimeInterval time=[date timeIntervalSince1970]*1000;
   NSString *timeString = [NSString stringWithFormat:@"%.0f", time];
   [dic setObject:timeString forKey:@"local_time"];
-  
+
   [dic setObject:@"" forKey:@"time_offset"];
-  
+
   [dic setObject:runId forKey:@"run_id"];
   return [dic copy];
 }
@@ -686,11 +686,11 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   [dic setObject:@"" forKey:@"extra_data"];
   [dic setObject:@"native" forKey:@"log_source"];
   [dic setObject:[self getUid] forKey:@"user_uuid"];
-  
+
   NSDate *date = [NSDate date];
   [dic setObject:[ApAnalyticsUtil getFormateLocalDate:date]  forKey:@"log_time"];
   [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:[ApAnalyticsUtil getFormateLocalDate:date]] forKey:@"log_time_z"];
-  
+
   [dic setObject:[ApAnalyticsUtil getFormateLocalDate:startTime] forKey:@"start_time"];
   [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:[ApAnalyticsUtil getFormateLocalDate:startTime]] forKey:@"start_time_z"];
   return [dic copy];
@@ -698,7 +698,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 
 + (NSString*)dictionaryToJson:(NSDictionary *)dic{
-  
+
   NSError *parseError = nil;
   NSData  *jsonData = [NSJSONSerialization dataWithJSONObject:dic
                                                       options:NSJSONWritingPrettyPrinted
@@ -707,11 +707,11 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 }
 
 + (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString {
-  
+
   if (jsonString == nil) {
     return nil;
   }
-  
+
   NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
   NSError *err;
   NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&err];
@@ -719,7 +719,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
     NSLog(@"json解析失败：%@",err);
     return nil;
   }
-  
+
   return dic;
 }
 
