@@ -112,89 +112,104 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 //判断是否设置了代理
 - (BOOL)getProxyStatus {
-  NSDictionary *proxySettings =  (__bridge NSDictionary *)(CFNetworkCopySystemProxySettings());
-  NSArray *proxies = (__bridge NSArray *)(CFNetworkCopyProxiesForURL((__bridge CFURLRef _Nonnull)([NSURL URLWithString:@"http://www.baidu.com"]), (__bridge CFDictionaryRef _Nonnull)(proxySettings)));
-  NSDictionary *settings = [proxies objectAtIndex:0];
+    @try {
+        NSDictionary *proxySettings =  (__bridge NSDictionary *)(CFNetworkCopySystemProxySettings());
+        NSArray *proxies = (__bridge NSArray *)(CFNetworkCopyProxiesForURL((__bridge CFURLRef _Nonnull)([NSURL URLWithString:@"http://www.baidu.com"]), (__bridge CFDictionaryRef _Nonnull)(proxySettings)));
+        NSDictionary *settings = [proxies objectAtIndex:0];
 
-  NSLog(@"host=%@", [settings objectForKey:(NSString *)kCFProxyHostNameKey]);
-  NSLog(@"port=%@", [settings objectForKey:(NSString *)kCFProxyPortNumberKey]);
-  NSLog(@"type=%@", [settings objectForKey:(NSString *)kCFProxyTypeKey]);
+        NSLog(@"host=%@", [settings objectForKey:(NSString *)kCFProxyHostNameKey]);
+        NSLog(@"port=%@", [settings objectForKey:(NSString *)kCFProxyPortNumberKey]);
+        NSLog(@"type=%@", [settings objectForKey:(NSString *)kCFProxyTypeKey]);
 
-  if ([[settings objectForKey:(NSString *)kCFProxyTypeKey] isEqualToString:@"kCFProxyTypeNone"]){
-    //没有设置代理
-    return NO;
-  }else{
-    //设置代理了
-    return YES;
-  }
+        if ([[settings objectForKey:(NSString *)kCFProxyTypeKey] isEqualToString:@"kCFProxyTypeNone"]){
+          //没有设置代理
+          return NO;
+        }else{
+          //设置代理了
+          return YES;
+        }
+    } @catch (NSException *exception) {
+        return NO;
+    } @finally {
+
+    }
+
 }
 
 //判断是否开启了vpn
 - (BOOL)isVPNOn
 {
-  BOOL flag = NO;
-  NSString *version = [UIDevice currentDevice].systemVersion;
-  // need two ways to judge this.
-  if (version.doubleValue >= 9.0)
-  {
-    NSDictionary *dict = CFBridgingRelease(CFNetworkCopySystemProxySettings());
-    NSArray *keys = [dict[@"__SCOPED__"] allKeys];
-    for (NSString *key in keys) {
-      if ([key rangeOfString:@"tap"].location != NSNotFound ||
-          [key rangeOfString:@"tun"].location != NSNotFound ||
-          [key rangeOfString:@"ipsec"].location != NSNotFound ||
-          [key rangeOfString:@"ppp"].location != NSNotFound){
-        flag = YES;
-        break;
-      }
-    }
-  }
-  else
-  {
-    struct ifaddrs *interfaces = NULL;
-    struct ifaddrs *temp_addr = NULL;
-    int success = 0;
 
-    // retrieve the current interfaces - returns 0 on success
-    success = getifaddrs(&interfaces);
-    if (success == 0)
-    {
-      // Loop through linked list of interfaces
-      temp_addr = interfaces;
-      while (temp_addr != NULL)
-      {
-        NSString *string = [NSString stringWithFormat:@"%s" , temp_addr->ifa_name];
-        if ([string rangeOfString:@"tap"].location != NSNotFound ||
-            [string rangeOfString:@"tun"].location != NSNotFound ||
-            [string rangeOfString:@"ipsec"].location != NSNotFound ||
-            [string rangeOfString:@"ppp"].location != NSNotFound)
+    @try {
+        BOOL flag = NO;
+        NSString *version = [UIDevice currentDevice].systemVersion;
+        // need two ways to judge this.
+        if (version.doubleValue >= 9.0)
         {
-          flag = YES;
-          break;
+          NSDictionary *dict = CFBridgingRelease(CFNetworkCopySystemProxySettings());
+          NSArray *keys = [dict[@"__SCOPED__"] allKeys];
+          for (NSString *key in keys) {
+            if ([key rangeOfString:@"tap"].location != NSNotFound ||
+                [key rangeOfString:@"tun"].location != NSNotFound ||
+                [key rangeOfString:@"ipsec"].location != NSNotFound ||
+                [key rangeOfString:@"ppp"].location != NSNotFound){
+              flag = YES;
+              break;
+            }
+          }
         }
-        temp_addr = temp_addr->ifa_next;
-      }
+        else
+        {
+          struct ifaddrs *interfaces = NULL;
+          struct ifaddrs *temp_addr = NULL;
+          int success = 0;
+
+          // retrieve the current interfaces - returns 0 on success
+          success = getifaddrs(&interfaces);
+          if (success == 0)
+          {
+            // Loop through linked list of interfaces
+            temp_addr = interfaces;
+            while (temp_addr != NULL)
+            {
+              NSString *string = [NSString stringWithFormat:@"%s" , temp_addr->ifa_name];
+              if ([string rangeOfString:@"tap"].location != NSNotFound ||
+                  [string rangeOfString:@"tun"].location != NSNotFound ||
+                  [string rangeOfString:@"ipsec"].location != NSNotFound ||
+                  [string rangeOfString:@"ppp"].location != NSNotFound)
+              {
+                flag = YES;
+                break;
+              }
+              temp_addr = temp_addr->ifa_next;
+            }
+          }
+
+          // Free memory
+          freeifaddrs(interfaces);
+        }
+
+        if (_vpnFlag != flag)
+        {
+          // reset flag
+          _vpnFlag = flag;
+
+          // post notification
+          __weak __typeof(self)weakSelf = self;
+          dispatch_async(dispatch_get_main_queue(), ^{
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kRRVPNStatusChangedNotification
+                                                                object:strongSelf];
+          });
+        }
+
+        return flag;
+    } @catch (NSException *exception) {
+        return false;
+    } @finally {
+
     }
 
-    // Free memory
-    freeifaddrs(interfaces);
-  }
-
-  if (_vpnFlag != flag)
-  {
-    // reset flag
-    _vpnFlag = flag;
-
-    // post notification
-    __weak __typeof(self)weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-      __strong __typeof(weakSelf)strongSelf = weakSelf;
-      [[NSNotificationCenter defaultCenter] postNotificationName:kRRVPNStatusChangedNotification
-                                                          object:strongSelf];
-    });
-  }
-
-  return flag;
 }
 
 //获取idfa
@@ -227,127 +242,161 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 #pragma 获取总磁盘容量
 + (NSString *)getTotalDiskSize {
-  struct statfs buf;
-  unsigned long long totalDiskSize = -1;
-  if (statfs("/var", &buf) >= 0) {
-    totalDiskSize = (unsigned long long)(buf.f_bsize * buf.f_blocks);
-  }
-  return [self fileSizeToString:totalDiskSize];
+    @try {
+        struct statfs buf;
+        unsigned long long totalDiskSize = -1;
+        if (statfs("/var", &buf) >= 0) {
+          totalDiskSize = (unsigned long long)(buf.f_bsize * buf.f_blocks);
+        }
+        return [self fileSizeToString:totalDiskSize];
+    } @catch (NSException *exception) {
+        return @"";
+    } @finally {
+
+    }
 }
 
-#pragma 获取可用磁盘容量  f_bavail 已经减去了系统所占用的大小，比 f_bfree 更准确
+#pragma 获取可用磁盘容量  f_bavail 已经减去了系统所占用的大小比 f_bfree 更准确
 + (NSString *)getAvailableDiskSize {
-  struct statfs buf;
-  unsigned long long availableDiskSize = -1;
-  if (statfs("/var", &buf) >= 0) {
-    availableDiskSize = (unsigned long long)(buf.f_bsize * buf.f_bavail);
-  }
-  return [self fileSizeToString:availableDiskSize];
+    @try {
+        struct statfs buf;
+        unsigned long long availableDiskSize = -1;
+        if (statfs("/var", &buf) >= 0) {
+          availableDiskSize = (unsigned long long)(buf.f_bsize * buf.f_bavail);
+        }
+        return [self fileSizeToString:availableDiskSize];
+    } @catch (NSException *exception) {
+        return @"";
+    } @finally {
+
+    }
+
 }
 
 + (NSString *)fileSizeToString:(unsigned long long)fileSize {
-  NSInteger KB = 1024;
-  NSInteger MB = KB*KB;
-  NSInteger GB = MB*KB;
+    @try {
 
-  if (fileSize < 10)  {
-    return @"0 B";
-  }else if (fileSize < KB) {
-    return @"< 1 KB";
-  }else if (fileSize < MB) {
-    return [NSString stringWithFormat:@"%.2f KB",((CGFloat)fileSize)/KB];
-  }else if (fileSize < GB) {
-    return [NSString stringWithFormat:@"%.2f MB",((CGFloat)fileSize)/MB];
-  }else {
-    return [NSString stringWithFormat:@"%.2f GB",((CGFloat)fileSize)/GB];
-  }
+      NSInteger KB = 1024;
+      NSInteger MB = KB*KB;
+      NSInteger GB = MB*KB;
+
+      if (fileSize < 10)  {
+        return @"0 B";
+      }else if (fileSize < KB) {
+        return @"< 1 KB";
+      }else if (fileSize < MB) {
+        return [NSString stringWithFormat:@"%.2f KB",((CGFloat)fileSize)/KB];
+      }else if (fileSize < GB) {
+        return [NSString stringWithFormat:@"%.2f MB",((CGFloat)fileSize)/MB];
+      }else {
+        return [NSString stringWithFormat:@"%.2f GB",((CGFloat)fileSize)/GB];
+      }
+    } @catch (NSException *exception) {
+        return @"";
+    } @finally {
+
+    }
 }
 
 
 ///手机是否越狱
 + (BOOL)isJailBreak{
-  BOOL isJail = NO;
-  /// 根据是否能打开cydia判断
-  if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"cydia://"]]) {
-    isJail = YES;
-  }
-  /// 根据是否能获取所有应用的名称判断 没有越狱的设备是没有读取所有应用名称的权限的。
-  if ([[NSFileManager defaultManager] fileExistsAtPath:@"User/Applications/"]) {
-    isJail = YES;
-  }
+    @try {
+        BOOL isJail = NO;
+        /// 根据是否能打开cydia判断
+        if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"cydia://"]]) {
+          isJail = YES;
+        }
+        /// 根据是否能获取所有应用的名称判断 没有越狱的设备是没有读取所有应用名称的权限的。
+        if ([[NSFileManager defaultManager] fileExistsAtPath:@"User/Applications/"]) {
+          isJail = YES;
+        }
 
-  NSArray *jailbreak_tool_paths = @[
-    @"/Applications/Cydia.app",
-    @"/Library/MobileSubstrate/MobileSubstrate.dylib",
-    @"/bin/bash",
-    @"/usr/sbin/sshd",
-    @"/etc/apt"
-  ];
+        NSArray *jailbreak_tool_paths = @[
+          @"/Applications/Cydia.app",
+          @"/Library/MobileSubstrate/MobileSubstrate.dylib",
+          @"/bin/bash",
+          @"/usr/sbin/sshd",
+          @"/etc/apt"
+        ];
 
-  /// 判断这些文件是否存在，只要有存在的，就可以认为手机已经越狱了。
-  for (int i=0; i<jailbreak_tool_paths.count; i++) {
-    if ([[NSFileManager defaultManager] fileExistsAtPath:jailbreak_tool_paths[i]]) {
-      isJail = YES;
+        /// 判断这些文件是否存在，只要有存在的，就可以认为手机已经越狱了。
+        for (int i=0; i<jailbreak_tool_paths.count; i++) {
+          if ([[NSFileManager defaultManager] fileExistsAtPath:jailbreak_tool_paths[i]]) {
+            isJail = YES;
+          }
+        }
+
+        return isJail;
+    } @catch (NSException *exception) {
+        return false;
+    } @finally {
+
     }
-  }
 
-  return isJail;
 }
 
 //获取网络状态
 + (NSString *)getNetWorkInfo{
 
   return  @"";
-  NSString *networktype = @"";
-  NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@"statusBar"] valueForKey:@"foregroundView"]subviews];
-  NSNumber *dataNetworkItemView = nil;
-  for (id subview in subviews) {
-    if([subview isKindOfClass:[NSClassFromString(@"UIStatusBarDataNetworkItemView") class]]) {
-      dataNetworkItemView = subview;
-      break;
-    }
-  }
-
-  switch ([[dataNetworkItemView valueForKey:@"dataNetworkType"]integerValue]) {
-    case 0:
-      networktype = @"无服务";
-      break;
-
-    case 1:
-      networktype = @"2G";
-      break;
-
-    case 2:
-      networktype = @"3G";
-      break;
-
-    case 3:
-      networktype = @"4G";
-      break;
-
-    case 4:
-      networktype = @"LTE";
-      break;
-
-    case 5:
-      networktype = @"Wi-Fi";
-      break;
-    default:
-      break;
-  }
-  return networktype;
+//  NSString *networktype = @"";
+//  NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@"statusBar"] valueForKey:@"foregroundView"]subviews];
+//  NSNumber *dataNetworkItemView = nil;
+//  for (id subview in subviews) {
+//    if([subview isKindOfClass:[NSClassFromString(@"UIStatusBarDataNetworkItemView") class]]) {
+//      dataNetworkItemView = subview;
+//      break;
+//    }
+//  }
+//
+//  switch ([[dataNetworkItemView valueForKey:@"dataNetworkType"]integerValue]) {
+//    case 0:
+//      networktype = @"无服务";
+//      break;
+//
+//    case 1:
+//      networktype = @"2G";
+//      break;
+//
+//    case 2:
+//      networktype = @"3G";
+//      break;
+//
+//    case 3:
+//      networktype = @"4G";
+//      break;
+//
+//    case 4:
+//      networktype = @"LTE";
+//      break;
+//
+//    case 5:
+//      networktype = @"Wi-Fi";
+//      break;
+//    default:
+//      break;
+//  }
+//  return networktype;
 };
 
 //获取运营商信息
 + (NSString *)getCarrierInfo{
-  CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];
-  CTCarrier *carrier = [telephonyInfo subscriberCellularProvider];
-  NSString *carrierName = [carrier carrierName];
-  //    NSString *mcc = [carrier mobileCountryCode]; // 国家码 如：460
-  //    NSString *mnc = [carrier mobileNetworkCode]; // 网络码 如：01
-  //    NSString *isoCountryCode = [carrier isoCountryCode]; // cn
-  //    BOOL allowsVOIP = [carrier allowsVOIP];// YES
-    return carrierName ? carrierName : @"";
+    @try {
+        CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];
+        CTCarrier *carrier = [telephonyInfo subscriberCellularProvider];
+        NSString *carrierName = [carrier carrierName];
+        //    NSString *mcc = [carrier mobileCountryCode]; // 国家码 如：460
+        //    NSString *mnc = [carrier mobileNetworkCode]; // 网络码 如：01
+        //    NSString *isoCountryCode = [carrier isoCountryCode]; // cn
+        //    BOOL allowsVOIP = [carrier allowsVOIP];// YES
+        return carrierName;
+    } @catch (NSException *exception) {
+        return @"";
+    } @finally {
+
+    }
+
 };
 
 //更新经纬度
@@ -358,47 +407,61 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 //内网ip
 + (NSString *)IPAddress{
-  NSString *address = @"0.0.0.0";
-  struct ifaddrs *interfaces = NULL;
-  struct ifaddrs *XZHDX_addr = NULL;
-  int success = 0;
+    @try {
+        NSString *address = @"0.0.0.0";
+        struct ifaddrs *interfaces = NULL;
+        struct ifaddrs *XZHDX_addr = NULL;
+        int success = 0;
 
-  // retrieve the current interfaces - returns 0 on success
-  success = getifaddrs(&interfaces);
-  if (success == 0) {
-    // Loop through linked list of interfaces
-    XZHDX_addr = interfaces;
-    while (XZHDX_addr != NULL) {
-      if( XZHDX_addr->ifa_addr->sa_family == AF_INET) {
-        // Check if interface is en0 which is the wifi connection on the iPhone
-        if ([[NSString stringWithUTF8String:XZHDX_addr->ifa_name] isEqualToString:@"en0"]) {
-          // Get NSString from C String
-          address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)XZHDX_addr->ifa_addr)->sin_addr)];
+        // retrieve the current interfaces - returns 0 on success
+        success = getifaddrs(&interfaces);
+        if (success == 0) {
+          // Loop through linked list of interfaces
+          XZHDX_addr = interfaces;
+          while (XZHDX_addr != NULL) {
+            if( XZHDX_addr->ifa_addr->sa_family == AF_INET) {
+              // Check if interface is en0 which is the wifi connection on the iPhone
+              if ([[NSString stringWithUTF8String:XZHDX_addr->ifa_name] isEqualToString:@"en0"]) {
+                // Get NSString from C String
+                address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)XZHDX_addr->ifa_addr)->sin_addr)];
+              }
+            }
+
+            XZHDX_addr = XZHDX_addr->ifa_next;
+          }
         }
-      }
 
-      XZHDX_addr = XZHDX_addr->ifa_next;
+        // Free memory
+        freeifaddrs(interfaces);
+
+        return address;
+    } @catch (NSException *exception) {
+        return @"";
+    } @finally {
+
     }
-  }
 
-  // Free memory
-  freeifaddrs(interfaces);
-
-  return address;
 }
 
 //获取可用内存
 +(long long)getAvailableMemorySize
 {
-  vm_statistics_data_t vmStats;
-  mach_msg_type_number_t infoCount = HOST_VM_INFO_COUNT;
-  kern_return_t kernReturn = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmStats, &infoCount);
-  if (kernReturn != KERN_SUCCESS)
-  {
-    return NSNotFound;
-  }
+    @try {
+        vm_statistics_data_t vmStats;
+        mach_msg_type_number_t infoCount = HOST_VM_INFO_COUNT;
+        kern_return_t kernReturn = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmStats, &infoCount);
+        if (kernReturn != KERN_SUCCESS)
+        {
+          return NSNotFound;
+        }
 
-  return ((vm_page_size * vmStats.free_count + vm_page_size * vmStats.inactive_count));
+        return ((vm_page_size * vmStats.free_count + vm_page_size * vmStats.inactive_count));
+    } @catch (NSException *exception) {
+        return 0;
+    } @finally {
+
+    }
+
 }
 
 //获取总内存
@@ -409,123 +472,131 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 //获取机型
 + (NSString *)getDeviceModel {
-  struct utsname systemInfo;
-  uname(&systemInfo);
-  // 获取设备标识Identifier
-  NSString *platform = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    @try {
 
-  // iPhone
-  if ([platform isEqualToString:@"iPhone1,1"]) return @"iPhone 2G";
-  if ([platform isEqualToString:@"iPhone1,2"]) return @"iPhone 3G";
-  if ([platform isEqualToString:@"iPhone2,1"]) return @"iPhone 3GS";
-  if ([platform isEqualToString:@"iPhone3,1"]) return @"iPhone 4";
-  if ([platform isEqualToString:@"iPhone3,2"]) return @"iPhone 4";
-  if ([platform isEqualToString:@"iPhone3,3"]) return @"iPhone 4";
-  if ([platform isEqualToString:@"iPhone4,1"]) return @"iPhone 4S";
-  if ([platform isEqualToString:@"iPhone5,1"]) return @"iPhone 5";
-  if ([platform isEqualToString:@"iPhone5,2"]) return @"iPhone 5";
-  if ([platform isEqualToString:@"iPhone5,3"]) return @"iPhone 5c";
-  if ([platform isEqualToString:@"iPhone5,4"]) return @"iPhone 5c";
-  if ([platform isEqualToString:@"iPhone6,1"]) return @"iPhone 5s";
-  if ([platform isEqualToString:@"iPhone6,2"]) return @"iPhone 5s";
-  if ([platform isEqualToString:@"iPhone7,1"]) return @"iPhone 6 Plus";
-  if ([platform isEqualToString:@"iPhone7,2"]) return @"iPhone 6";
-  if ([platform isEqualToString:@"iPhone8,1"]) return @"iPhone 6s";
-  if ([platform isEqualToString:@"iPhone8,2"]) return @"iPhone 6s Plus";
-  if ([platform isEqualToString:@"iPhone8,4"]) return @"iPhone SE";
-  if ([platform isEqualToString:@"iPhone9,1"]) return @"iPhone 7";
-  if ([platform isEqualToString:@"iPhone9,2"]) return @"iPhone 7 Plus";
-  if ([platform isEqualToString:@"iPhone10,1"]) return @"iPhone 8";
-  if ([platform isEqualToString:@"iPhone10,4"]) return @"iPhone 8";
-  if ([platform isEqualToString:@"iPhone10,2"]) return @"iPhone 8 Plus";
-  if ([platform isEqualToString:@"iPhone10,5"]) return @"iPhone 8 Plus";
-  if ([platform isEqualToString:@"iPhone10,3"]) return @"iPhone X";
-  if ([platform isEqualToString:@"iPhone10,6"]) return @"iPhone X";
-  if ([platform isEqualToString:@"iPhone11,2"]) return @"iPhone XS";
-  if ([platform isEqualToString:@"iPhone11,6"]) return @"iPhone XS MAX";
-  if ([platform isEqualToString:@"iPhone11,8"]) return @"iPhone XR";
-  if ([platform isEqualToString:@"iPhone12,1"]) return @"iPhone 11";
-  if ([platform isEqualToString:@"iPhone12,3"]) return @"iPhone 11 Pro";
-  if ([platform isEqualToString:@"iPhone12,5"]) return @"iPhone 11 Pro Max";
-  if ([platform isEqualToString:@"iPhone12,8"]) return @"iPhone SE (2nd generation)";
-  if ([platform isEqualToString:@"iPhone13,1"]) return @"iPhone 12 mini";
-  if ([platform isEqualToString:@"iPhone13,2"]) return @"iPhone 12";
-  if ([platform isEqualToString:@"iPhone13,3"]) return @"iPhone 12 Pro";
-  if ([platform isEqualToString:@"iPhone13,4"]) return @"iPhone 12 Pro Max";
-  if ([platform isEqualToString:@"iPhone14,1"]) return @"iPhone 13 mini";
-  if ([platform isEqualToString:@"iPhone14,2"]) return @"iPhone 13";
-  if ([platform isEqualToString:@"iPhone14,3"]) return @"iPhone 13 Pro";
-  if ([platform isEqualToString:@"iPhone14,4"]) return @"iPhone 13 Pro Max";
+      struct utsname systemInfo;
+      uname(&systemInfo);
+      // 获取设备标识Identifier
+      NSString *platform = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
 
-  // iPod
-  if ([platform isEqualToString:@"iPod1,1"])  return @"iPod Touch 1";
-  if ([platform isEqualToString:@"iPod2,1"])  return @"iPod Touch 2";
-  if ([platform isEqualToString:@"iPod3,1"])  return @"iPod Touch 3";
-  if ([platform isEqualToString:@"iPod4,1"])  return @"iPod Touch 4";
-  if ([platform isEqualToString:@"iPod5,1"])  return @"iPod Touch 5";
-  if ([platform isEqualToString:@"iPod7,1"])  return @"iPod Touch 6";
-  if ([platform isEqualToString:@"iPod9,1"])  return @"iPod Touch 7";
+      // iPhone
+      if ([platform isEqualToString:@"iPhone1,1"]) return @"iPhone 2G";
+      if ([platform isEqualToString:@"iPhone1,2"]) return @"iPhone 3G";
+      if ([platform isEqualToString:@"iPhone2,1"]) return @"iPhone 3GS";
+      if ([platform isEqualToString:@"iPhone3,1"]) return @"iPhone 4";
+      if ([platform isEqualToString:@"iPhone3,2"]) return @"iPhone 4";
+      if ([platform isEqualToString:@"iPhone3,3"]) return @"iPhone 4";
+      if ([platform isEqualToString:@"iPhone4,1"]) return @"iPhone 4S";
+      if ([platform isEqualToString:@"iPhone5,1"]) return @"iPhone 5";
+      if ([platform isEqualToString:@"iPhone5,2"]) return @"iPhone 5";
+      if ([platform isEqualToString:@"iPhone5,3"]) return @"iPhone 5c";
+      if ([platform isEqualToString:@"iPhone5,4"]) return @"iPhone 5c";
+      if ([platform isEqualToString:@"iPhone6,1"]) return @"iPhone 5s";
+      if ([platform isEqualToString:@"iPhone6,2"]) return @"iPhone 5s";
+      if ([platform isEqualToString:@"iPhone7,1"]) return @"iPhone 6 Plus";
+      if ([platform isEqualToString:@"iPhone7,2"]) return @"iPhone 6";
+      if ([platform isEqualToString:@"iPhone8,1"]) return @"iPhone 6s";
+      if ([platform isEqualToString:@"iPhone8,2"]) return @"iPhone 6s Plus";
+      if ([platform isEqualToString:@"iPhone8,4"]) return @"iPhone SE";
+      if ([platform isEqualToString:@"iPhone9,1"]) return @"iPhone 7";
+      if ([platform isEqualToString:@"iPhone9,2"]) return @"iPhone 7 Plus";
+      if ([platform isEqualToString:@"iPhone10,1"]) return @"iPhone 8";
+      if ([platform isEqualToString:@"iPhone10,4"]) return @"iPhone 8";
+      if ([platform isEqualToString:@"iPhone10,2"]) return @"iPhone 8 Plus";
+      if ([platform isEqualToString:@"iPhone10,5"]) return @"iPhone 8 Plus";
+      if ([platform isEqualToString:@"iPhone10,3"]) return @"iPhone X";
+      if ([platform isEqualToString:@"iPhone10,6"]) return @"iPhone X";
+      if ([platform isEqualToString:@"iPhone11,2"]) return @"iPhone XS";
+      if ([platform isEqualToString:@"iPhone11,6"]) return @"iPhone XS MAX";
+      if ([platform isEqualToString:@"iPhone11,8"]) return @"iPhone XR";
+      if ([platform isEqualToString:@"iPhone12,1"]) return @"iPhone 11";
+      if ([platform isEqualToString:@"iPhone12,3"]) return @"iPhone 11 Pro";
+      if ([platform isEqualToString:@"iPhone12,5"]) return @"iPhone 11 Pro Max";
+      if ([platform isEqualToString:@"iPhone12,8"]) return @"iPhone SE (2nd generation)";
+      if ([platform isEqualToString:@"iPhone13,1"]) return @"iPhone 12 mini";
+      if ([platform isEqualToString:@"iPhone13,2"]) return @"iPhone 12";
+      if ([platform isEqualToString:@"iPhone13,3"]) return @"iPhone 12 Pro";
+      if ([platform isEqualToString:@"iPhone13,4"]) return @"iPhone 12 Pro Max";
+      if ([platform isEqualToString:@"iPhone14,1"]) return @"iPhone 13 mini";
+      if ([platform isEqualToString:@"iPhone14,2"]) return @"iPhone 13";
+      if ([platform isEqualToString:@"iPhone14,3"]) return @"iPhone 13 Pro";
+      if ([platform isEqualToString:@"iPhone14,4"]) return @"iPhone 13 Pro Max";
 
-  // iPad
-  if ([platform isEqualToString:@"iPad1,1"])  return @"iPad 1";
-  if ([platform isEqualToString:@"iPad2,1"])  return @"iPad 2";
-  if ([platform isEqualToString:@"iPad2,2"]) return @"iPad 2";
-  if ([platform isEqualToString:@"iPad2,3"])  return @"iPad 2";
-  if ([platform isEqualToString:@"iPad2,4"])  return @"iPad 2";
-  if ([platform isEqualToString:@"iPad2,5"])  return @"iPad Mini 1";
-  if ([platform isEqualToString:@"iPad2,6"])  return @"iPad Mini 1";
-  if ([platform isEqualToString:@"iPad2,7"])  return @"iPad Mini 1";
-  if ([platform isEqualToString:@"iPad3,1"])  return @"iPad 3";
-  if ([platform isEqualToString:@"iPad3,2"])  return @"iPad 3";
-  if ([platform isEqualToString:@"iPad3,3"])  return @"iPad 3";
-  if ([platform isEqualToString:@"iPad3,4"])  return @"iPad 4";
-  if ([platform isEqualToString:@"iPad3,5"])  return @"iPad 4";
-  if ([platform isEqualToString:@"iPad3,6"])  return @"iPad 4";
-  if ([platform isEqualToString:@"iPad4,1"])  return @"iPad Air";
-  if ([platform isEqualToString:@"iPad4,2"])  return @"iPad Air";
-  if ([platform isEqualToString:@"iPad4,3"])  return @"iPad Air";
-  if ([platform isEqualToString:@"iPad4,4"])  return @"iPad Mini 2";
-  if ([platform isEqualToString:@"iPad4,5"])  return @"iPad Mini 2";
-  if ([platform isEqualToString:@"iPad4,6"])  return @"iPad Mini 2";
-  if ([platform isEqualToString:@"iPad4,7"])  return @"iPad mini 3";
-  if ([platform isEqualToString:@"iPad4,8"])  return @"iPad mini 3";
-  if ([platform isEqualToString:@"iPad4,9"])  return @"iPad mini 3";
-  if ([platform isEqualToString:@"iPad5,1"])  return @"iPad mini 4";
-  if ([platform isEqualToString:@"iPad5,2"])  return @"iPad mini 4";
-  if ([platform isEqualToString:@"iPad5,3"])  return @"iPad Air 2";
-  if ([platform isEqualToString:@"iPad5,4"])  return @"iPad Air 2";
-  if ([platform isEqualToString:@"iPad6,3"])  return @"iPad Pro (9.7-inch)";
-  if ([platform isEqualToString:@"iPad6,4"])  return @"iPad Pro (9.7-inch)";
-  if ([platform isEqualToString:@"iPad6,7"])  return @"iPad Pro (12.9-inch)";
-  if ([platform isEqualToString:@"iPad6,8"])  return @"iPad Pro (12.9-inch)";
-  if ([platform isEqualToString:@"iPad6,11"])  return @"iPad 5";
-  if ([platform isEqualToString:@"iPad6,12"])  return @"iPad 5";
-  if ([platform isEqualToString:@"iPad7,1"])  return @"iPad Pro 2(12.9-inch)";
-  if ([platform isEqualToString:@"iPad7,2"])  return @"iPad Pro 2(12.9-inch)";
-  if ([platform isEqualToString:@"iPad7,3"])  return @"iPad Pro (10.5-inch)";
-  if ([platform isEqualToString:@"iPad7,4"])  return @"iPad Pro (10.5-inch)";
-  if ([platform isEqualToString:@"iPad7,5"])  return @"iPad 6";
-  if ([platform isEqualToString:@"iPad7,6"])  return @"iPad 6";
-  if ([platform isEqualToString:@"iPad7,11"])  return @"iPad 7";
-  if ([platform isEqualToString:@"iPad7,12"])  return @"iPad 7";
-  if ([platform isEqualToString:@"iPad8,1"])  return @"iPad Pro (11-inch) ";
-  if ([platform isEqualToString:@"iPad8,2"])  return @"iPad Pro (11-inch) ";
-  if ([platform isEqualToString:@"iPad8,3"])  return @"iPad Pro (11-inch) ";
-  if ([platform isEqualToString:@"iPad8,4"])  return @"iPad Pro (11-inch) ";
-  if ([platform isEqualToString:@"iPad8,5"])  return @"iPad Pro 3 (12.9-inch) ";
-  if ([platform isEqualToString:@"iPad8,6"])  return @"iPad Pro 3 (12.9-inch) ";
-  if ([platform isEqualToString:@"iPad8,7"])  return @"iPad Pro 3 (12.9-inch) ";
-  if ([platform isEqualToString:@"iPad8,8"])  return @"iPad Pro 3 (12.9-inch) ";
-  if ([platform isEqualToString:@"iPad11,1"])  return @"iPad mini 5";
-  if ([platform isEqualToString:@"iPad11,2"])  return @"iPad mini 5";
-  if ([platform isEqualToString:@"iPad11,3"])  return @"iPad Air 3";
-  if ([platform isEqualToString:@"iPad11,4"])  return @"iPad Air 3";
+      // iPod
+      if ([platform isEqualToString:@"iPod1,1"])  return @"iPod Touch 1";
+      if ([platform isEqualToString:@"iPod2,1"])  return @"iPod Touch 2";
+      if ([platform isEqualToString:@"iPod3,1"])  return @"iPod Touch 3";
+      if ([platform isEqualToString:@"iPod4,1"])  return @"iPod Touch 4";
+      if ([platform isEqualToString:@"iPod5,1"])  return @"iPod Touch 5";
+      if ([platform isEqualToString:@"iPod7,1"])  return @"iPod Touch 6";
+      if ([platform isEqualToString:@"iPod9,1"])  return @"iPod Touch 7";
 
-  // 其他
-  if ([platform isEqualToString:@"i386"])   return @"iPhone Simulator";
-  if ([platform isEqualToString:@"x86_64"])  return @"iPhone Simulator";
+      // iPad
+      if ([platform isEqualToString:@"iPad1,1"])  return @"iPad 1";
+      if ([platform isEqualToString:@"iPad2,1"])  return @"iPad 2";
+      if ([platform isEqualToString:@"iPad2,2"]) return @"iPad 2";
+      if ([platform isEqualToString:@"iPad2,3"])  return @"iPad 2";
+      if ([platform isEqualToString:@"iPad2,4"])  return @"iPad 2";
+      if ([platform isEqualToString:@"iPad2,5"])  return @"iPad Mini 1";
+      if ([platform isEqualToString:@"iPad2,6"])  return @"iPad Mini 1";
+      if ([platform isEqualToString:@"iPad2,7"])  return @"iPad Mini 1";
+      if ([platform isEqualToString:@"iPad3,1"])  return @"iPad 3";
+      if ([platform isEqualToString:@"iPad3,2"])  return @"iPad 3";
+      if ([platform isEqualToString:@"iPad3,3"])  return @"iPad 3";
+      if ([platform isEqualToString:@"iPad3,4"])  return @"iPad 4";
+      if ([platform isEqualToString:@"iPad3,5"])  return @"iPad 4";
+      if ([platform isEqualToString:@"iPad3,6"])  return @"iPad 4";
+      if ([platform isEqualToString:@"iPad4,1"])  return @"iPad Air";
+      if ([platform isEqualToString:@"iPad4,2"])  return @"iPad Air";
+      if ([platform isEqualToString:@"iPad4,3"])  return @"iPad Air";
+      if ([platform isEqualToString:@"iPad4,4"])  return @"iPad Mini 2";
+      if ([platform isEqualToString:@"iPad4,5"])  return @"iPad Mini 2";
+      if ([platform isEqualToString:@"iPad4,6"])  return @"iPad Mini 2";
+      if ([platform isEqualToString:@"iPad4,7"])  return @"iPad mini 3";
+      if ([platform isEqualToString:@"iPad4,8"])  return @"iPad mini 3";
+      if ([platform isEqualToString:@"iPad4,9"])  return @"iPad mini 3";
+      if ([platform isEqualToString:@"iPad5,1"])  return @"iPad mini 4";
+      if ([platform isEqualToString:@"iPad5,2"])  return @"iPad mini 4";
+      if ([platform isEqualToString:@"iPad5,3"])  return @"iPad Air 2";
+      if ([platform isEqualToString:@"iPad5,4"])  return @"iPad Air 2";
+      if ([platform isEqualToString:@"iPad6,3"])  return @"iPad Pro (9.7-inch)";
+      if ([platform isEqualToString:@"iPad6,4"])  return @"iPad Pro (9.7-inch)";
+      if ([platform isEqualToString:@"iPad6,7"])  return @"iPad Pro (12.9-inch)";
+      if ([platform isEqualToString:@"iPad6,8"])  return @"iPad Pro (12.9-inch)";
+      if ([platform isEqualToString:@"iPad6,11"])  return @"iPad 5";
+      if ([platform isEqualToString:@"iPad6,12"])  return @"iPad 5";
+      if ([platform isEqualToString:@"iPad7,1"])  return @"iPad Pro 2(12.9-inch)";
+      if ([platform isEqualToString:@"iPad7,2"])  return @"iPad Pro 2(12.9-inch)";
+      if ([platform isEqualToString:@"iPad7,3"])  return @"iPad Pro (10.5-inch)";
+      if ([platform isEqualToString:@"iPad7,4"])  return @"iPad Pro (10.5-inch)";
+      if ([platform isEqualToString:@"iPad7,5"])  return @"iPad 6";
+      if ([platform isEqualToString:@"iPad7,6"])  return @"iPad 6";
+      if ([platform isEqualToString:@"iPad7,11"])  return @"iPad 7";
+      if ([platform isEqualToString:@"iPad7,12"])  return @"iPad 7";
+      if ([platform isEqualToString:@"iPad8,1"])  return @"iPad Pro (11-inch) ";
+      if ([platform isEqualToString:@"iPad8,2"])  return @"iPad Pro (11-inch) ";
+      if ([platform isEqualToString:@"iPad8,3"])  return @"iPad Pro (11-inch) ";
+      if ([platform isEqualToString:@"iPad8,4"])  return @"iPad Pro (11-inch) ";
+      if ([platform isEqualToString:@"iPad8,5"])  return @"iPad Pro 3 (12.9-inch) ";
+      if ([platform isEqualToString:@"iPad8,6"])  return @"iPad Pro 3 (12.9-inch) ";
+      if ([platform isEqualToString:@"iPad8,7"])  return @"iPad Pro 3 (12.9-inch) ";
+      if ([platform isEqualToString:@"iPad8,8"])  return @"iPad Pro 3 (12.9-inch) ";
+      if ([platform isEqualToString:@"iPad11,1"])  return @"iPad mini 5";
+      if ([platform isEqualToString:@"iPad11,2"])  return @"iPad mini 5";
+      if ([platform isEqualToString:@"iPad11,3"])  return @"iPad Air 3";
+      if ([platform isEqualToString:@"iPad11,4"])  return @"iPad Air 3";
 
-  return platform;
+      // 其他
+      if ([platform isEqualToString:@"i386"])   return @"iPhone Simulator";
+      if ([platform isEqualToString:@"x86_64"])  return @"iPhone Simulator";
+
+      return platform;
+    } @catch (NSException *exception) {
+        return @"";
+    } @finally {
+
+    }
+
 }
 
 - (NSString *)getUid{
