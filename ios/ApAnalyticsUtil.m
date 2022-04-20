@@ -632,96 +632,104 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 //配置入库（device）的数据，这部分数据不会变
 - (NSDictionary *)getDeviceInfo{
   NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:1];
-  [dic setObject:@"" forKey:@"air_mode"];
-  [dic setObject:[[[UIDevice currentDevice] identifierForVendor] UUIDString] forKey:@"android_id"];
-  [dic setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] forKey:@"app_version"];
-  [dic setObject:@"" forKey:@"applist"];
-  [dic setObject:@"" forKey:@"bluetooth_list"];
-  [dic setObject:@"" forKey:@"cid"];
 
-  [dic setObject:@"" forKey:@"cpu_cur_freq"];
-  [dic setObject:@"" forKey:@"cpu_max_freq"];
-  [dic setObject:@"" forKey:@"cpu_min_freq"];
-  [dic setObject:@"" forKey:@"cpu_name"];
+    @try {
+        [dic setObject:@"" forKey:@"air_mode"];
+        [dic setObject:[[[UIDevice currentDevice] identifierForVendor] UUIDString] forKey:@"android_id"];
+        [dic setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] forKey:@"app_version"];
+        [dic setObject:@"" forKey:@"applist"];
+        [dic setObject:@"" forKey:@"bluetooth_list"];
+        [dic setObject:@"" forKey:@"cid"];
 
-  [dic setObject:@"app_log" forKey:@"data_type"];
-  [dic setObject:@"15" forKey:@"data_version"];
+        [dic setObject:@"" forKey:@"cpu_cur_freq"];
+        [dic setObject:@"" forKey:@"cpu_max_freq"];
+        [dic setObject:@"" forKey:@"cpu_min_freq"];
+        [dic setObject:@"" forKey:@"cpu_name"];
 
-  [dic setObject:@"" forKey:@"deviceId"];
-  [dic setObject:@"" forKey:@"deviceId2"];
+        [dic setObject:@"app_log" forKey:@"data_type"];
+        [dic setObject:@"15" forKey:@"data_version"];
 
-  [dic setObject:[ApAnalyticsUtil getTotalDiskSize] forKey:@"disk_avail"];
-  [dic setObject:[ApAnalyticsUtil getAvailableDiskSize] forKey:@"disk_total"];
+        [dic setObject:@"" forKey:@"deviceId"];
+        [dic setObject:@"" forKey:@"deviceId2"];
 
-  [dic setObject:@"" forKey:@"do_not_disturb"];
+        [dic setObject:[ApAnalyticsUtil getTotalDiskSize] forKey:@"disk_avail"];
+        [dic setObject:[ApAnalyticsUtil getAvailableDiskSize] forKey:@"disk_total"];
 
-  [dic setObject:@"" forKey:@"iccid"];
-  [dic setObject:@"" forKey:@"iccid2"];
-  [dic setObject:@"" forKey:@"imei"];
-  [dic setObject:@"" forKey:@"imei2"];
-  [dic setObject:@"" forKey:@"imsi"];
-  [dic setObject:@"" forKey:@"imsi2"];
-  [dic setObject:@"" forKey:@"instance_id"];
+        [dic setObject:@"" forKey:@"do_not_disturb"];
 
-  [dic setObject:@"" forKey:@"lineNumber"];
+        [dic setObject:@"" forKey:@"iccid"];
+        [dic setObject:@"" forKey:@"iccid2"];
+        [dic setObject:@"" forKey:@"imei"];
+        [dic setObject:@"" forKey:@"imei2"];
+        [dic setObject:@"" forKey:@"imsi"];
+        [dic setObject:@"" forKey:@"imsi2"];
+        [dic setObject:@"" forKey:@"instance_id"];
 
-  [dic setObject:[NSNumber numberWithBool:[ApAnalyticsUtil isJailBreak]] forKey:@"isRoot"];
-  [dic setObject:[NSNumber numberWithBool:[self getProxyStatus]] forKey:@"isWifiProxy"];
-  [dic setObject:[NSNumber numberWithBool:[self isVPNOn]] forKey:@"isVpnUsed"];
+        [dic setObject:@"" forKey:@"lineNumber"];
 
-  [dic setObject:[ApAnalyticsUtil getCarrierInfo] forKey:@"isp_info"];
-  [dic setObject:@"" forKey:@"lac"];
+        [dic setObject:[NSNumber numberWithBool:[ApAnalyticsUtil isJailBreak]] forKey:@"isRoot"];
+        [dic setObject:[NSNumber numberWithBool:[self getProxyStatus]] forKey:@"isWifiProxy"];
+        [dic setObject:[NSNumber numberWithBool:[self isVPNOn]] forKey:@"isVpnUsed"];
 
-  [dic setObject:@"" forKey:@"lineNumber"];
-  [dic setObject:[ApAnalyticsUtil IPAddress] forKey:@"ipv4"];
+        [dic setObject:[ApAnalyticsUtil getCarrierInfo] forKey:@"isp_info"];
+        [dic setObject:@"" forKey:@"lac"];
 
-  [dic setObject:@"" forKey:@"ip"];
+        [dic setObject:@"" forKey:@"lineNumber"];
+        [dic setObject:[ApAnalyticsUtil IPAddress] forKey:@"ipv4"];
 
-  NSArray*languageArray = [NSLocale preferredLanguages];
-  NSString*language = [languageArray objectAtIndex:0];
-  [dic setObject:language forKey:@"locale"];
+        [dic setObject:@"" forKey:@"ip"];
 
-  [dic setObject:@"HIGH" forKey:@"location_type"];
+        NSArray*languageArray = [NSLocale preferredLanguages];
+        NSString*language = [languageArray objectAtIndex:0];
+        [dic setObject:language forKey:@"locale"];
 
-  [dic setObject:@"" forKey:@"wifiMac"];
-  [dic setObject:@"" forKey:@"mcc"];
-  [dic setObject:@"" forKey:@"mcc2"];
-  [dic setObject:@"" forKey:@"meid"];
-  [dic setObject:@"" forKey:@"meid2"];
+        [dic setObject:@"HIGH" forKey:@"location_type"];
 
-  [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getAvailableMemorySize]] forKey:@"mem_avail"];
-  [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getTotalMemorySize]]forKey:@"men_total"];
+        [dic setObject:@"" forKey:@"wifiMac"];
+        [dic setObject:@"" forKey:@"mcc"];
+        [dic setObject:@"" forKey:@"mcc2"];
+        [dic setObject:@"" forKey:@"meid"];
+        [dic setObject:@"" forKey:@"meid2"];
 
-  [dic setObject:@"" forKey:@"mnc"];
-  [dic setObject:@"" forKey:@"mnc2"];
-  [dic setObject:@"" forKey:@"nativePhoneNum"];
-  [dic setObject:@"" forKey:@"nativePhoneNum2"];
+        [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getAvailableMemorySize]] forKey:@"mem_avail"];
+        [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getTotalMemorySize]]forKey:@"men_total"];
 
-  [dic setObject:[ApAnalyticsUtil getNetWorkInfo] forKey:@"networktype"];
-  [dic setObject:@"ios" forKey:@"os"];
-  [dic setObject:[[UIDevice currentDevice] systemVersion] forKey:@"sysVersion"];
+        [dic setObject:@"" forKey:@"mnc"];
+        [dic setObject:@"" forKey:@"mnc2"];
+        [dic setObject:@"" forKey:@"nativePhoneNum"];
+        [dic setObject:@"" forKey:@"nativePhoneNum2"];
 
-  [dic setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] forKey:@"package_name"];
-  [dic setObject:@"iphone" forKey:@"phone_brand"];
-  [dic setObject:[ApAnalyticsUtil getDeviceModel] forKey:@"model"];
+        [dic setObject:[ApAnalyticsUtil getNetWorkInfo] forKey:@"networktype"];
+        [dic setObject:@"ios" forKey:@"os"];
+        [dic setObject:[[UIDevice currentDevice] systemVersion] forKey:@"sysVersion"];
 
-  [dic setObject:@"" forKey:@"pid"];
-  [dic setObject:@"7" forKey:@"platform_id"];
-  [dic setObject:@"adapundi" forKey:@"platform_name"];
+        [dic setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] forKey:@"package_name"];
+        [dic setObject:@"iphone" forKey:@"phone_brand"];
+        [dic setObject:[ApAnalyticsUtil getDeviceModel] forKey:@"model"];
 
-  [dic setObject:@"" forKey:@"providersName"];
-  [dic setObject:@"" forKey:@"providersName2"];
+        [dic setObject:@"" forKey:@"pid"];
+        [dic setObject:@"7" forKey:@"platform_id"];
+        [dic setObject:@"adapundi" forKey:@"platform_name"];
 
-  [dic setObject:@"" forKey:@"routerMac"];
-  [dic setObject:@"" forKey:@"routerName"];
+        [dic setObject:@"" forKey:@"providersName"];
+        [dic setObject:@"" forKey:@"providersName2"];
 
-  [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.width] forKey:@"screen_width"];
-  [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.height] forKey:@"screen_height"];
+        [dic setObject:@"" forKey:@"routerMac"];
+        [dic setObject:@"" forKey:@"routerName"];
 
-  [dic setObject:@"" forKey:@"sdk_version"];
-  [dic setObject:@"" forKey:@"serial_number"];
-  [dic setObject:@"" forKey:@"user_uuid"];
-  [dic setObject:@"" forKey:@"wifi_list"];
+        [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.width] forKey:@"screen_width"];
+        [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.height] forKey:@"screen_height"];
+
+        [dic setObject:@"" forKey:@"sdk_version"];
+        [dic setObject:@"" forKey:@"serial_number"];
+        [dic setObject:@"" forKey:@"user_uuid"];
+        [dic setObject:@"" forKey:@"wifi_list"];
+    } @catch (NSException *exception) {
+
+    } @finally {
+
+    }
+
 
   return [dic copy];
 }
@@ -729,41 +737,60 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 //配置当前的设备数据
 - (NSDictionary *)getRealTimeDeviceData:(NSString *)runId{
   NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:1];
-  [dic setObject:[self getAccelerometerData] forKey:@"accelerate_info"];
-  [dic setObject:[self getIdfa] forKey:@"advertising_id"];
-  [dic setObject:@"" forKey:@"BatteryCapacity"];
-  [dic setObject:[NSString stringWithFormat:@"%.f",  [[UIDevice currentDevice] batteryLevel] * 100] forKey:@"BatteryCapacityScale"];
-  [dic setObject:[UIPasteboard generalPasteboard].string ? [UIPasteboard generalPasteboard].string : @"" forKey:@"clipboard_with_text"];
-  [dic setObject:[self getGyroData] forKey:@"gyro_info"];
 
-  [dic setObject:self.latitude ? self.latitude : @"" forKey:@"latitude"];
-  [dic setObject:self.longitude ? self.longitude : @"" forKey:@"longitude"];
+    @try {
+        [dic setObject:[self getAccelerometerData] forKey:@"accelerate_info"];
+        [dic setObject:[self getIdfa] forKey:@"advertising_id"];
+        [dic setObject:@"" forKey:@"BatteryCapacity"];
+        [dic setObject:[NSString stringWithFormat:@"%.f",  [[UIDevice currentDevice] batteryLevel] * 100] forKey:@"BatteryCapacityScale"];
+        [dic setObject:[UIPasteboard generalPasteboard].string ? [UIPasteboard generalPasteboard].string : @"" forKey:@"clipboard_with_text"];
+        [dic setObject:[self getGyroData] forKey:@"gyro_info"];
 
-  NSDate* date = [NSDate dateWithTimeIntervalSinceNow:0];
-  NSTimeInterval time=[date timeIntervalSince1970]*1000;
-  NSString *timeString = [NSString stringWithFormat:@"%.0f", time];
-  [dic setObject:timeString forKey:@"local_time"];
+        [dic setObject:self.latitude ? self.latitude : @"" forKey:@"latitude"];
+        [dic setObject:self.longitude ? self.longitude : @"" forKey:@"longitude"];
 
-  [dic setObject:@"" forKey:@"time_offset"];
+        NSDate* date = [NSDate dateWithTimeIntervalSinceNow:0];
+        NSTimeInterval time=[date timeIntervalSince1970]*1000;
+        NSString *timeString = [NSString stringWithFormat:@"%.0f", time];
+        [dic setObject:timeString forKey:@"local_time"];
 
-  [dic setObject:runId forKey:@"run_id"];
+        [dic setObject:@"" forKey:@"time_offset"];
+
+        [dic setObject:runId forKey:@"run_id"];
+    } @catch (NSException *exception) {
+
+
+    } @finally {
+
+    }
+
+
   return [dic copy];
 }
 
 //获取启动日志
 - (NSDictionary *)getStartLog:(NSDate *)startTime{
   NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:1];
-  [dic setObject:@"start_event" forKey:@"action_type"];
-  [dic setObject:@"" forKey:@"extra_data"];
-  [dic setObject:@"native" forKey:@"log_source"];
-  [dic setObject:[self getUid] forKey:@"user_uuid"];
 
-  NSDate *date = [NSDate date];
-  [dic setObject:[ApAnalyticsUtil getFormateLocalDate:date]  forKey:@"log_time"];
-  [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:[ApAnalyticsUtil getFormateLocalDate:date]] forKey:@"log_time_z"];
+    @try {
+        [dic setObject:@"start_event" forKey:@"action_type"];
+        [dic setObject:@"" forKey:@"extra_data"];
+        [dic setObject:@"native" forKey:@"log_source"];
+        [dic setObject:[self getUid] forKey:@"user_uuid"];
 
-  [dic setObject:[ApAnalyticsUtil getFormateLocalDate:startTime] forKey:@"start_time"];
-  [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:[ApAnalyticsUtil getFormateLocalDate:startTime]] forKey:@"start_time_z"];
+        NSDate *date = [NSDate date];
+        [dic setObject:[ApAnalyticsUtil getFormateLocalDate:date]  forKey:@"log_time"];
+        [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:[ApAnalyticsUtil getFormateLocalDate:date]] forKey:@"log_time_z"];
+
+        [dic setObject:[ApAnalyticsUtil getFormateLocalDate:startTime] forKey:@"start_time"];
+        [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:[ApAnalyticsUtil getFormateLocalDate:startTime]] forKey:@"start_time_z"];
+    } @catch (NSException *exception) {
+
+    } @finally {
+
+    }
+
+
   return [dic copy];
 }
 
