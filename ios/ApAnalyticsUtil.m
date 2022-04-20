@@ -390,7 +390,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         //    NSString *mnc = [carrier mobileNetworkCode]; // 网络码 如：01
         //    NSString *isoCountryCode = [carrier isoCountryCode]; // cn
         //    BOOL allowsVOIP = [carrier allowsVOIP];// YES
-        return carrierName;
+        return carrierName ? carrierName : @"";
     } @catch (NSException *exception) {
         return @"";
     } @finally {
