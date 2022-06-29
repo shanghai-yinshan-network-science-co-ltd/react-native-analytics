@@ -1,20 +1,19 @@
+//
+//  ApAnalyticsModule.m
+//  adapundi
+//
+//  Created by liang zeng on 2022/3/10.
+//
 
-#import "RNAnalytics.h"
+#import "ApAnalyticsModule.h"
 #import "ApLogManager.h"
-#import "ApNeworkManager.h"
 
-@implementation RNAnalytics
-
-- (dispatch_queue_t)methodQueue
-{
-    return dispatch_get_main_queue();
-}
-RCT_EXPORT_MODULE()
-
+@implementation ApAnalyticsModule
+RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(sendBuriedData:(NSString *)data)
 {
-    [[ApLogManager sharedInstance] addActionLog:data];
+  [[ApLogManager sharedInstance] addActionLog:data];
 }
 
 
@@ -26,7 +25,7 @@ RCT_EXPORT_METHOD(setUserId:(NSString *)useId)
 
 RCT_EXPORT_METHOD(saveBusinessEvent:(NSString *)event)
 {
-
+  
 }
 
 
@@ -43,4 +42,3 @@ RCT_EXPORT_METHOD(setLatitude:(NSString *)latitude setLongitude:(NSString *)long
 
 
 @end
-
