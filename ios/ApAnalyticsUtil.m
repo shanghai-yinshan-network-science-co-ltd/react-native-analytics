@@ -52,6 +52,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 - (instancetype)init{
   if(self = [super init]){
     [self accelerometerPull];
+      
+    //检查idfa的权限，ios14后需要用户授权才能获取
     [self configIdfa];
 
     //设置可以访问电池信息
@@ -86,13 +88,15 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 //获取idfa
 - (void)configIdfa{
-  //需要延时，否则可能取不到
-  [NSTimer scheduledTimerWithTimeInterval:5.f repeats:false block:^(NSTimer * _Nonnull timer) {
-    [ApAnalyticsUtil getIdfa:^(NSString * _Nonnull idfa) {
-      self.idfa = idfa;
-    }];
-    [timer invalidate];
-    timer = nil;
+  //需要延时，且当前app是活跃状态时，才可以弹出授权弹窗，否则可能取不到
+  [NSTimer scheduledTimerWithTimeInterval:3.f repeats:true block:^(NSTimer * _Nonnull timer) {
+      if([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive){
+          [timer invalidate];
+          timer = nil;
+          [ApAnalyticsUtil getIdfa:^(NSString * _Nonnull idfa) {
+            self.idfa = idfa;
+          }];
+      }
   }];
 }
 
