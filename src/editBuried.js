@@ -17,10 +17,7 @@ function getCommenEvent(viewPath, pageId, vId) {
     return;
   }
   const now = Date.now();
-  const pages = pageId.split('-');
-  if (pages.length > 0) {
-    viewPath = pages[pages.length - 1] + '-' + viewPath;
-  }
+  viewPath = pageId + '-' + viewPath;
   return {
     page_id: pageId,
     start_time: getStrTime(now),
@@ -90,12 +87,12 @@ class HookTextInput extends React.Component {
   };
 
   _sendEditBuriedData = (editData, opType) => {
-    const _pageId = getCurrentPageId();
+    this._pageId = this._pageId || getCurrentPageId();
     let {path: viewPath, description, vId} = getViewPathByComponent(
-        this._reactInternals || this._reactInternalFiber, getCurrentPageId());
+        this._reactInternals || this._reactInternalFiber, this._pageId);
     if (opType === 'inputEnd' || opType === 'inputStart') {
       const text = editData;
-      const data = getCommenEvent(viewPath, _pageId, vId);
+      const data = getCommenEvent(viewPath, this._pageId, vId);
       if (data) {
         data.page_info = {
           textLength: text ? text.length : 0,
@@ -106,7 +103,7 @@ class HookTextInput extends React.Component {
         sendBuriedData(data);
       }
     } else if (opType === 'paste') {
-      const data = getCommenEvent(viewPath, _pageId, vId);
+      const data = getCommenEvent(viewPath, this._pageId, vId);
       if (data) {
         data.page_info = {
           newTextLength: editData.newTextLength,

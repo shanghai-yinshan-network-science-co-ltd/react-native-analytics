@@ -15,13 +15,13 @@ let lastClickId;
 
 let hostNode;
 
-export function clickEvent(instance, pageInfo) {
+export function clickEvent(instance, pageInfo, pageId) {
   let {path: viewPath, description, vId} = getViewPathByComponent(
       instance._reactInternals || instance._reactInternalFiber,
-      getCurrentPageId());
+      pageId);
   if (hostNode !== viewPath) {
     hostNode = viewPath;
-    onClickEvent({viewPath: hostNode, description, vId, pageInfo});
+    onClickEvent({viewPath: hostNode, description, vId, pageInfo, pageId});
     const id = setImmediate(() => {
       hostNode = undefined;
       clearImmediate(id);
@@ -30,16 +30,12 @@ export function clickEvent(instance, pageInfo) {
 
 }
 
-function onClickEvent({viewPath, description, vId, pageInfo}) {
-  const pageId = getCurrentPageId();
+function onClickEvent({viewPath, description, vId, pageInfo, pageId}) {
   if (!pageId) {
     return;
   }
   const now = Date.now();
-  const pages = pageId.split('-');
-  if (pages.length > 0) {
-    viewPath = pages[pages.length - 1] + '-' + viewPath;
-  }
+  viewPath = pageId + '-' + viewPath;
   lastClickId = viewPath;
   const clickData = {
     action_type: click_event,
@@ -84,12 +80,14 @@ export const createHookTouchable = function(path, Touchable) {
     constructor(props, context) {
       super(props, context);
       this._onPress = function(...args) {
-        clickEvent(this, {type: 'press', ...this.props.pageInfo});
+        this.pageId = this.pageId || getCurrentPageId()
+        clickEvent(this, {type: 'press', ...this.props.pageInfo}, this.pageId);
         this.props.onPress(...args);
       }.bind(this);
 
       this._onLongPress = function(...args) {
-        clickEvent(this, {type: 'longPress', ...this.props.pageInfo});
+        this.pageId = this.pageId || getCurrentPageId()
+        clickEvent(this, {type: 'longPress', ...this.props.pageInfo},this.pageId);
         this.props.onLongPress(...args);
       }.bind(this);
     }

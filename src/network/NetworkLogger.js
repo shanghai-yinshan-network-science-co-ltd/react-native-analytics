@@ -74,7 +74,7 @@ export let NetworkLogger = function () {
                 xhr._log.response_data = "Blob";
             }
         }
-        xhr._log.request_consuming = xhr._log.end_time - xhr._log.start_time;
+        xhr._log.request_consuming = new Date(xhr._log.end_time) - new Date(xhr._log.start_time);
         xhr._log.log_time = getStrTime(Date.now());
         xhr._log.log_time_z = getFormatTimeZ(Date.now());
         xhr._log.request_id = xhr.getResponseHeader('X_REQUEST_ID');
