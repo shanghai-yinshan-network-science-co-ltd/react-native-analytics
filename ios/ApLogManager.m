@@ -122,7 +122,8 @@
     [dic setObject:obj forKey:key];
   }];
   [dic setObject:actions forKey:@"logs"];
-  
+    [dic setObject:[self.util getUid] forKey:@"user_uuid"];
+
   self.isSending = true;
   self.lastTime = [[NSDate dateWithTimeIntervalSinceNow:0] timeIntervalSince1970];
   [[ApNeworkManager sharedInstance] sendLog:dic completionHandler:^(BOOL success) {

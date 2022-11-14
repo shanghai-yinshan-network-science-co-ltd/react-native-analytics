@@ -52,6 +52,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 - (instancetype)init{
   if(self = [super init]){
     [self accelerometerPull];
+      
+    //检查idfa的权限，ios14后需要用户授权才能获取
     [self configIdfa];
 
     //设置可以访问电池信息
@@ -86,13 +88,15 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 //获取idfa
 - (void)configIdfa{
-  //需要延时，否则可能取不到
-  [NSTimer scheduledTimerWithTimeInterval:5.f repeats:false block:^(NSTimer * _Nonnull timer) {
-    [ApAnalyticsUtil getIdfa:^(NSString * _Nonnull idfa) {
-      self.idfa = idfa;
-    }];
-    [timer invalidate];
-    timer = nil;
+  //需要延时，且当前app是活跃状态时，才可以弹出授权弹窗，否则可能取不到
+  [NSTimer scheduledTimerWithTimeInterval:3.f repeats:true block:^(NSTimer * _Nonnull timer) {
+      if([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive){
+          [timer invalidate];
+          timer = nil;
+          [ApAnalyticsUtil getIdfa:^(NSString * _Nonnull idfa) {
+            self.idfa = idfa;
+          }];
+      }
   }];
 }
 
@@ -634,7 +638,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:1];
 
     @try {
-        [dic setObject:@"" forKey:@"air_mode"];
+        [dic setObject:[NSNumber numberWithBool:false] forKey:@"air_mode"];
         [dic setObject:[[[UIDevice currentDevice] identifierForVendor] UUIDString] forKey:@"android_id"];
         [dic setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] forKey:@"app_version"];
         [dic setObject:@"" forKey:@"applist"];
@@ -655,7 +659,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         [dic setObject:[ApAnalyticsUtil getTotalDiskSize] forKey:@"disk_avail"];
         [dic setObject:[ApAnalyticsUtil getAvailableDiskSize] forKey:@"disk_total"];
 
-        [dic setObject:@"" forKey:@"do_not_disturb"];
+        [dic setObject:[NSNumber numberWithBool:false] forKey:@"do_not_disturb"];
 
         [dic setObject:@"" forKey:@"iccid"];
         [dic setObject:@"" forKey:@"iccid2"];
@@ -691,8 +695,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         [dic setObject:@"" forKey:@"meid"];
         [dic setObject:@"" forKey:@"meid2"];
 
-        [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getAvailableMemorySize]] forKey:@"mem_avail"];
-        [dic setObject:[NSNumber numberWithInteger:[ApAnalyticsUtil getTotalMemorySize]]forKey:@"men_total"];
+        [dic setObject:[NSString stringWithFormat:@"%lli",[ApAnalyticsUtil getAvailableMemorySize]] forKey:@"mem_avail"];
+        [dic setObject:[NSString stringWithFormat:@"%lli",[ApAnalyticsUtil getTotalMemorySize]]forKey:@"men_total"];
 
         [dic setObject:@"" forKey:@"mnc"];
         [dic setObject:@"" forKey:@"mnc2"];
@@ -717,8 +721,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         [dic setObject:@"" forKey:@"routerMac"];
         [dic setObject:@"" forKey:@"routerName"];
 
-        [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.width] forKey:@"screen_width"];
-        [dic setObject:[NSNumber numberWithFloat:[UIScreen mainScreen].bounds.size.height] forKey:@"screen_height"];
+        [dic setObject:[NSString stringWithFormat:@"%.2f",[UIScreen mainScreen].bounds.size.width] forKey:@"screen_width"];
+        [dic setObject:[NSString stringWithFormat:@"%.2f",[UIScreen mainScreen].bounds.size.height] forKey:@"screen_height"];
 
         [dic setObject:@"" forKey:@"sdk_version"];
         [dic setObject:@"" forKey:@"serial_number"];
@@ -752,7 +756,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         NSDate* date = [NSDate dateWithTimeIntervalSinceNow:0];
         NSTimeInterval time=[date timeIntervalSince1970]*1000;
         NSString *timeString = [NSString stringWithFormat:@"%.0f", time];
-        [dic setObject:timeString forKey:@"local_time"];
+        [dic setObject:[NSNumber numberWithLong:timeString.integerValue] forKey:@"local_time"];
 
         [dic setObject:@"" forKey:@"time_offset"];
 
