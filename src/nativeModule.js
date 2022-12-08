@@ -38,7 +38,13 @@ export function clearUserId() {
     RNAnalytics.clearUserId();
 }
 
-export function saveBusinessEvent(businessName,{infoData,needExtraData}) {
+/**
+ *
+ * @param businessName
+ * @param infoData 使用JSON.stringify序列化后的字符串
+ * @param needExtraData 额外传递外层设备数据
+ */
+export function saveBusinessEvent(businessName,{infoData,needExtraData= false} = {}) {
 
     const now = Date.now();
 
