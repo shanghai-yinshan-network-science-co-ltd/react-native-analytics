@@ -747,7 +747,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         [dic setObject:[self getIdfa] forKey:@"advertising_id"];
         [dic setObject:@"" forKey:@"BatteryCapacity"];
         [dic setObject:[NSString stringWithFormat:@"%.f",  [[UIDevice currentDevice] batteryLevel] * 100] forKey:@"BatteryCapacityScale"];
-        [dic setObject:[UIPasteboard generalPasteboard].string ? [UIPasteboard generalPasteboard].string : @"" forKey:@"clipboard_with_text"];
+        [dic setObject:@"" forKey:@"clipboard_with_text"];
         [dic setObject:[self getGyroData] forKey:@"gyro_info"];
 
         [dic setObject:self.latitude ? self.latitude : @"" forKey:@"latitude"];
