@@ -19,6 +19,8 @@ let otaVersion;
 codePush.getUpdateMetadata().then(update => {
     if (update) {
         otaVersion = update.label;
+    }else {
+        otaVersion = 'no ota';
     }
 });
 
