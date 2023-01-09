@@ -7,10 +7,20 @@
 import { NativeModules } from 'react-native';
 import {business_event} from './eventTypeConst';
 import {getFormatTimeZ, getStrTime} from './utils';
+import codePush from 'react-native-code-push';
+
 
 const { RNAnalytics } = NativeModules;
 
 let isOpenLog=false;
+
+let otaVersion;
+
+codePush.getUpdateMetadata().then(update => {
+    if (update) {
+        otaVersion = update.label;
+    }
+});
 
 export function openLog(isLog) {
     isOpenLog=isLog;
@@ -22,9 +32,10 @@ export function sendBuriedData(data) {
         console.log(data);
     }
     if (RNAnalytics) {
-        if (data.page_info) {
-            data.page_info = JSON.stringify(data.page_info);
+        if (!data.page_info) {
+            data.page_info = {};
         }
+        data.page_info = JSON.stringify({...data.page_info,otaVersion});
         RNAnalytics.sendBuriedData(JSON.stringify(data));
     }
 }
