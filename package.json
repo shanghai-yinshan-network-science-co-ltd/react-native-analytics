@@ -12,7 +12,7 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "pod-install": "^0.1.0"
+    "pod-install": "^0.1.38"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.3.2",
