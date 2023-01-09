@@ -171,6 +171,7 @@
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:actionDic ? actionDic : @{}];
         [dic setObject:logId forKey:@"log_id"];
         [dic setObject:runId forKey:@"runId"];
+        [dic setObject:[self.util getUid] forKey:@"user_uuid"];
         [logItems addObject:dic];
       }
     }
