@@ -51,7 +51,7 @@ export let NetworkLogger = function () {
             data = JSON.stringify(data);
         }
 
-        if (typeof data === 'string' && data.length > 1024){
+        if (typeof data === 'string' && data.length > 1024*64){
             data = '["$filter$"]'
         }
 
