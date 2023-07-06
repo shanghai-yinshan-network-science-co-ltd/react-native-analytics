@@ -65,7 +65,7 @@ export let NetworkLogger = function () {
         xhr._log.end_time_z = getFormatTimeZ(Date.now());
 
         xhr._log.http_status = status;
-        if (response&&(response.length> 1024 * 10)) {
+        if (response&&(response.length> 1024 * 64)) {
             xhr._log.response_data = "[filter]";
         }else {
             if (typeof response === 'string'){
