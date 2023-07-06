@@ -1,6 +1,6 @@
 {
   "name": "react-native-analytics",
-  "version": "2.7.12",
+  "version": "2.7.13",
   "description": "ap_analytics",
   "main": "index.js",
   "scripts": {
