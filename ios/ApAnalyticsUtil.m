@@ -30,6 +30,7 @@
 #include <net/if.h>
 
 #import "sys/utsname.h"
+#import "DeviceUID.h"
 
 NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotification";
 
@@ -52,7 +53,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 - (instancetype)init{
   if(self = [super init]){
     [self accelerometerPull];
-      
+
     //检查idfa的权限，ios14后需要用户授权才能获取
     [self configIdfa];
 
@@ -639,7 +640,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
     @try {
         [dic setObject:[NSNumber numberWithBool:false] forKey:@"air_mode"];
-        [dic setObject:[[[UIDevice currentDevice] identifierForVendor] UUIDString] forKey:@"android_id"];
+        [dic setObject:[DeviceUID uid] forKey:@"android_id"];
         [dic setObject:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] forKey:@"app_version"];
         [dic setObject:@"" forKey:@"applist"];
         [dic setObject:@"" forKey:@"bluetooth_list"];
