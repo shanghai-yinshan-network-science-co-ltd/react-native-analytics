@@ -6,10 +6,10 @@
 //
 
 #import "ApNeworkManager.h"
-#import <GZIP.h>
+#import <GZIP/GZIP.h>
 #import <UIKit/UIKit.h>
 #import <AdSupport/AdSupport.h>
-#import <AFNetworking.h>
+#import <AFNetworking/AFNetworking.h>
 
 @interface ApNeworkManager (){
   NSString *serverUrl;
