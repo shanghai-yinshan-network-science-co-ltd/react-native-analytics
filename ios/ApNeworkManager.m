@@ -55,12 +55,7 @@
   [[self sessionManage] POST:serverUrl parameters:@{@"content":parameters} headers:nil progress:^(NSProgress * _Nonnull uploadProgress) {
     NSLog(@"uploadProgress-->%@",uploadProgress);
   } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-    if(responseObject && [responseObject isKindOfClass: [NSDictionary class]] && [[responseObject objectForKey:@"status"] isEqualToString:@"OK"]){
-      block(true);
-    }
-    else{
-      block(false);
-    }
+    block(true);
   } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
     [self task:task failureData:error callback:^(NSDictionary *response) {
       block(false);
