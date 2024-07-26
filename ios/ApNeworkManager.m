@@ -83,6 +83,7 @@
         manager.requestSerializer.timeoutInterval = 30.0f;
 
         [manager.requestSerializer setValue:apiKey forHTTPHeaderField:@"x-api-key"];
+        [manager.requestSerializer setValue:@"iOS" forHTTPHeaderField:@"OS"];
         manager.responseSerializer = [AFJSONResponseSerializer serializer];
         manager.responseSerializer.acceptableContentTypes=[[NSSet alloc] initWithObjects:@"application/xml", @"text/xml",@"text/html", @"application/json",@"text/plain",nil];
 
