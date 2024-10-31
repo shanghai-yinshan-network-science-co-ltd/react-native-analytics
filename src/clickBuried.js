@@ -90,6 +90,7 @@ export const createHookTouchable = function(path, Touchable) {
         clickEvent(this, {type: 'longPress', ...this.props.pageInfo},this.pageId);
         this.props.onLongPress(...args);
       }.bind(this);
+
     }
 
     render() {
@@ -99,8 +100,9 @@ export const createHookTouchable = function(path, Touchable) {
           <Touchable
               ref={forwardedRef}
               {...rest}
-              onPress={this.props.onPress && this._onPress}
-              onLongPress={this.props.onLongPress && this._onLongPress}
+              allowFontScaling={this.props.allowFontScaling || false}
+              onPress={!!this.props.onPress && this._onPress}
+              onLongPress={!!this.props.onLongPress && this._onLongPress}
           />
       );
     }
