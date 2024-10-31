@@ -6,10 +6,10 @@
 //
 
 #import "ApNeworkManager.h"
-#import <GZIP.h>
+#import <GZIP/GZIP.h>
 #import <UIKit/UIKit.h>
 #import <AdSupport/AdSupport.h>
-#import <AFNetworking.h>
+#import <AFNetworking/AFNetworking.h>
 
 @interface ApNeworkManager (){
   NSString *serverUrl;
@@ -55,12 +55,7 @@
   [[self sessionManage] POST:serverUrl parameters:@{@"content":parameters} headers:nil progress:^(NSProgress * _Nonnull uploadProgress) {
     NSLog(@"uploadProgress-->%@",uploadProgress);
   } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-    if(responseObject && [responseObject isKindOfClass: [NSDictionary class]] && [[responseObject objectForKey:@"status"] isEqualToString:@"OK"]){
-      block(true);
-    }
-    else{
-      block(false);
-    }
+    block(true);
   } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
     [self task:task failureData:error callback:^(NSDictionary *response) {
       block(false);
@@ -88,6 +83,7 @@
         manager.requestSerializer.timeoutInterval = 30.0f;
 
         [manager.requestSerializer setValue:apiKey forHTTPHeaderField:@"x-api-key"];
+        [manager.requestSerializer setValue:@"iOS" forHTTPHeaderField:@"OS"];
         manager.responseSerializer = [AFJSONResponseSerializer serializer];
         manager.responseSerializer.acceptableContentTypes=[[NSSet alloc] initWithObjects:@"application/xml", @"text/xml",@"text/html", @"application/json",@"text/plain",nil];
 
