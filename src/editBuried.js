@@ -133,6 +133,7 @@ class HookTextInput extends React.Component {
         <TextInput
             ref={forwardedRef}
             {...rest}
+            allowFontScaling={this.props.allowFontScaling || false}
             onChangeText={this._onChangeText}
             onTextInput={this._onTextInput}
             onFocus={this._onFocus}
