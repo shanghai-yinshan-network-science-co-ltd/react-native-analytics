@@ -83,6 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 + (NSString*)dictionaryToJson:(NSDictionary *)dic;
++ (NSString*)dataToJson:(id)data;
 
 + (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString;
 @end

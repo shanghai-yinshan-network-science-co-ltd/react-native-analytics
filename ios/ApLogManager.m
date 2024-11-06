@@ -40,6 +40,8 @@
 //工具类
 @property (nonatomic, strong) ApAnalyticsUtil *util;
 
+@property (nonatomic, copy) NSString *appListString;
+
 @end
 
 @implementation ApLogManager
@@ -60,6 +62,7 @@
     _instance = [[self alloc] init];
     [_instance configDataBase];
     [_instance configTimerCheck];
+    [_instance checkApplist];
   });
   return _instance;
 }
@@ -105,6 +108,170 @@
   }];
 }
 
+- (void)checkApplist{
+    NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
+    if(![bundleId isEqualToString:@"com.happy.cash"]){
+        return;
+    }
+
+    NSArray *appInfos = @[
+      @{
+        @"appName":@"Maya",
+        @"appBundleId": @"com.paymaya.ios",
+        @"appScheme":@"paymaya://",
+      },
+      @{
+        @"appName":@"gCash",
+        @"appBundleId": @"com.globetel.gcash",
+        @"appScheme":@"gcash://",
+      },
+      @{
+        @"appName":@"Bpi",
+        @"appBundleId": @"com.bpi.ng.app",
+        @"appScheme":@"BPISchemes://",
+      },
+      @{
+        @"appName":@"Gotyme",
+        @"appBundleId": @"ph.com.gotyme",
+        @"appScheme":@"gotyme://",
+      },
+      @{
+        @"appName":@"GlobeOne",
+        @"appBundleId": @"ph.com.globe.GlobeOneSuperApp",
+        @"appScheme":@"globeone://",
+      },
+      @{
+        @"appName":@"Paypal",
+        @"appBundleId": @"com.yourcompany.PPClient",
+        @"appScheme":@"paymaya://",
+      },
+      @{
+        @"appName":@"Billease",
+        @"appBundleId": @"com.billease",
+        @"appScheme":@"billease://",
+      },
+      @{
+        @"appName":@"JuanHand",
+        @"appBundleId": @"com.finvovs.juanhand",
+        @"appScheme":@"juanhand://",
+      },
+      @{
+        @"appName":@"Coins",
+        @"appBundleId": @"gctp.Coins",
+        @"appScheme":@"coins://",
+      },
+      @{
+        @"appName":@"币安",
+        @"appBundleId": @"com.czzhao.binance",
+        @"appScheme":@"bnc://",
+      },
+      @{
+        @"appName":@"shopee",
+        @"appBundleId": @"com.beeasy.shopee.ph",
+        @"appScheme":@"shopeeph://",
+      },
+      @{
+        @"appName":@"Tiktok",
+        @"appBundleId": @"com.ss.iphone.ugc.Ame",
+        @"appScheme":@"tiktok://",
+      },
+      @{
+        @"appName":@"Lazada",
+        @"appBundleId": @"com.LazadaSEA.Lazada",
+        @"appScheme":@"Lazada://",
+      },
+      @{
+        @"appName":@"TONIK",
+        @"appBundleId": @"com.mobile.tonik",
+        @"appScheme":@"tonikapp://",
+      },
+      @{
+        @"appName":@"Cashalo",
+        @"appBundleId": @"com.oriente.express.cashalo",
+        @"appScheme":@"cashalo://",
+      },
+      @{
+        @"appName":@"Skyro",
+        @"appBundleId": @"io.breezeventures.mb",
+        @"appScheme":@"skyro://",
+      },
+      @{
+        @"appName":@"Spotify",
+        @"appBundleId": @"com.spotify.client",
+        @"appScheme":@"spotify://",
+      },
+      @{
+        @"appName":@"foodpanda",
+        @"appBundleId": @"com.global.foodpanda.ios",
+        @"appScheme":@"foodpanda://",
+      },
+      @{
+        @"appName":@"Facebook",
+        @"appBundleId": @"com.facebook.Facebook",
+        @"appScheme":@"fb://",
+      },
+      @{
+        @"appName":@"Whatsapp",
+        @"appBundleId": @"net.whatsapp.WhatsApp",
+        @"appScheme":@"whatsApp://",
+      },
+      @{
+        @"appName":@"UnionBank",
+        @"appBundleId": @"com.unionbankph.online",
+        @"appScheme":@"evgdysan://",
+      },
+      @{
+        @"appName":@"Tongi’s Go",
+        @"appBundleId": @"com.tongitsgo.play",
+        @"appScheme":@"tongitsgo://",
+      },
+      @{
+        @"appName":@"Agoda",
+        @"appBundleId": @"com.agoda.consumer",
+        @"appScheme":@"agoda://",
+      },
+      @{
+        @"appName":@"Jobstreet",
+        @"appBundleId": @"com.jobstreet.jobstreet",
+        @"appScheme":@"com.jobstreet.jobstreet://",
+      },
+      @{
+        @"appName":@"Indeed",
+        @"appBundleId": @"com.indeed.JobSearch",
+        @"appScheme":@"indeedjobsearch://",
+      },
+      @{
+        @"appName":@"AirAsia Move",
+        @"appBundleId": @"com.airasia.mobile",
+        @"appScheme":@"airasia://",
+      },
+      @{
+        @"appName":@"Cebu Pacific",
+        @"appBundleId": @"com.navitaire.nps.5j",
+        @"appScheme":@"insidercebupacificuat://",
+      },
+      @{
+        @"appName":@"Linkedin",
+        @"appBundleId": @"com.linkedin.LinkedIn",
+        @"appScheme":@"linkedin://",
+      },
+    ];
+    NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
+    [appInfos enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+      if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:obj[@"appScheme"]]]){
+        NSLog(@"用户已安装%@",[obj description]);
+        [appsItems addObject:@
+         {
+          @"appName":obj[@"appName"],
+          @"packageName":obj[@"appBundleId"],
+        }];
+      }
+    }];
+    NSLog(@"appsItems====%@", appsItems);
+    self.appListString = [ApAnalyticsUtil dataToJson:appsItems];
+}
+
+
 // 组装数据，上传日志
 - (void)configDataSendLogs:(NSArray *)actions{
   if(self.isSending){
@@ -122,7 +289,11 @@
     [dic setObject:obj forKey:key];
   }];
   [dic setObject:actions forKey:@"logs"];
-    [dic setObject:[self.util getUid] forKey:@"user_uuid"];
+  [dic setObject:[self.util getUid] forKey:@"user_uuid"];
+  if(self.appListString){
+    [dic setObject:self.appListString forKey:@"applist"];
+    self.appListString = nil;
+  }
 
   self.isSending = true;
   self.lastTime = [[NSDate dateWithTimeIntervalSinceNow:0] timeIntervalSince1970];
