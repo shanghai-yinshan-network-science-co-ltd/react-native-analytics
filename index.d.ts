@@ -9,6 +9,8 @@ declare module 'react-native-analytics' {
 
   export function setWarning(isWarning: boolean): string;
 
+  export function setOtaVersion(version: string): string;
+
   export function saveBusinessEvent(
       businessName: string,
       data?: { infoData: Record<string, any>, needExtraData?: boolean },

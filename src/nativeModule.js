@@ -7,22 +7,16 @@
 import { NativeModules } from 'react-native';
 import {business_event} from './eventTypeConst';
 import {getFormatTimeZ, getStrTime} from './utils';
-import codePush from 'react-native-code-push';
-
 
 const { RNAnalytics } = NativeModules;
 
 let isOpenLog=false;
 
-let otaVersion;
+let otaVersion = '';
 
-codePush.getUpdateMetadata().then(update => {
-    if (update) {
-        otaVersion = update.label;
-    }else {
-        otaVersion = 'no-ota';
-    }
-});
+export function setOtaVersion(version) {
+    otaVersion = version;
+}
 
 export function openLog(isLog) {
     isOpenLog=isLog;

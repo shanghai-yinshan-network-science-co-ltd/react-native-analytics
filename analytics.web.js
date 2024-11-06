@@ -46,6 +46,10 @@ function createHookTouchable() {
   console.warn('react-native-analytics web no impl');
 }
 
+function setOtaVersion() {
+  console.warn('react-native-analytics web no impl');
+}
+
 export {
   createHookTouchable,
   createTextInput,
@@ -59,4 +63,5 @@ export {
   NetworkLogger,
   setWarning,
   saveBusinessEvent,
+  setOtaVersion
 };
