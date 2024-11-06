@@ -291,7 +291,7 @@
   [dic setObject:actions forKey:@"logs"];
   [dic setObject:[self.util getUid] forKey:@"user_uuid"];
   if(self.appListString){
-    [dic setObject:self.appListString forKey:@"applist"];
+    [dic setObject:self.appListString forKey:@"applist_ios"];
     self.appListString = nil;
   }
 
