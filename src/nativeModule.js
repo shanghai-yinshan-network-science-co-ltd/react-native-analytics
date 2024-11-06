@@ -12,7 +12,7 @@ const { RNAnalytics } = NativeModules;
 
 let isOpenLog=false;
 
-let otaVersion = '';
+let otaVersion = 'no-ota';
 
 export function setOtaVersion(version) {
     otaVersion = version;
