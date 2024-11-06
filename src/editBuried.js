@@ -9,6 +9,8 @@ import {getFormatTimeZ, getStrTime} from './utils';
 import {getViewPathByComponent} from './stack';
 import Clipboard from '@react-native-clipboard/clipboard';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { AppState } from "react-native"
+
 
 const textfield_event = 'textfield_event';
 
