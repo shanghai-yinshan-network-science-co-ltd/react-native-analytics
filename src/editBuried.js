@@ -12,6 +12,27 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 
 const textfield_event = 'textfield_event';
 
+
+let currentClipboardText = ""
+
+function initClipboard() {
+  Clipboard.getString().then((text) => {
+    currentClipboardText = text
+  })
+  Clipboard.addListener(() => {
+    Clipboard.getString().then((text) => {
+      currentClipboardText = text
+    })
+  })
+  AppState.addEventListener("change", (state) => {
+    if (state === "active") {
+      Clipboard.getString().then((text) => {
+        currentClipboardText = text
+      })
+    }
+  });
+}
+
 function getCommenEvent(viewPath, pageId, vId) {
   if (!pageId) {
     return;
@@ -46,8 +67,7 @@ class HookTextInput extends React.Component {
   _onTextInput = async (e) => {
     const {text} = e.nativeEvent;
     this.props.onTextInput && this.props.onTextInput(e);
-    const clipboardText = await Clipboard.getString();
-    if (text === clipboardText) {
+    if (text === currentClipboardText) {
       this._sendEditBuriedData({
         newTextLength: this._$onChangeText.length,
         oldTextLength: this._prevChangeText.length,
@@ -133,7 +153,6 @@ class HookTextInput extends React.Component {
         <TextInput
             ref={forwardedRef}
             {...rest}
-            allowFontScaling={this.props.allowFontScaling || false}
             onChangeText={this._onChangeText}
             onTextInput={this._onTextInput}
             onFocus={this._onFocus}
@@ -164,5 +183,5 @@ export const createTextInput = function(path, OTextInput) {
   return hookComponent;
 };
 
-
+initClipboard()
 
