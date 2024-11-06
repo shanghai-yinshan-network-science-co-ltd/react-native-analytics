@@ -99,8 +99,8 @@ export const createHookTouchable = function(path, Touchable) {
           <Touchable
               ref={forwardedRef}
               {...rest}
-              onPress={!!this.props.onPress && this._onPress}
-              onLongPress={!!this.props.onLongPress && this._onLongPress}
+              onPress={this.props.onPress && this._onPress}
+              onLongPress={this.props.onLongPress && this._onLongPress}
           />
       );
     }
