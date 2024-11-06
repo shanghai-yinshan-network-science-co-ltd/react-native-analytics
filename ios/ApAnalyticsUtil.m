@@ -809,6 +809,17 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
 
+
++ (NSString*)dataToJson:(id )data{
+
+  NSError *parseError = nil;
+  NSData  *jsonData = [NSJSONSerialization dataWithJSONObject:data
+                                                      options:NSJSONWritingPrettyPrinted
+                                                        error:&parseError];
+  return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+}
+
+
 + (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString {
 
   if (jsonString == nil) {
