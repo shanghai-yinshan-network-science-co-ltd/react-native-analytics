@@ -19,11 +19,11 @@ if (__dirname.search('node_modules') === -1) {
 function transformerReactNative(content) {
   content = content.replace(
       `require('./Libraries/Components/TextInput/TextInput')`,
-      `require('react-native-analytics').createTextInput('./Libraries/Components/TextInput/TextInput',require('./Libraries/Components/TextInput/TextInput'))`,
+      `require('react-native-analytics').createTextInput('./Libraries/Components/TextInput/TextInput',require( './Libraries/Components/TextInput/TextInput' ))`,
   );
   content = content.replace(
       `require('./Libraries/Components/Pressable/Pressable').default`,
-      `require('react-native-analytics').createHookTouchable('./Libraries/Components/Pressable/Pressable',require('./Libraries/Components/Pressable/Pressable').default)`,
+      `require('react-native-analytics').createHookTouchable('./Libraries/Components/Pressable/Pressable',require( './Libraries/Components/Pressable/Pressable' ).default)`,
   );
   [
     './Libraries/Text/Text',
@@ -35,7 +35,7 @@ function transformerReactNative(content) {
   ].forEach((value)=>{
     content = content.replace(
         `require('${value}')`,
-        `require('react-native-analytics').createHookTouchable('${value}',require('${value}'))`,
+        `require('react-native-analytics').createHookTouchable('${value}',require( '${value}' ))`,
     );
   })
   return content;
