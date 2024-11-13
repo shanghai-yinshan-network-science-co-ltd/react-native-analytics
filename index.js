@@ -10,7 +10,8 @@ import {
     NetworkLogger,
     setWarning,
     saveBusinessEvent,
-    clickEvent
+    clickEvent,
+    setOtaVersion
 } from './analytics'
 
 export {
@@ -25,7 +26,8 @@ export {
     NetworkLogger,
     setWarning,
     saveBusinessEvent,
-    clickEvent
+    clickEvent,
+    setOtaVersion
 };
 export default {
     createTextInput,
@@ -39,5 +41,6 @@ export default {
     NetworkLogger,
     setWarning,
     saveBusinessEvent,
-    clickEvent
+    clickEvent,
+    setOtaVersion
 };
