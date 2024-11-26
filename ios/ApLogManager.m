@@ -438,6 +438,8 @@
   if(!_runId){
     NSDateFormatter *format = [[NSDateFormatter alloc] init];
     [format setDateFormat:@"yyyyMMddHHmmss"];
+    [format setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]]; // 确保不带 AM/PM
+    [format setTimeZone:[NSTimeZone localTimeZone]];
     NSString *formatDateString = [format stringFromDate:[NSDate date]];
     _runId = [NSString stringWithFormat:@"%@_1", formatDateString];
   }

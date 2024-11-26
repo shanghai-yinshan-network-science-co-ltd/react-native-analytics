@@ -616,6 +616,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 +(NSString*)getFormateLocalDate:(NSDate *)date{
   NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
   [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+  [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]]; // 确保不带 AM/PM
+  [formatter setTimeZone:[NSTimeZone localTimeZone]];
   NSString *time_now = [formatter stringFromDate:date];
   return time_now;
 }
@@ -625,6 +627,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 {
   NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
   [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+  [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]]; // 确保不带 AM/PM
+  [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
   NSDate *dateFormatted = [dateFormatter dateFromString:localDate];
   NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:@"UTC"];
   [dateFormatter setTimeZone:timeZone];
