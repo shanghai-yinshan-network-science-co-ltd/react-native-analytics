@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.3.2",
-    "dayjs": "^1.10.7"
+    "dayjs": "^1.10.7",
+    "lodash": "^4.17.21"
   },
   "homepage": "https://github.com/shanghai-yinshan-network-science-co-ltd/react-native-analytics/blob/master/README.md",
   "peerDependencies": {
