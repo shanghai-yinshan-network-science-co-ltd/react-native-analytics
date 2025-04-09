@@ -1,5 +1,5 @@
 
-package com.reactlibrary;
+package com.reactysanalytics;
 
 import android.os.Bundle;
 
