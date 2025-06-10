@@ -114,390 +114,402 @@
         return;
     }
 
-    NSArray *appInfos = @[
-      @{
-        @"appName":@"Maya",
-        @"appBundleId": @"com.paymaya.ios",
-        @"appScheme":@"paymaya://",
-      },
-      @{
-        @"appName":@"gCash",
-        @"appBundleId": @"com.globetel.gcash",
-        @"appScheme":@"gcash://",
-      },
-      @{
-        @"appName":@"Bpi",
-        @"appBundleId": @"com.bpi.ng.app",
-        @"appScheme":@"BPISchemes://",
-      },
-      @{
-        @"appName":@"Gotyme",
-        @"appBundleId": @"ph.com.gotyme",
-        @"appScheme":@"gotyme://",
-      },
-      @{
-        @"appName":@"GlobeOne",
-        @"appBundleId": @"ph.com.globe.GlobeOneSuperApp",
-        @"appScheme":@"globeone://",
-      },
-      @{
-        @"appName":@"Paypal",
-        @"appBundleId": @"com.yourcompany.PPClient",
-        @"appScheme":@"paymaya://",
-      },
-      @{
-        @"appName":@"Billease",
-        @"appBundleId": @"com.billease",
-        @"appScheme":@"billease://",
-      },
-      @{
-        @"appName":@"JuanHand",
-        @"appBundleId": @"com.finvovs.juanhand",
-        @"appScheme":@"juanhand://",
-      },
-      @{
-        @"appName":@"Coins",
-        @"appBundleId": @"gctp.Coins",
-        @"appScheme":@"coins://",
-      },
-      @{
-        @"appName":@"币安",
-        @"appBundleId": @"com.czzhao.binance",
-        @"appScheme":@"bnc://",
-      },
-      @{
-        @"appName":@"shopee",
-        @"appBundleId": @"com.beeasy.shopee.ph",
-        @"appScheme":@"shopeeph://",
-      },
-      @{
-        @"appName":@"Tiktok",
-        @"appBundleId": @"com.ss.iphone.ugc.Ame",
-        @"appScheme":@"tiktok://",
-      },
-      @{
-        @"appName":@"Lazada",
-        @"appBundleId": @"com.LazadaSEA.Lazada",
-        @"appScheme":@"Lazada://",
-      },
-      @{
-        @"appName":@"TONIK",
-        @"appBundleId": @"com.mobile.tonik",
-        @"appScheme":@"tonikapp://",
-      },
-      @{
-        @"appName":@"Cashalo",
-        @"appBundleId": @"com.oriente.express.cashalo",
-        @"appScheme":@"cashalo://",
-      },
-      @{
-        @"appName":@"Skyro",
-        @"appBundleId": @"io.breezeventures.mb",
-        @"appScheme":@"skyro://",
-      },
-      @{
-        @"appName":@"Spotify",
-        @"appBundleId": @"com.spotify.client",
-        @"appScheme":@"spotify://",
-      },
-      @{
-        @"appName":@"foodpanda",
-        @"appBundleId": @"com.global.foodpanda.ios",
-        @"appScheme":@"foodpanda://",
-      },
-      @{
-        @"appName":@"Facebook",
-        @"appBundleId": @"com.facebook.Facebook",
-        @"appScheme":@"fb://",
-      },
-      @{
-        @"appName":@"Whatsapp",
-        @"appBundleId": @"net.whatsapp.WhatsApp",
-        @"appScheme":@"whatsApp://",
-      },
-      @{
-        @"appName":@"UnionBank",
-        @"appBundleId": @"com.unionbankph.online",
-        @"appScheme":@"evgdysan://",
-      },
-      @{
-        @"appName":@"Tongi’s Go",
-        @"appBundleId": @"com.tongitsgo.play",
-        @"appScheme":@"tongitsgo://",
-      },
-      @{
-        @"appName":@"Agoda",
-        @"appBundleId": @"com.agoda.consumer",
-        @"appScheme":@"agoda://",
-      },
-      @{
-        @"appName":@"Jobstreet",
-        @"appBundleId": @"com.jobstreet.jobstreet",
-        @"appScheme":@"com.jobstreet.jobstreet://",
-      },
-      @{
-        @"appName":@"Indeed",
-        @"appBundleId": @"com.indeed.JobSearch",
-        @"appScheme":@"indeedjobsearch://",
-      },
-      @{
-        @"appName":@"AirAsia Move",
-        @"appBundleId": @"com.airasia.mobile",
-        @"appScheme":@"airasia://",
-      },
-      @{
-        @"appName":@"Cebu Pacific",
-        @"appBundleId": @"com.navitaire.nps.5j",
-        @"appScheme":@"insidercebupacificuat://",
-      },
-      @{
-        @"appName":@"Linkedin",
-        @"appBundleId": @"com.linkedin.LinkedIn",
-        @"appScheme":@"linkedin://",
-      },
 
-    @{
-      @"appName":@"LANDBANK",
-      @"appBundleId": @"com.landbank.mobilebanking",
-      @"appScheme":@"landbank://",
-    },
-    @{
-      @"appName":@"Digido",
-      @"appBundleId": @"ph.digido.app",
-      @"appScheme":@"digido://",
-    },
-    @{
-      @"appName":@"EasyPeso",
-      @"appBundleId": @"com.easypeso",
-      @"appScheme":@"easypeso://",
-    },
-    @{
-      @"appName":@"Hellomoney",
-      @"appBundleId": @"com.aub.HelloMoney",
-      @"appScheme":@"hellomoney://",
-    },
-    @{
-      @"appName":@"Pesoloan",
-      @"appBundleId": @"com.pesoloan",
-      @"appScheme":@"pesoloan://",
-    },
+        NSArray *appInfos = @[
+          @{
+            @"appName":@"Maya",
+            @"appBundleId": @"com.paymaya.ios",
+            @"appScheme":@"paymaya://",
+          },
+          @{
+            @"appName":@"gCash",
+            @"appBundleId": @"com.globetel.gcash",
+            @"appScheme":@"gcash://",
+          },
+          @{
+            @"appName":@"Bpi",
+            @"appBundleId": @"com.bpi.ng.app",
+            @"appScheme":@"BPISchemes://",
+          },
+          @{
+            @"appName":@"Gotyme",
+            @"appBundleId": @"ph.com.gotyme",
+            @"appScheme":@"gotyme://",
+          },
+          @{
+            @"appName":@"GlobeOne",
+            @"appBundleId": @"ph.com.globe.GlobeOneSuperApp",
+            @"appScheme":@"globeone://",
+          },
+          @{
+            @"appName":@"Paypal",
+            @"appBundleId": @"com.yourcompany.PPClient",
+            @"appScheme":@"paymaya://",
+          },
+          @{
+            @"appName":@"Billease",
+            @"appBundleId": @"com.billease",
+            @"appScheme":@"billease://",
+          },
+          @{
+            @"appName":@"JuanHand",
+            @"appBundleId": @"com.finvovs.juanhand",
+            @"appScheme":@"juanhand://",
+          },
+          @{
+            @"appName":@"Coins",
+            @"appBundleId": @"gctp.Coins",
+            @"appScheme":@"coins://",
+          },
+          @{
+            @"appName":@"币安",
+            @"appBundleId": @"com.czzhao.binance",
+            @"appScheme":@"bnc://",
+          },
+          @{
+            @"appName":@"shopee",
+            @"appBundleId": @"com.beeasy.shopee.ph",
+            @"appScheme":@"shopeeph://",
+          },
+          @{
+            @"appName":@"Tiktok",
+            @"appBundleId": @"com.ss.iphone.ugc.Ame",
+            @"appScheme":@"tiktok://",
+          },
+          @{
+            @"appName":@"Lazada",
+            @"appBundleId": @"com.LazadaSEA.Lazada",
+            @"appScheme":@"Lazada://",
+          },
+          @{
+            @"appName":@"TONIK",
+            @"appBundleId": @"com.mobile.tonik",
+            @"appScheme":@"tonikapp://",
+          },
+          @{
+            @"appName":@"Cashalo",
+            @"appBundleId": @"com.oriente.express.cashalo",
+            @"appScheme":@"cashalo://",
+          },
+          @{
+            @"appName":@"Skyro",
+            @"appBundleId": @"io.breezeventures.mb",
+            @"appScheme":@"skyro://",
+          },
+          @{
+            @"appName":@"Spotify",
+            @"appBundleId": @"com.spotify.client",
+            @"appScheme":@"spotify://",
+          },
+          @{
+            @"appName":@"foodpanda",
+            @"appBundleId": @"com.global.foodpanda.ios",
+            @"appScheme":@"foodpanda://",
+          },
+          @{
+            @"appName":@"Facebook",
+            @"appBundleId": @"com.facebook.Facebook",
+            @"appScheme":@"fb://",
+          },
+          @{
+            @"appName":@"Whatsapp",
+            @"appBundleId": @"net.whatsapp.WhatsApp",
+            @"appScheme":@"whatsApp://",
+          },
+          @{
+            @"appName":@"UnionBank",
+            @"appBundleId": @"com.unionbankph.online",
+            @"appScheme":@"evgdysan://",
+          },
+          @{
+            @"appName":@"Cash Mart Philippines",
+            @"appBundleId": @"com.cashmart.cashmart",
+            @"appScheme":@"fb174472730476253://",
+          },
+          @{
+            @"appName":@"Tongi’s Go",
+            @"appBundleId": @"com.tongitsgo.play",
+            @"appScheme":@"tongitsgo://",
+          },
+          @{
+            @"appName":@"Home Credit Online Loan App",
+            @"appBundleId": @"ph.homecredit.capp",
+            @"appScheme":@"line3rdp.ph.homecredit.capp://",
+          },
+          @{
+            @"appName":@"Agoda",
+            @"appBundleId": @"com.agoda.consumer",
+            @"appScheme":@"agoda://",
+          },
+          @{
+            @"appName":@"Jobstreet",
+            @"appBundleId": @"com.jobstreet.jobstreet",
+            @"appScheme":@"com.jobstreet.jobstreet://",
+          },
+          @{
+            @"appName":@"Indeed",
+            @"appBundleId": @"com.indeed.JobSearch",
+            @"appScheme":@"indeedjobsearch://",
+          },
+          @{
+            @"appName":@"AirAsia Move",
+            @"appBundleId": @"com.airasia.mobile",
+            @"appScheme":@"airasia://",
+          },
+          @{
+            @"appName":@"Cebu Pacific",
+            @"appBundleId": @"com.navitaire.nps.5j",
+            @"appScheme":@"insidercebupacificuat://",
+          },
+          @{
+            @"appName":@"Linkedin",
+            @"appBundleId": @"com.linkedin.LinkedIn",
+            @"appScheme":@"linkedin://",
+          },
 
-
-
-      @{
-        @"appName":@"OwnBank",
-        @"appBundleId": @"com.ownbank.app",
-        @"appScheme":@"ownbank://",
-      },
-      @{
-        @"appName":@"Octopus",
-        @"appBundleId": @"com.octopuscards.octopus",
-        @"appScheme":@"octopus://",
-      },
-      @{
-        @"appName":@"Splitwise",
-        @"appBundleId": @"com.Splitwise.SplitwiseMobile",
-        @"appScheme":@"splitwise://",
-      },
-      @{
-        @"appName":@"Chinabank",
-        @"appBundleId": @"ph.chinabank.digital",
-        @"appScheme":@"chinabank://",
-      },
-      @{
-        @"appName":@"World app",
-        @"appBundleId": @"org.worldcoin.insight",
-        @"appScheme":@"worldapp://",
-      },
-
-
-      @{
-        @"appName":@"IQ Option",
-        @"appBundleId": @"com.trading.iqoption",
-        @"appScheme":@"iqoption://",
-      },
-      @{
-        @"appName":@"Moca",
-        @"appBundleId": @"com.xlkash.mabilis.moca.loan",
-        @"appScheme":@"moca://",
-      },
-      @{
-        @"appName":@"Trust",
-        @"appBundleId": @"com.sixdays.trust",
-        @"appScheme":@"trust://",
-      },
-      @{
-        @"appName":@"komo",
-        @"appBundleId": @"ph.komo.app",
-        @"appScheme":@"komo://",
-      },
-      @{
-        @"appName":@"Taptapsend",
-        @"appBundleId": @"com.taptapsend.TaptapSend",
-        @"appScheme":@"taptapsend://",
-      },
-
-  @{
-        @"appName":@"SweatWallet",
-        @"appBundleId": @"com.sweateconomy.wallet",
-        @"appScheme":@"sweat://",
-      },
-      @{
-        @"appName":@"EasyLoan",
-        @"appBundleId": @"mn.app.easyloan",
-        @"appScheme":@"fb574404829945253://",
-      },
-      @{
-        @"appName":@"MetaTrader 5",
-        @"appBundleId": @"net.metaquotes.MetaTrader5Terminal",
-        @"appScheme":@"metatrader5://",
-      },
-      @{
-        @"appName":@"PH Sun Life",
-        @"appBundleId": @"com.sunlife.ph.sunlifeph",
-        @"appScheme":@"sunlifeph://",
-      },
-      @{
-        @"appName":@"XM",
-        @"appBundleId": @"com.xm.WebApp",
-        @"appScheme":@"xm://",
-      },
+        @{
+          @"appName":@"LANDBANK",
+          @"appBundleId": @"com.landbank.mobilebanking",
+          @"appScheme":@"landbank://",
+        },
+        @{
+          @"appName":@"Digido",
+          @"appBundleId": @"ph.digido.app",
+          @"appScheme":@"digido://",
+        },
+        @{
+          @"appName":@"EasyPeso",
+          @"appBundleId": @"com.easypeso",
+          @"appScheme":@"easypeso://",
+        },
+        @{
+          @"appName":@"Hellomoney",
+          @"appBundleId": @"com.aub.HelloMoney",
+          @"appScheme":@"hellomoney://",
+        },
+        @{
+          @"appName":@"Pesoloan",
+          @"appBundleId": @"com.pesoloan",
+          @"appScheme":@"pesoloan://",
+        },
 
 
 
+          @{
+            @"appName":@"OwnBank",
+            @"appBundleId": @"com.ownbank.app",
+            @"appScheme":@"ownbank://",
+          },
+          @{
+            @"appName":@"Octopus",
+            @"appBundleId": @"com.octopuscards.octopus",
+            @"appScheme":@"octopus://",
+          },
+          @{
+            @"appName":@"Splitwise",
+            @"appBundleId": @"com.Splitwise.SplitwiseMobile",
+            @"appScheme":@"splitwise://",
+          },
+          @{
+            @"appName":@"Chinabank",
+            @"appBundleId": @"ph.chinabank.digital",
+            @"appScheme":@"chinabank://",
+          },
+          @{
+            @"appName":@"World app",
+            @"appBundleId": @"org.worldcoin.insight",
+            @"appScheme":@"worldapp://",
+          },
+
+
+          @{
+            @"appName":@"IQ Option",
+            @"appBundleId": @"com.trading.iqoption",
+            @"appScheme":@"iqoption://",
+          },
+          @{
+            @"appName":@"Moca",
+            @"appBundleId": @"com.xlkash.mabilis.moca.loan",
+            @"appScheme":@"moca://",
+          },
+          @{
+            @"appName":@"Trust",
+            @"appBundleId": @"com.sixdays.trust",
+            @"appScheme":@"trust://",
+          },
+          @{
+            @"appName":@"komo",
+            @"appBundleId": @"ph.komo.app",
+            @"appScheme":@"komo://",
+          },
+          @{
+            @"appName":@"Taptapsend",
+            @"appBundleId": @"com.taptapsend.TaptapSend",
+            @"appScheme":@"taptapsend://",
+          },
+
       @{
-        @"appName":@"UnionDigital",
-        @"appBundleId": @"ph.uniondigital.superapp",
-        @"appScheme":@"ph.uniondigital.superapp://",
-      },
-      @{
-        @"appName":@"Payoneer",
-        @"appBundleId": @"com.Payoneer.PayoneerDevAdHoc",
-        @"appScheme":@"payoneer.app.link://",
-      },
-      @{
-        @"appName":@"DiskarTech",
-        @"appBundleId": @"com.diskartech.mobile",
-        @"appScheme":@"diskartechpx://",
-      },
-      @{
-        @"appName":@"CBS Personal",
-        @"appBundleId": @"com.cbs.mobilebanking",
-        @"appScheme":@"chinabanksavings://",
-      },
-      @{
-        @"appName":@"DirectLoan",
-        @"appBundleId": @"com.megalink.directLoan",
-        @"appScheme":@"dloan://",
-      },
+            @"appName":@"SweatWallet",
+            @"appBundleId": @"com.sweateconomy.wallet",
+            @"appScheme":@"sweat://",
+          },
+          @{
+            @"appName":@"EasyLoan",
+            @"appBundleId": @"mn.app.easyloan",
+            @"appScheme":@"fb574404829945253://",
+          },
+          @{
+            @"appName":@"MetaTrader 5",
+            @"appBundleId": @"net.metaquotes.MetaTrader5Terminal",
+            @"appScheme":@"metatrader5://",
+          },
+          @{
+            @"appName":@"PH Sun Life",
+            @"appBundleId": @"com.sunlife.ph.sunlifeph",
+            @"appScheme":@"sunlifeph://",
+          },
+          @{
+            @"appName":@"XM",
+            @"appBundleId": @"com.xm.WebApp",
+            @"appScheme":@"xm://",
+          },
 
 
 
-      @{
-        @"appName":@"myTOYOTA",
-        @"appBundleId": @"com.toyotawallet.ph",
-        @"appScheme":@"toyota-wallet-ph://",
-      },
-      @{
-        @"appName":@"U Mobile App",
-        @"appBundleId": @"com.clearmindai.ussc.panalo.wallet",
-        @"appScheme":@"fb678363717494134://",
-      },
-      @{
-        @"appName":@"Cebuana Xpress",
-        @"appBundleId": @"com.ncvi.cebxpress",
-        @"appScheme":@"fb317513330114413://",
-      },
-      @{
-        @"appName":@"OKX",
-        @"appBundleId": @"com.okex.OKExAppstoreFull",
-        @"appScheme":@"okex://",
-      },
-      @{
-        @"appName":@"zukì",
-        @"appBundleId": @"ph.com.sbfinance.zuki.customer",
-        @"appScheme":@"ph.com.sbfinance.zuki.customer://",
-      },
-
-
-      @{
-        @"appName":@"BanKo Mobile",
-        @"appBundleId": @"com.banko.cm",
-        @"appScheme":@"bankocm://",
-      },
-      @{
-        @"appName":@"AUB",
-        @"appBundleId": @"com.aub.mobile.AUBMobileBanking",
-        @"appScheme":@"aubmobileapp://",
-      },
-      @{
-        @"appName":@"eCebuana 2.0",
-        @"appBundleId": @"com.ncvi.eCebuana2",
-        @"appScheme":@"fb774871643140800://",
-      },
-      @{
-        @"appName":@"Money Manager Expense & Budget",
-        @"appBundleId": @"com.realbyteapps.MoneyManager2",
-        @"appScheme":@"com.realbyteapps.MoneyManager2://",
-      },
-      @{
-        @"appName":@"Advance",
-        @"appBundleId": @"com.advanceph.mobile",
-        @"appScheme":@"com.advanceph.mobile://",
-      },
+          @{
+            @"appName":@"UnionDigital",
+            @"appBundleId": @"ph.uniondigital.superapp",
+            @"appScheme":@"ph.uniondigital.superapp://",
+          },
+          @{
+            @"appName":@"Payoneer",
+            @"appBundleId": @"com.Payoneer.PayoneerDevAdHoc",
+            @"appScheme":@"payoneer.app.link://",
+          },
+          @{
+            @"appName":@"DiskarTech",
+            @"appBundleId": @"com.diskartech.mobile",
+            @"appScheme":@"diskartechpx://",
+          },
+          @{
+            @"appName":@"CBS Personal",
+            @"appBundleId": @"com.cbs.mobilebanking",
+            @"appScheme":@"chinabanksavings://",
+          },
+          @{
+            @"appName":@"DirectLoan",
+            @"appBundleId": @"com.megalink.directLoan",
+            @"appScheme":@"dloan://",
+          },
 
 
 
-      @{
-        @"appName":@"Lista",
-        @"appBundleId": @"com.lista.ph",
-        @"appScheme":@"com.lista.ph://",
-      },
-      @{
-        @"appName":@"Wise",
-        @"appBundleId": @"com.transferwise.Transferwise",
-        @"appScheme":@"transferwise://",
-      },
-      @{
-        @"appName":@"PayMe",
-        @"appBundleId": @"io.attabot.paymeindia",
-        @"appScheme":@"io.attabot.paymeindia://",
-      },
-      @{
-        @"appName":@"western union",
-        @"appBundleId": @"com.westernunion.track.location.finder.global",
-        @"appScheme":@"wuapp://",
-      },
-      @{
-        @"appName":@"PalawanPay",
-        @"appBundleId": @"com.palawanpay.ewallet",
-        @"appScheme":@"fb799208697589820://",
-      },
+          @{
+            @"appName":@"myTOYOTA",
+            @"appBundleId": @"com.toyotawallet.ph",
+            @"appScheme":@"toyota-wallet-ph://",
+          },
+          @{
+            @"appName":@"U Mobile App",
+            @"appBundleId": @"com.clearmindai.ussc.panalo.wallet",
+            @"appScheme":@"fb678363717494134://",
+          },
+          @{
+            @"appName":@"Cebuana Xpress",
+            @"appBundleId": @"com.ncvi.cebxpress",
+            @"appScheme":@"fb317513330114413://",
+          },
+          @{
+            @"appName":@"OKX",
+            @"appBundleId": @"com.okex.OKExAppstoreFull",
+            @"appScheme":@"okex://",
+          },
+          @{
+            @"appName":@"zukì",
+            @"appBundleId": @"ph.com.sbfinance.zuki.customer",
+            @"appScheme":@"ph.com.sbfinance.zuki.customer://",
+          },
 
 
-      @{
-        @"appName":@"My Sun Life PH",
-        @"appBundleId": @"com.sunlifecorp.cpma.touchpoint.slocpi.ph",
-        @"appScheme":@"com.sunlifecorp.cpma.touchpoint.slocpi.ph://",
-      },
-      @{
-        @"appName":@"RCBC",
-        @"appBundleId": @"com.rcbc.mobile",
-        @"appScheme":@"com.rcbc.mobile.sit://",
-      },
-      @{
-        @"appName":@"Hello Pag-IBIG",
-        @"appBundleId": @"com.aub.HelloMoney.pagibig",
-        @"appScheme":@"hellopagibig://",
-      },
-      @{
-        @"appName":@"Budget",
-        @"appBundleId": @"com.lightByte.Budget",
-        @"appScheme":@"Budget://",
-      },
+          @{
+            @"appName":@"BanKo Mobile",
+            @"appBundleId": @"com.banko.cm",
+            @"appScheme":@"bankocm://",
+          },
+          @{
+            @"appName":@"AUB",
+            @"appBundleId": @"com.aub.mobile.AUBMobileBanking",
+            @"appScheme":@"aubmobileapp://",
+          },
+          @{
+            @"appName":@"eCebuana 2.0",
+            @"appBundleId": @"com.ncvi.eCebuana2",
+            @"appScheme":@"fb774871643140800://",
+          },
+          @{
+            @"appName":@"Money Manager Expense & Budget",
+            @"appBundleId": @"com.realbyteapps.MoneyManager2",
+            @"appScheme":@"com.realbyteapps.MoneyManager2://",
+          },
+          @{
+            @"appName":@"Advance",
+            @"appBundleId": @"com.advanceph.mobile",
+            @"appScheme":@"com.advanceph.mobile://",
+          },
 
 
-    ];
+
+          @{
+            @"appName":@"Lista",
+            @"appBundleId": @"com.lista.ph",
+            @"appScheme":@"com.lista.ph://",
+          },
+          @{
+            @"appName":@"Wise",
+            @"appBundleId": @"com.transferwise.Transferwise",
+            @"appScheme":@"transferwise://",
+          },
+          @{
+            @"appName":@"PayMe",
+            @"appBundleId": @"io.attabot.paymeindia",
+            @"appScheme":@"io.attabot.paymeindia://",
+          },
+          @{
+            @"appName":@"western union",
+            @"appBundleId": @"com.westernunion.track.location.finder.global",
+            @"appScheme":@"wuapp://",
+          },
+          @{
+            @"appName":@"PalawanPay",
+            @"appBundleId": @"com.palawanpay.ewallet",
+            @"appScheme":@"fb799208697589820://",
+          },
+
+
+          @{
+            @"appName":@"My Sun Life PH",
+            @"appBundleId": @"com.sunlifecorp.cpma.touchpoint.slocpi.ph",
+            @"appScheme":@"com.sunlifecorp.cpma.touchpoint.slocpi.ph://",
+          },
+          @{
+            @"appName":@"RCBC",
+            @"appBundleId": @"com.rcbc.mobile",
+            @"appScheme":@"com.rcbc.mobile.sit://",
+          },
+          @{
+            @"appName":@"Hello Pag-IBIG",
+            @"appBundleId": @"com.aub.HelloMoney.pagibig",
+            @"appScheme":@"hellopagibig://",
+          },
+          @{
+            @"appName":@"Budget",
+            @"appBundleId": @"com.lightByte.Budget",
+            @"appScheme":@"Budget://",
+          },
+
+
+        ];
+        
     NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
     [appInfos enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
       if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:obj[@"appScheme"]]]){
