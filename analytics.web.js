@@ -50,6 +50,10 @@ function setOtaVersion() {
   console.warn('react-native-analytics web no impl');
 }
 
+function uploadLogImmediately() {
+  console.warn('react-native-analytics web no impl');
+}
+
 export {
   createHookTouchable,
   createTextInput,
@@ -63,5 +67,6 @@ export {
   NetworkLogger,
   setWarning,
   saveBusinessEvent,
-  setOtaVersion
+  setOtaVersion,
+  uploadLogImmediately
 };

@@ -5,7 +5,8 @@ import {
   clearUserId,
   setUserId,
   saveBusinessEvent,
-  setOtaVersion
+  setOtaVersion,
+  uploadLogImmediately
 } from './src/nativeModule';
 import {createTextInput} from './src/editBuried';
 import {NetworkLogger} from './src/network/NetworkLogger';
@@ -24,5 +25,6 @@ export {
   clickEvent,
   createTextInput,
   createHookTouchable,
-  setOtaVersion
+  setOtaVersion,
+  uploadLogImmediately
 };

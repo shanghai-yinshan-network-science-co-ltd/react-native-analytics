@@ -45,6 +45,10 @@ export function clearUserId() {
     RNAnalytics.clearUserId();
 }
 
+export function uploadLogImmediately() {
+    RNAnalytics.uploadLogImmediately();
+}
+
 /**
  *
  * @param businessName

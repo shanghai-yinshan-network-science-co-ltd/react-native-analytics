@@ -11,7 +11,8 @@ import {
     setWarning,
     saveBusinessEvent,
     clickEvent,
-    setOtaVersion
+    setOtaVersion,
+    uploadLogImmediately
 } from './analytics'
 
 export {
@@ -27,7 +28,8 @@ export {
     setWarning,
     saveBusinessEvent,
     clickEvent,
-    setOtaVersion
+    setOtaVersion,
+    uploadLogImmediately
 };
 export default {
     createTextInput,
@@ -42,5 +44,6 @@ export default {
     setWarning,
     saveBusinessEvent,
     clickEvent,
-    setOtaVersion
+    setOtaVersion,
+    uploadLogImmediately
 };
