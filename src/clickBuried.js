@@ -85,11 +85,13 @@ export const createHookTouchable = function(path, Touchable) {
         clickEvent(this, {type: 'press', ...this.props.pageInfo}, this.pageId);
         this.props.onPress(...args);
       }.bind(this);
-      this._onPress = debounce(
-          this._onPress,
-          300,
-          { leading: true, trailing: false } // 关键配置
-      );
+      if (!this.props.disableDebounce) {
+        this._onPress = debounce(
+            this._onPress,
+            300,
+            { leading: true, trailing: false } // 关键配置
+        );
+      }
       this._onLongPress = function(...args) {
         this.pageId = this.pageId || getCurrentPageId()
         clickEvent(this, {type: 'longPress', ...this.props.pageInfo},this.pageId);

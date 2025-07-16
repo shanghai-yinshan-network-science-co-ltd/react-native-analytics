@@ -33,6 +33,7 @@ export let NetworkLogger = function () {
 
     function onOpen(method, url, xhr) {
         xhr._log = {...DEFAULT};
+        xhr._log.page_id = getCurrentPageId();
     }
 
     function onRequestHeaderCallback(header, value, xhr) {
@@ -42,7 +43,6 @@ export let NetworkLogger = function () {
 
         xhr._log.start_time = getStrTime(Date.now());
         xhr._log.start_time_z = getFormatTimeZ(Date.now());
-        xhr._log.page_id = getCurrentPageId();
 
         xhr._log.request_type = xhr._method;
         xhr._log.request_url = xhr._url;

@@ -57,6 +57,11 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
     }
 
 
+    @ReactMethod
+    public void uploadLogImmediately() {
+        MZLogAgent.uploadLogImmediately();
+    }
+
     private void emit(ReactContext context, String event, Bundle bundle) {
         if (bundle == null) {
             bundle = new Bundle();
