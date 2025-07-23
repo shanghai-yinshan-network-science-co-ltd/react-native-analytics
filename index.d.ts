@@ -16,6 +16,9 @@ declare module 'react-native-analytics' {
       data?: { infoData: Record<string, any>, needExtraData?: boolean },
   ): string;
 
+
+  export function uploadLogImmediately(userId: string): void;
+
   export function useAnalyticsScreen(): {
     navigationRef: any;
     onStateChange: () => void;
