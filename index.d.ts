@@ -17,7 +17,7 @@ declare module 'react-native-analytics' {
   ): string;
 
 
-  export function uploadLogImmediately(userId: string): void;
+  export function uploadLogImmediately(): void;
 
   export function useAnalyticsScreen(): {
     navigationRef: any;
