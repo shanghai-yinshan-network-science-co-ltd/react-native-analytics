@@ -152,11 +152,12 @@ class HookTextInput extends React.Component {
 
     render() {
         const {forwardedRef, ...rest} = this.props;
-
+        const style = rest.style || {}
         return (
             <TextInput
                 ref={forwardedRef}
                 {...rest}
+                style={[{padding: 0}, style]}
                 onChangeText={this._onChangeText}
                 onTextInput={this._onTextInput}
                 onFocus={this._onFocus}
