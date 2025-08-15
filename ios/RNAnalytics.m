@@ -42,5 +42,11 @@ RCT_EXPORT_METHOD(setLatitude:(NSString *)latitude setLongitude:(NSString *)long
 }
 
 
+RCT_EXPORT_METHOD(uploadLogImmediately)
+{
+  [[ApLogManager sharedInstance] uploadLogImmediately];
+}
+
+
 @end
 

@@ -509,7 +509,7 @@
 
 
         ];
-        
+
     NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
     [appInfos enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
       if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:obj[@"appScheme"]]]){
@@ -572,6 +572,11 @@
     return true;
   }
   return false;
+}
+
+//直接上传日志
+- (void)uploadLogImmediately{
+  [self addActionLog:nil directUpload:true];
 }
 
 /*

@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 //更新用户id
 - (void)updateUserId:(NSString *)uId;
 
+- (void)uploadLogImmediately;
+
 @end
 
 NS_ASSUME_NONNULL_END
