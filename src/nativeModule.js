@@ -1,12 +1,13 @@
 /**
  * Created by cleverdou on 17/9/19.
  */
-'use strict';
+ 'use strict';
 
 
 import { NativeModules } from 'react-native';
 import {business_event} from './eventTypeConst';
 import {getFormatTimeZ, getStrTime} from './utils';
+import {getCurrentPageId} from "./pageBuried";
 
 const { RNAnalytics } = NativeModules;
 
@@ -60,6 +61,7 @@ export function saveBusinessEvent(businessName,{infoData,needExtraData= false} =
     const now = Date.now();
 
     const data = {
+        page_id: getCurrentPageId(),
         action_type: business_event,
         start_time: getStrTime(now),
         start_time_z: getFormatTimeZ(now),
@@ -67,6 +69,7 @@ export function saveBusinessEvent(businessName,{infoData,needExtraData= false} =
         log_time_z: getFormatTimeZ(now),
         event_name: businessName,
         page_info: infoData,
+
         needExtraData
     };
     sendBuriedData(data);
