@@ -19,7 +19,7 @@ declare module 'react-native-analytics' {
 
   export function uploadLogImmediately(): void;
 
-  export function useAnalyticsScreen(): {
+  export function useAnalyticsScreen(customerAction: (string)=>void): {
     navigationRef: any;
     onStateChange: () => void;
     onReady: () => void;
