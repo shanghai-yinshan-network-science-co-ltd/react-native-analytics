@@ -72,7 +72,7 @@ function handleAppStateChange(nextAppState) {
 }
 
 
-export function useAnalyticsScreen() {
+export function useAnalyticsScreen(customAction?: (pageName: string)=>void ) {
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef();
 
@@ -95,6 +95,7 @@ export function useAnalyticsScreen() {
       // Change this line to use another Mobile analytics SDK
       onPageEnd(previousRouteName);
       onPageStart(currentRouteName)
+      customAction?.(currentRouteName);
     }
 
     // Save the current route name for later comparison
