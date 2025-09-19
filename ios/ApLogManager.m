@@ -113,6 +113,27 @@
 
     if([bundleId isEqualToString:@"com.ys.credinex"]){
         NSArray *appInfos = @[
+                    @{
+                        @"appName":@"Blibli",
+                        @"appBundleId": @"com.blibli.mobile",
+                        @"appScheme":@"blibli://",
+                    },
+                    @{
+                        @"appName":@"Shopeepay",
+                        @"appBundleId": @"com.shopeepay.id",
+                        @"appScheme":@"shopeepayid://",
+                    },
+                    @{
+                        @"appName":@"Tokopedia",
+                        @"appBundleId": @"com.tokopedia.Tokopedia",
+                        @"appScheme":@"tokopedia://",
+                    },
+
+                    @{
+                        @"appName":@"OVO",
+                        @"appBundleId": @"ovo.id",
+                        @"appScheme":@"ovo://",
+                    },
             @{
                 @"appName":@"Easycash",
                 @"appBundleId": @"com.fintopia.investaja",
