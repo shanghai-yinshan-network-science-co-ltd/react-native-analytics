@@ -76,6 +76,9 @@ export const createHookTouchable = function(path, Touchable) {
     return paths.get(path);
   }
 
+  // 处理默认导出的情况
+  const Component = Touchable && Touchable.default ? Touchable.default : Touchable;
+
   class HookTouchable extends React.Component {
 
     constructor(props, context) {
@@ -103,7 +106,7 @@ export const createHookTouchable = function(path, Touchable) {
       const {forwardedRef, ...rest} = this.props;
 
       return (
-          <Touchable
+          <Component
               ref={forwardedRef}
               {...rest}
               onPress={this.props.onPress && this._onPress}
@@ -114,10 +117,20 @@ export const createHookTouchable = function(path, Touchable) {
   }
 
   const component = hoistNonReactStatics(React.forwardRef((props, ref) => {
-
     return <HookTouchable {...props} forwardedRef={ref} />;
-  }), Touchable);
-  component.propTypes = Touchable.propTypes;
-  paths.set(path, component);
-  return component;
+  }), Component);
+  component.propTypes = Component.propTypes;
+  if(Touchable && Touchable.default){
+    // 安全地拷贝所有属性并设置 default
+    const wrappedTouchable = Object.assign({}, Touchable, {
+      default: component
+    });
+    // 拷贝原型链上的属性
+    Object.setPrototypeOf(wrappedTouchable, Object.getPrototypeOf(Touchable));
+    paths.set(path, wrappedTouchable);
+    return wrappedTouchable;
+  } else {
+    paths.set(path, component);
+    return component;
+  }
 };
