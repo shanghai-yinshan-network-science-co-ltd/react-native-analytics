@@ -107,7 +107,8 @@ function getText(fiberNode) {
   } else {
     const name = getComponentName(fiberNode.type);
     if (props.source && name && name.includes("Image")) {
-      const source = Image.resolveAssetSource(props.source);
+      const propsSource = Array.isArray(props.source) ? props.source[0] : props.source;
+      const source = Image.resolveAssetSource(propsSource);
       return `image(${source.uri})&&`;
     }
     if (name && name.includes("TextInput")) {
