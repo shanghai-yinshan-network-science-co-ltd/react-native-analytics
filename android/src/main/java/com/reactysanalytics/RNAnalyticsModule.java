@@ -62,6 +62,14 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
         MZLogAgent.uploadLogImmediately();
     }
 
+
+    @ReactMethod
+    public void updateLocation(String longitude, String latitude, String locationType) {
+        MZLogAgent.updateLocation(longitude, latitude, locationType);
+    }
+
+
+
     private void emit(ReactContext context, String event, Bundle bundle) {
         if (bundle == null) {
             bundle = new Bundle();

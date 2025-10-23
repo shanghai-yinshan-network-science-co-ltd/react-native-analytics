@@ -12,7 +12,8 @@ import {
     saveBusinessEvent,
     clickEvent,
     setOtaVersion,
-    uploadLogImmediately
+    uploadLogImmediately,
+    updateLocation
 } from './analytics'
 
 export {
@@ -29,7 +30,8 @@ export {
     saveBusinessEvent,
     clickEvent,
     setOtaVersion,
-    uploadLogImmediately
+    uploadLogImmediately,
+    updateLocation
 };
 export default {
     createTextInput,
@@ -45,5 +47,6 @@ export default {
     saveBusinessEvent,
     clickEvent,
     setOtaVersion,
-    uploadLogImmediately
+    uploadLogImmediately,
+    updateLocation
 };

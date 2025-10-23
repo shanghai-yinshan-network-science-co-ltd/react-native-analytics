@@ -54,6 +54,10 @@ function uploadLogImmediately() {
   console.warn('react-native-analytics web no impl');
 }
 
+function updateLocation() {
+  console.warn('react-native-analytics web no impl');
+}
+
 export {
   createHookTouchable,
   createTextInput,
@@ -68,5 +72,6 @@ export {
   setWarning,
   saveBusinessEvent,
   setOtaVersion,
-  uploadLogImmediately
+  uploadLogImmediately,
+  updateLocation
 };

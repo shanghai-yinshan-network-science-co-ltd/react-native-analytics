@@ -1,10 +1,10 @@
 /**
  * Created by cleverdou on 17/9/19.
  */
- 'use strict';
+'use strict';
 
 
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import {business_event} from './eventTypeConst';
 import {getFormatTimeZ, getStrTime} from './utils';
 import {getCurrentPageId} from "./pageBuried";
@@ -75,3 +75,20 @@ export function saveBusinessEvent(businessName,{infoData,needExtraData= false} =
     sendBuriedData(data);
 }
 
+/**
+ * 更新位置信息
+ * @param longitude 经度
+ * @param latitude 纬度
+ * @param locationType 位置类型 (仅Android使用)
+ */
+export function updateLocation(longitude, latitude, locationType = '') {
+    if (RNAnalytics) {
+        if (Platform.OS === 'android') {
+            // Android端使用 updateLocation 方法
+            RNAnalytics.updateLocation(longitude, latitude, locationType);
+        } else if (Platform.OS === 'ios') {
+            // iOS端使用 setLatitude 方法
+            RNAnalytics.setLatitude(latitude, longitude);
+        }
+    }
+}

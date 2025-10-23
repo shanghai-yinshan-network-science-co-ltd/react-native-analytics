@@ -19,6 +19,8 @@ declare module 'react-native-analytics' {
 
   export function uploadLogImmediately(): void;
 
+  export function updateLocation(longitude: string, latitude: string, locationType?: string): void;
+
   export function useAnalyticsScreen(customerAction: (string)=>void): {
     navigationRef: any;
     onStateChange: () => void;
