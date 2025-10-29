@@ -51,7 +51,7 @@ export function uploadLogImmediately() {
         const timer = setTimeout(() => {
             RNAnalytics.uploadLogImmediately();
             clearTimeout(timer);
-        }, 500);
+        }, 200);
     } else if(Platform.OS === 'ios') {
         RNAnalytics.uploadLogImmediately();
     }
