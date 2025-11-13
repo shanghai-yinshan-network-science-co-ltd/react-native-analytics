@@ -50,8 +50,9 @@ function setOtaVersion() {
   console.warn('react-native-analytics web no impl');
 }
 
-function uploadLogImmediately() {
+function uploadLogImmediately(delay) {
   console.warn('react-native-analytics web no impl');
+  return Promise.resolve();
 }
 
 function updateLocation() {

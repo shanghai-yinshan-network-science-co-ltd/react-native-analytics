@@ -17,7 +17,7 @@ declare module 'react-native-analytics' {
   ): string;
 
 
-  export function uploadLogImmediately(): void;
+  export function uploadLogImmediately(delay?: number): Promise<void>;
 
   export function updateLocation(longitude: string, latitude: string, locationType?: string): void;
 

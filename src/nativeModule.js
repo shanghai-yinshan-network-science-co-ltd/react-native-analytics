@@ -46,15 +46,14 @@ export function clearUserId() {
     RNAnalytics.clearUserId();
 }
 
-export function uploadLogImmediately() {
-    if(Platform.OS === 'android') {
-        const timer = setTimeout(() => {
+export function uploadLogImmediately(delay) {
+    const timeout = delay !== undefined ? delay : (Platform.OS === 'android' ? 200 : 0);
+    return new Promise((resolve) => {
+        setTimeout(() => {
             RNAnalytics.uploadLogImmediately();
-            clearTimeout(timer);
-        }, 200);
-    } else if(Platform.OS === 'ios') {
-        RNAnalytics.uploadLogImmediately();
-    }
+            resolve();
+        }, timeout);
+    });
 }
 
 /**
