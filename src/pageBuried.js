@@ -78,7 +78,18 @@ export function useAnalyticsScreen(customAction?: (pageName: string)=>void ) {
 
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', handleAppStateChange)
+    // 加上防抖
+    let debounceTimer = null;
+    const debouncedHandleAppStateChange = (...args) => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      debounceTimer = setTimeout(() => {
+        handleAppStateChange(...args);
+        debounceTimer = null;
+      }, 300); // 300ms防抖
+    };
+    const subscription = AppState.addEventListener('change', debouncedHandleAppStateChange)
     return () => {
       subscription.remove()
     };
