@@ -71,8 +71,13 @@ function handleAppStateChange(nextAppState) {
   }
 }
 
-
-export function useAnalyticsScreen(customAction?: (pageName: string)=>void ) {
+/*
+actions: 这个方法数组，目前是承接三个方法，依次按照顺序是：
+1：神策的页面浏览事件
+2：神策的开始计时事件
+3：神策的结束计时事件
+*/
+export function useAnalyticsScreen(actions = []) {
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef();
 
@@ -106,7 +111,16 @@ export function useAnalyticsScreen(customAction?: (pageName: string)=>void ) {
       // Change this line to use another Mobile analytics SDK
       onPageEnd(previousRouteName);
       onPageStart(currentRouteName)
-      customAction?.(currentRouteName);
+
+      if(actions?.[0]){
+        actions?.[0]?.(currentRouteName);
+      }
+      if(actions?.[1]){
+        actions?.[1]?.('pageView', { pageName: currentRouteName });
+      }
+      if(actions?.[2]){
+        actions?.[2]?.('pageView', { pageName: previousRouteName });
+      }
     }
 
     // Save the current route name for later comparison
