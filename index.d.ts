@@ -21,7 +21,9 @@ declare module 'react-native-analytics' {
 
   export function updateLocation(longitude: string, latitude: string, locationType?: string): void;
 
-  export function useAnalyticsScreen(customerAction: (string)=>void): {
+
+  type Action = (...args: any[]) => void;
+  export function useAnalyticsScreen(actions?: Action[]): {
     navigationRef: any;
     onStateChange: () => void;
     onReady: () => void;
