@@ -116,10 +116,10 @@ export function useAnalyticsScreen(actions = []) {
         actions?.[0]?.(currentRouteName);
       }
       if(actions?.[1]){
-        actions?.[1]?.('pageView', { pageName: currentRouteName });
+        actions?.[1]?.(`pageView_${currentRouteName}`);
       }
       if(actions?.[2]){
-        actions?.[2]?.('pageView', { pageName: previousRouteName });
+        actions?.[2]?.(`pageView_${previousRouteName}`, { pageName: previousRouteName });
       }
     }
 
