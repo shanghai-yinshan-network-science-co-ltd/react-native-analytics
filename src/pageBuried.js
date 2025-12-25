@@ -16,6 +16,7 @@ import {lastClickId, resetLastClickId} from './clickBuried';
 import {
   useNavigationContainerRef,
 } from '@react-navigation/native';
+import {debounce} from 'lodash/function';
 
 let lastPageId;
 
@@ -173,9 +174,9 @@ export function getReferrerPageId() {
 }
 
 /**
- * 发送截屏埋点
+ * 发送截屏埋点（内部实现）
  */
-export function trackScreenshot() {
+function _trackScreenshot() {
   const pageId = getCurrentPageId() || '';
   const referrerPage = getReferrerPageId() || '';
   const screenshotTime = Date.now();
@@ -190,9 +191,22 @@ export function trackScreenshot() {
 }
 
 /**
- * 初始化录屏状态并发送录屏开始事件
+ * 发送截屏埋点（带防抖，500ms）
  */
-export function initRecordingState() {
+export const trackScreenshot = debounce(_trackScreenshot, 500, {
+  leading: true,  // 第一次调用立即执行
+  trailing: false, // 不执行最后一次调用
+});
+
+/**
+ * 初始化录屏状态并发送录屏开始事件（内部实现）
+ */
+function _initRecordingState() {
+  // 如果已经在录屏中，不重复开始
+  if (recordingState.isRecording) {
+    return;
+  }
+
   const startTime = Date.now();
   const startPage = getCurrentPageId() || '';
 
@@ -213,21 +227,25 @@ export function initRecordingState() {
 }
 
 /**
- * 结束录屏并发送埋点
+ * 初始化录屏状态并发送录屏开始事件（带防抖，500ms）
+ */
+export const initRecordingState = debounce(_initRecordingState, 500, {
+  leading: true,  // 第一次调用立即执行
+  trailing: false, // 不执行最后一次调用
+});
+
+/**
+ * 结束录屏并发送埋点（内部实现）
  * 注意：在安卓上可能没有录屏开始事件，如果检测到没有初始化录屏状态，
  * 会自动使用当前页面和时间作为开始信息
  */
-export function endRecordingAndTrack() {
+function _endRecordingAndTrack() {
   const { isRecording, startTime, startPage, pagesVisited } = recordingState;
   const endTime = Date.now();
   const endPage = getCurrentPageId() || '';
 
   // 如果没有录屏开始事件（安卓可能的情况），自动初始化一个开始状态
   if (!isRecording || startTime === null) {
-    // 使用当前页面作为开始页面，使用当前时间作为开始时间（duration 会很小或为0）
-    // 或者使用一个合理的默认开始时间（比如当前时间减去1秒）
-    const defaultStartTime = endTime - 1000; // 默认1秒前开始
-    const defaultStartPage = endPage || '';
 
     // 发送录屏结束事件（没有开始事件的情况）
     saveBusinessEvent('screen_recording_end', {
@@ -241,10 +259,10 @@ export function endRecordingAndTrack() {
     // 发送录屏埋点（没有开始事件的情况）
     saveBusinessEvent('screen_recording', {
       infoData: {
-        start_time: defaultStartTime,
+        start_time: 'unknown',
         end_time: endTime,
-        duration: endTime - defaultStartTime,
-        start_page: defaultStartPage,
+        duration: 0,
+        start_page: 'unknown',
         end_page: endPage,
         pages_visited: endPage ? [endPage] : [],
         no_start_event: true, // 标记没有开始事件
@@ -299,6 +317,14 @@ export function endRecordingAndTrack() {
     pagesVisited: [],
   };
 }
+
+/**
+ * 结束录屏并发送埋点（带防抖，500ms）
+ */
+export const endRecordingAndTrack = debounce(_endRecordingAndTrack, 500, {
+  leading: true,  // 第一次调用立即执行
+  trailing: false, // 不执行最后一次调用
+});
 
 /**
  * 获取录屏状态
