@@ -6,6 +6,7 @@ import {
     setUserId,
     useAnalyticsScreen,
     getCurrentPageId,
+    getReferrerPageId,
     setBuried,
     NetworkLogger,
     setWarning,
@@ -13,7 +14,11 @@ import {
     clickEvent,
     setOtaVersion,
     uploadLogImmediately,
-    updateLocation
+    updateLocation,
+    trackScreenshot,
+    initRecordingState,
+    endRecordingAndTrack,
+    getRecordingState
 } from './analytics'
 
 export {
@@ -24,6 +29,7 @@ export {
     setUserId,
     useAnalyticsScreen,
     getCurrentPageId,
+    getReferrerPageId,
     setBuried,
     NetworkLogger,
     setWarning,
@@ -31,7 +37,11 @@ export {
     clickEvent,
     setOtaVersion,
     uploadLogImmediately,
-    updateLocation
+    updateLocation,
+    trackScreenshot,
+    initRecordingState,
+    endRecordingAndTrack,
+    getRecordingState
 };
 export default {
     createTextInput,
@@ -41,6 +51,7 @@ export default {
     setUserId,
     useAnalyticsScreen,
     getCurrentPageId,
+    getReferrerPageId,
     setBuried,
     NetworkLogger,
     setWarning,
@@ -48,5 +59,9 @@ export default {
     clickEvent,
     setOtaVersion,
     uploadLogImmediately,
-    updateLocation
+    updateLocation,
+    trackScreenshot,
+    initRecordingState,
+    endRecordingAndTrack,
+    getRecordingState
 };

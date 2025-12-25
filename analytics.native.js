@@ -1,5 +1,13 @@
 import {setBuried,createHookTouchable,clickEvent} from './src/clickBuried';
-import {getCurrentPageId, useAnalyticsScreen} from './src/pageBuried';
+import {
+  getCurrentPageId,
+  useAnalyticsScreen,
+  trackScreenshot,
+  initRecordingState,
+  endRecordingAndTrack,
+  getRecordingState,
+  getReferrerPageId
+} from './src/pageBuried';
 import {
   openLog,
   clearUserId,
@@ -19,6 +27,7 @@ export {
   setUserId,
   useAnalyticsScreen,
   getCurrentPageId,
+  getReferrerPageId,
   setBuried,
   NetworkLogger,
   setWarning,
@@ -28,5 +37,9 @@ export {
   createHookTouchable,
   setOtaVersion,
   uploadLogImmediately,
-  updateLocation
+  updateLocation,
+  trackScreenshot,
+  initRecordingState,
+  endRecordingAndTrack,
+  getRecordingState
 };

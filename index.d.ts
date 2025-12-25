@@ -7,6 +7,21 @@ declare module 'react-native-analytics' {
 
   export function getCurrentPageId(): string;
 
+  export function getReferrerPageId(): string;
+
+  export function trackScreenshot(): void;
+
+  export function initRecordingState(): void;
+
+  export function endRecordingAndTrack(): void;
+
+  export function getRecordingState(): {
+    isRecording: boolean;
+    startTime: number | null;
+    startPage: string;
+    pagesVisited: string[];
+  };
+
   export function setWarning(isWarning: boolean): string;
 
   export function setOtaVersion(version: string): string;

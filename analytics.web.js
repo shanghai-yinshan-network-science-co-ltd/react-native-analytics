@@ -59,6 +59,33 @@ function updateLocation() {
   console.warn('react-native-analytics web no impl');
 }
 
+function trackScreenshot() {
+  console.warn('react-native-analytics web no impl');
+}
+
+function initRecordingState() {
+  console.warn('react-native-analytics web no impl');
+}
+
+function endRecordingAndTrack() {
+  console.warn('react-native-analytics web no impl');
+}
+
+function getRecordingState() {
+  console.warn('react-native-analytics web no impl');
+  return {
+    isRecording: false,
+    startTime: null,
+    startPage: '',
+    pagesVisited: [],
+  };
+}
+
+function getReferrerPageId() {
+  console.warn('react-native-analytics web no impl');
+  return '';
+}
+
 export {
   createHookTouchable,
   createTextInput,
@@ -68,11 +95,16 @@ export {
   setUserId,
   useAnalyticsScreen,
   getCurrentPageId,
+  getReferrerPageId,
   setBuried,
   NetworkLogger,
   setWarning,
   saveBusinessEvent,
   setOtaVersion,
   uploadLogImmediately,
-  updateLocation
+  updateLocation,
+  trackScreenshot,
+  initRecordingState,
+  endRecordingAndTrack,
+  getRecordingState
 };
