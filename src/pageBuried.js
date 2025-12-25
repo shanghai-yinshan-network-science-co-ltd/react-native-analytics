@@ -191,9 +191,9 @@ function _trackScreenshot() {
 }
 
 /**
- * 发送截屏埋点（带防抖，500ms）
+ * 发送截屏埋点（带防抖，1000ms）
  */
-export const trackScreenshot = debounce(_trackScreenshot, 500, {
+export const trackScreenshot = debounce(_trackScreenshot, 1000, {
   leading: true,  // 第一次调用立即执行
   trailing: false, // 不执行最后一次调用
 });
