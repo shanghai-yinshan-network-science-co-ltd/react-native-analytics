@@ -190,7 +190,7 @@ export function trackScreenshot() {
 }
 
 /**
- * 初始化录屏状态
+ * 初始化录屏状态并发送录屏开始事件
  */
 export function initRecordingState() {
   const startTime = Date.now();
@@ -202,34 +202,52 @@ export function initRecordingState() {
     startPage,
     pagesVisited: startPage ? [startPage] : [], // 记录开始页面
   };
+
+  // 发送录屏开始事件
+  saveBusinessEvent('screen_recording_start', {
+    infoData: {
+      start_time: startTime,
+      start_page: startPage,
+    },
+  });
 }
 
 /**
  * 结束录屏并发送埋点
+ * 注意：在安卓上可能没有录屏开始事件，如果检测到没有初始化录屏状态，
+ * 会自动使用当前页面和时间作为开始信息
  */
 export function endRecordingAndTrack() {
   const { isRecording, startTime, startPage, pagesVisited } = recordingState;
+  const endTime = Date.now();
+  const endPage = getCurrentPageId() || '';
 
-  if (isRecording && startTime !== null) {
-    const endTime = Date.now();
-    const endPage = getCurrentPageId() || '';
-    const duration = endTime - startTime;
+  // 如果没有录屏开始事件（安卓可能的情况），自动初始化一个开始状态
+  if (!isRecording || startTime === null) {
+    // 使用当前页面作为开始页面，使用当前时间作为开始时间（duration 会很小或为0）
+    // 或者使用一个合理的默认开始时间（比如当前时间减去1秒）
+    const defaultStartTime = endTime - 1000; // 默认1秒前开始
+    const defaultStartPage = endPage || '';
 
-    // 确保结束页面在访问列表中
-    const finalPagesVisited = [...pagesVisited];
-    if (endPage && finalPagesVisited[finalPagesVisited.length - 1] !== endPage) {
-      finalPagesVisited.push(endPage);
-    }
+    // 发送录屏结束事件（没有开始事件的情况）
+    saveBusinessEvent('screen_recording_end', {
+      infoData: {
+        end_time: endTime,
+        end_page: endPage,
+        no_start_event: true, // 标记没有开始事件
+      },
+    });
 
-    // 发送录屏埋点
+    // 发送录屏埋点（没有开始事件的情况）
     saveBusinessEvent('screen_recording', {
       infoData: {
-        start_time: startTime,
+        start_time: defaultStartTime,
         end_time: endTime,
-        duration: duration,
-        start_page: startPage,
+        duration: endTime - defaultStartTime,
+        start_page: defaultStartPage,
         end_page: endPage,
-        pages_visited: finalPagesVisited,
+        pages_visited: endPage ? [endPage] : [],
+        no_start_event: true, // 标记没有开始事件
       },
     });
 
@@ -240,7 +258,46 @@ export function endRecordingAndTrack() {
       startPage: '',
       pagesVisited: [],
     };
+    return;
   }
+
+  // 正常情况：有录屏开始事件
+  const duration = endTime - startTime;
+
+  // 确保结束页面在访问列表中
+  const finalPagesVisited = [...pagesVisited];
+  if (endPage && finalPagesVisited[finalPagesVisited.length - 1] !== endPage) {
+    finalPagesVisited.push(endPage);
+  }
+
+  // 发送录屏结束事件
+  saveBusinessEvent('screen_recording_end', {
+    infoData: {
+      end_time: endTime,
+      end_page: endPage,
+      duration: duration,
+    },
+  });
+
+  // 发送录屏埋点
+  saveBusinessEvent('screen_recording', {
+    infoData: {
+      start_time: startTime,
+      end_time: endTime,
+      duration: duration,
+      start_page: startPage,
+      end_page: endPage,
+      pages_visited: finalPagesVisited,
+    },
+  });
+
+  // 重置录屏状态
+  recordingState = {
+    isRecording: false,
+    startTime: null,
+    startPage: '',
+    pagesVisited: [],
+  };
 }
 
 /**
