@@ -767,11 +767,6 @@
                 @"appBundleId": @"me.apptapp.installer",
                 @"appScheme":@"installer://",
             },
-            @{
-                @"appName":@"Tenorshare 4uKey",
-                @"appBundleId": @"com.tenorshare.4ukey",
-                @"appScheme":@"4ukey://",
-            },
             // 亚航
             @{
                 @"appName":@"AirAsia Move",
