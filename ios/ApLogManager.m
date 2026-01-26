@@ -497,7 +497,6 @@
 
     if([bundleId isEqualToString:@"com.happy.cash"]){
         NSArray *appInfos = @[
-            // 借贷类
             @{
                 @"appName":@"Billease",
                 @"appBundleId": @"com.billease",
@@ -583,49 +582,41 @@
                 @"appBundleId": @"com.agidream",
                 @"appScheme":@"moca://",
             },
-            // 电子钱包
             @{
                 @"appName":@"gCash",
                 @"appBundleId": @"com.globetel.gcash",
                 @"appScheme":@"gcash://",
             },
-            // 电商平台
             @{
                 @"appName":@"shopee",
                 @"appBundleId": @"com.beeasy.shopee.ph",
                 @"appScheme":@"shopeeph://",
             },
-            // 国际支付
             @{
                 @"appName":@"Paypal",
                 @"appBundleId": @"com.yourcompany.PPClient",
                 @"appScheme":@"paypal://",
             },
-            // 电子钱包
             @{
                 @"appName":@"Maya",
                 @"appBundleId": @"com.paymaya.ios",
                 @"appScheme":@"paymaya://",
             },
-            // 农村银行
             @{
                 @"appName":@"RCBC DiskarTech Savings",
                 @"appBundleId": @"com.diskartech.mobile",
                 @"appScheme":@"diskartechpx://",
             },
-            // 社保服务
             @{
                 @"appName":@"MySSS",
                 @"appBundleId": @"com.sss.gov.mysss.mobileapp",
                 @"appScheme":@"mysss://",
             },
-            // 数字银行
             @{
                 @"appName":@"MariBank PH",
                 @"appBundleId": @"ph.seabank.seabank",
                 @"appScheme":@"maribank://",
             },
-            // 求职
             @{
                 @"appName":@"Jobstreet",
                 @"appBundleId": @"com.jobstreet.jobstreet",
@@ -636,19 +627,16 @@
                 @"appBundleId": @"com.indeed.JobSearch",
                 @"appScheme":@"indeedjobsearch://",
             },
-            // 住房基金
             @{
                 @"appName":@"Virtual Pag-IBIG",
                 @"appBundleId": @"com.pagibigfund.virtualpagibigapp",
                 @"appScheme":@"virtualpagibig://",
             },
-            // 银行
             @{
                 @"appName":@"BDO Online",
                 @"appBundleId": @"com.bdo.newdigital",
                 @"appScheme":@"bdo://",
             },
-            // 财务管理App
             @{
                 @"appName":@"Spending Tracker",
                 @"appBundleId": @"com.lightByte.Budget",
@@ -659,31 +647,26 @@
                 @"appBundleId": @"com.realbyteapps.MoneyManager",
                 @"appScheme":@"moneymanager://",
             },
-            // 电商平台
             @{
                 @"appName":@"Lazada",
                 @"appBundleId": @"com.LazadaSEA.Lazada",
                 @"appScheme":@"Lazada://",
             },
-            // 外卖平台
             @{
                 @"appName":@"foodpanda",
                 @"appBundleId": @"com.global.foodpanda.ios",
                 @"appScheme":@"foodpanda://",
             },
-            // Globe电信的金融服务
             @{
                 @"appName":@"GlobeOne",
                 @"appBundleId": @"ph.com.globe.GlobeOneSuperApp",
                 @"appScheme":@"globeone://",
             },
-            // 数字银行
             @{
                 @"appName":@"Gotyme",
                 @"appBundleId": @"ph.com.gotyme",
                 @"appScheme":@"gotyme://",
             },
-            // 银行
             @{
                 @"appName":@"Bpi",
                 @"appBundleId": @"com.bpi.ng.app",
@@ -694,43 +677,36 @@
                 @"appBundleId": @"com.unionbankph.online",
                 @"appScheme":@"evgdysan://",
             },
-            // 数字银行
             @{
                 @"appName":@"TONIK",
                 @"appBundleId": @"com.mobile.tonik",
                 @"appScheme":@"tonikapp://",
             },
-            // 酒店预订
             @{
                 @"appName":@"Agoda",
                 @"appBundleId": @"com.agoda.consumer",
                 @"appScheme":@"agoda://",
             },
-            // 太平洋航空
             @{
                 @"appName":@"Cebu Pacific",
                 @"appBundleId": @"com.navitaire.nps.5j",
                 @"appScheme":@"insidercebupacificuat://",
             },
-            // 银行
             @{
                 @"appName":@"LANDBANK",
                 @"appBundleId": @"com.landbank.mobilebanking",
                 @"appScheme":@"landbank://",
             },
-            // 高利贷/欺诈性贷款
             @{
                 @"appName":@"PesoKing-mabilis cash loan app",
                 @"appBundleId": @"com.king.peso.star",
                 @"appScheme":@"pesoking://",
             },
-            // 在线博彩
             @{
                 @"appName":@"BingoPlus",
                 @"appBundleId": @"Solidleisure.BingoPlus.iosC66.release",
                 @"appScheme":@"bingoplus://",
             },
-            // 高利贷
             @{
                 @"appName":@"KuhaCash -loan app philippines",
                 @"appBundleId": @"com.crown-infinity-lending.kuha.cash",
@@ -746,7 +722,6 @@
                 @"appBundleId": @"com.playmate.playtime",
                 @"appScheme":@"playtime://",
             },
-            // 越狱工具
             @{
                 @"appName":@"Sileo",
                 @"appBundleId": @"org.coolstar.sileo",
@@ -767,25 +742,21 @@
                 @"appBundleId": @"me.apptapp.installer",
                 @"appScheme":@"installer://",
             },
-            // 亚航
             @{
                 @"appName":@"AirAsia Move",
                 @"appBundleId": @"com.airasia.mobile",
                 @"appScheme":@"airasia://",
             },
-            // 数字钱包
             @{
                 @"appName":@"Coins",
                 @"appBundleId": @"gctp.Coins",
                 @"appScheme":@"coins://",
             },
-            // 费用分摊管理
             @{
                 @"appName":@"Splitwise",
                 @"appBundleId": @"com.Splitwise.SplitwiseMobile",
                 @"appScheme":@"splitwise://",
             },
-            // 银行
             @{
                 @"appName":@"komo",
                 @"appBundleId": @"ph.komo.app",
@@ -796,13 +767,11 @@
                 @"appBundleId": @"com.ownbank.app",
                 @"appScheme":@"ownbank://",
             },
-            // 全球跨境支付
             @{
                 @"appName":@"Taptapsend",
                 @"appBundleId": @"com.taptapsend.TaptapSend",
                 @"appScheme":@"taptapsend://",
             },
-            // 商业银行
             @{
                 @"appName":@"Hellomoney",
                 @"appBundleId": @"com.aub.HelloMoney",
