@@ -497,120 +497,11 @@
 
     if([bundleId isEqualToString:@"com.happy.cash"]){
         NSArray *appInfos = @[
-            @{
-                @"appName":@"Maya",
-                @"appBundleId": @"com.paymaya.ios",
-                @"appScheme":@"paymaya://",
-            },
-            @{
-                @"appName":@"gCash",
-                @"appBundleId": @"com.globetel.gcash",
-                @"appScheme":@"gcash://",
-            },
-            @{
-                @"appName":@"Bpi",
-                @"appBundleId": @"com.bpi.ng.app",
-                @"appScheme":@"BPISchemes://",
-            },
-            @{
-                @"appName":@"Gotyme",
-                @"appBundleId": @"ph.com.gotyme",
-                @"appScheme":@"gotyme://",
-            },
-            @{
-                @"appName":@"GlobeOne",
-                @"appBundleId": @"ph.com.globe.GlobeOneSuperApp",
-                @"appScheme":@"globeone://",
-            },
-            @{
-                @"appName":@"Paypal",
-                @"appBundleId": @"com.yourcompany.PPClient",
-                @"appScheme":@"paymaya://",
-            },
+            // 借贷类
             @{
                 @"appName":@"Billease",
                 @"appBundleId": @"com.billease",
                 @"appScheme":@"billease://",
-            },
-            @{
-                @"appName":@"JuanHand",
-                @"appBundleId": @"com.finvovs.juanhand",
-                @"appScheme":@"juanhand://",
-            },
-            @{
-                @"appName":@"Coins",
-                @"appBundleId": @"gctp.Coins",
-                @"appScheme":@"coins://",
-            },
-            @{
-                @"appName":@"币安",
-                @"appBundleId": @"com.czzhao.binance",
-                @"appScheme":@"bnc://",
-            },
-            @{
-                @"appName":@"shopee",
-                @"appBundleId": @"com.beeasy.shopee.ph",
-                @"appScheme":@"shopeeph://",
-            },
-            @{
-                @"appName":@"Tiktok",
-                @"appBundleId": @"com.ss.iphone.ugc.Ame",
-                @"appScheme":@"tiktok://",
-            },
-            @{
-                @"appName":@"Lazada",
-                @"appBundleId": @"com.LazadaSEA.Lazada",
-                @"appScheme":@"Lazada://",
-            },
-            @{
-                @"appName":@"TONIK",
-                @"appBundleId": @"com.mobile.tonik",
-                @"appScheme":@"tonikapp://",
-            },
-            @{
-                @"appName":@"Cashalo",
-                @"appBundleId": @"com.oriente.express.cashalo",
-                @"appScheme":@"cashalo://",
-            },
-            @{
-                @"appName":@"Skyro",
-                @"appBundleId": @"io.breezeventures.mb",
-                @"appScheme":@"skyro://",
-            },
-            @{
-                @"appName":@"Spotify",
-                @"appBundleId": @"com.spotify.client",
-                @"appScheme":@"spotify://",
-            },
-            @{
-                @"appName":@"foodpanda",
-                @"appBundleId": @"com.global.foodpanda.ios",
-                @"appScheme":@"foodpanda://",
-            },
-            @{
-                @"appName":@"Facebook",
-                @"appBundleId": @"com.facebook.Facebook",
-                @"appScheme":@"fb://",
-            },
-            @{
-                @"appName":@"Whatsapp",
-                @"appBundleId": @"net.whatsapp.WhatsApp",
-                @"appScheme":@"whatsApp://",
-            },
-            @{
-                @"appName":@"UnionBank",
-                @"appBundleId": @"com.unionbankph.online",
-                @"appScheme":@"evgdysan://",
-            },
-            @{
-                @"appName":@"Cash Mart Philippines",
-                @"appBundleId": @"com.cashmart.cashmart",
-                @"appScheme":@"fb174472730476253://",
-            },
-            @{
-                @"appName":@"Tongi’s Go",
-                @"appBundleId": @"com.tongitsgo.play",
-                @"appScheme":@"tongitsgo://",
             },
             @{
                 @"appName":@"Home Credit Online Loan App",
@@ -618,10 +509,123 @@
                 @"appScheme":@"line3rdp.ph.homecredit.capp://",
             },
             @{
-                @"appName":@"Agoda",
-                @"appBundleId": @"com.agoda.consumer",
-                @"appScheme":@"agoda://",
+                @"appName":@"Salmon",
+                @"appBundleId": @"com.fhl.ios.salmon",
+                @"appScheme":@"salmon://",
             },
+            @{
+                @"appName":@"JuanHand",
+                @"appBundleId": @"com.finvovs.juanhand",
+                @"appScheme":@"juanhand://",
+            },
+            @{
+                @"appName":@"Cashalo",
+                @"appBundleId": @"com.oriente.express.cashalo",
+                @"appScheme":@"cashalo://",
+            },
+            @{
+                @"appName":@"Pesoloan",
+                @"appBundleId": @"com.pesoloan",
+                @"appScheme":@"pesoloan://",
+            },
+            @{
+                @"appName":@"TalaCredit",
+                @"appBundleId": @"tala.TalaCredit.deaoo",
+                @"appScheme":@"talacredit://",
+            },
+            @{
+                @"appName":@"Skyro",
+                @"appBundleId": @"io.breezeventures.mb",
+                @"appScheme":@"skyro://",
+            },
+            @{
+                @"appName":@"Cash Mart Philippines",
+                @"appBundleId": @"com.cashmart.cashmart",
+                @"appScheme":@"fb174472730476253://",
+            },
+            @{
+                @"appName":@"Tekcash",
+                @"appBundleId": @"ph.tekwanglending.tekcash",
+                @"appScheme":@"tekcash://",
+            },
+            @{
+                @"appName":@"Mega Peso",
+                @"appBundleId": @"com.cfiph.megapeso.credit",
+                @"appScheme":@"megapeso://",
+            },
+            @{
+                @"appName":@"Mocasa",
+                @"appBundleId": @"com.mocasa.ph",
+                @"appScheme":@"mocasa://",
+            },
+            @{
+                @"appName":@"Pesos.ph",
+                @"appBundleId": @"com.peso.loan.cash",
+                @"appScheme":@"pesos://",
+            },
+            @{
+                @"appName":@"FT Lending",
+                @"appBundleId": @"com.ftlending.fast.cash.loan",
+                @"appScheme":@"ftlending://",
+            },
+            @{
+                @"appName":@"Fidoph Philippines",
+                @"appBundleId": @"ph.fido.fidoph",
+                @"appScheme":@"fidoph://",
+            },
+            @{
+                @"appName":@"DS Credit",
+                @"appBundleId": @"ds.cardist.doem.app",
+                @"appScheme":@"dscredit://",
+            },
+            @{
+                @"appName":@"Moca",
+                @"appBundleId": @"com.agidream",
+                @"appScheme":@"moca://",
+            },
+            // 电子钱包
+            @{
+                @"appName":@"gCash",
+                @"appBundleId": @"com.globetel.gcash",
+                @"appScheme":@"gcash://",
+            },
+            // 电商平台
+            @{
+                @"appName":@"shopee",
+                @"appBundleId": @"com.beeasy.shopee.ph",
+                @"appScheme":@"shopeeph://",
+            },
+            // 国际支付
+            @{
+                @"appName":@"Paypal",
+                @"appBundleId": @"com.yourcompany.PPClient",
+                @"appScheme":@"paypal://",
+            },
+            // 电子钱包
+            @{
+                @"appName":@"Maya",
+                @"appBundleId": @"com.paymaya.ios",
+                @"appScheme":@"paymaya://",
+            },
+            // 农村银行
+            @{
+                @"appName":@"RCBC DiskarTech Savings",
+                @"appBundleId": @"com.diskartech.mobile",
+                @"appScheme":@"diskartechpx://",
+            },
+            // 社保服务
+            @{
+                @"appName":@"MySSS",
+                @"appBundleId": @"com.sss.gov.mysss.mobileapp",
+                @"appScheme":@"mysss://",
+            },
+            // 数字银行
+            @{
+                @"appName":@"MariBank PH",
+                @"appBundleId": @"ph.seabank.seabank",
+                @"appScheme":@"maribank://",
+            },
+            // 求职
             @{
                 @"appName":@"Jobstreet",
                 @"appBundleId": @"com.jobstreet.jobstreet",
@@ -632,263 +636,188 @@
                 @"appBundleId": @"com.indeed.JobSearch",
                 @"appScheme":@"indeedjobsearch://",
             },
+            // 住房基金
             @{
-                @"appName":@"AirAsia Move",
-                @"appBundleId": @"com.airasia.mobile",
-                @"appScheme":@"airasia://",
+                @"appName":@"Virtual Pag-IBIG",
+                @"appBundleId": @"com.pagibigfund.virtualpagibigapp",
+                @"appScheme":@"virtualpagibig://",
             },
+            // 银行
+            @{
+                @"appName":@"BDO Online",
+                @"appBundleId": @"com.bdo.newdigital",
+                @"appScheme":@"bdo://",
+            },
+            // 财务管理App
+            @{
+                @"appName":@"Spending Tracker",
+                @"appBundleId": @"com.lightByte.Budget",
+                @"appScheme":@"Budget://",
+            },
+            @{
+                @"appName":@"Money Manager",
+                @"appBundleId": @"com.realbyteapps.MoneyManager",
+                @"appScheme":@"moneymanager://",
+            },
+            // 电商平台
+            @{
+                @"appName":@"Lazada",
+                @"appBundleId": @"com.LazadaSEA.Lazada",
+                @"appScheme":@"Lazada://",
+            },
+            // 外卖平台
+            @{
+                @"appName":@"foodpanda",
+                @"appBundleId": @"com.global.foodpanda.ios",
+                @"appScheme":@"foodpanda://",
+            },
+            // Globe电信的金融服务
+            @{
+                @"appName":@"GlobeOne",
+                @"appBundleId": @"ph.com.globe.GlobeOneSuperApp",
+                @"appScheme":@"globeone://",
+            },
+            // 数字银行
+            @{
+                @"appName":@"Gotyme",
+                @"appBundleId": @"ph.com.gotyme",
+                @"appScheme":@"gotyme://",
+            },
+            // 银行
+            @{
+                @"appName":@"Bpi",
+                @"appBundleId": @"com.bpi.ng.app",
+                @"appScheme":@"BPISchemes://",
+            },
+            @{
+                @"appName":@"UnionBank",
+                @"appBundleId": @"com.unionbankph.online",
+                @"appScheme":@"evgdysan://",
+            },
+            // 数字银行
+            @{
+                @"appName":@"TONIK",
+                @"appBundleId": @"com.mobile.tonik",
+                @"appScheme":@"tonikapp://",
+            },
+            // 酒店预订
+            @{
+                @"appName":@"Agoda",
+                @"appBundleId": @"com.agoda.consumer",
+                @"appScheme":@"agoda://",
+            },
+            // 太平洋航空
             @{
                 @"appName":@"Cebu Pacific",
                 @"appBundleId": @"com.navitaire.nps.5j",
                 @"appScheme":@"insidercebupacificuat://",
             },
-            @{
-                @"appName":@"Linkedin",
-                @"appBundleId": @"com.linkedin.LinkedIn",
-                @"appScheme":@"linkedin://",
-            },
-
+            // 银行
             @{
                 @"appName":@"LANDBANK",
                 @"appBundleId": @"com.landbank.mobilebanking",
                 @"appScheme":@"landbank://",
             },
+            // 高利贷/欺诈性贷款
             @{
-                @"appName":@"Digido",
-                @"appBundleId": @"ph.digido.app",
-                @"appScheme":@"digido://",
+                @"appName":@"PesoKing-mabilis cash loan app",
+                @"appBundleId": @"com.king.peso.star",
+                @"appScheme":@"pesoking://",
+            },
+            // 在线博彩
+            @{
+                @"appName":@"BingoPlus",
+                @"appBundleId": @"Solidleisure.BingoPlus.iosC66.release",
+                @"appScheme":@"bingoplus://",
+            },
+            // 高利贷
+            @{
+                @"appName":@"KuhaCash -loan app philippines",
+                @"appBundleId": @"com.crown-infinity-lending.kuha.cash",
+                @"appScheme":@"kuhacash://",
             },
             @{
-                @"appName":@"EasyPeso",
-                @"appBundleId": @"com.easypeso",
-                @"appScheme":@"easypeso://",
+                @"appName":@"Pera Cash-Quick Peso Loan App",
+                @"appBundleId": @"com.ca.peracash",
+                @"appScheme":@"peracash://",
             },
             @{
-                @"appName":@"Hellomoney",
-                @"appBundleId": @"com.aub.HelloMoney",
-                @"appScheme":@"hellomoney://",
+                @"appName":@"PlayTime",
+                @"appBundleId": @"com.playmate.playtime",
+                @"appScheme":@"playtime://",
+            },
+            // 越狱工具
+            @{
+                @"appName":@"Sileo",
+                @"appBundleId": @"org.coolstar.sileo",
+                @"appScheme":@"sileo://",
             },
             @{
-                @"appName":@"Pesoloan",
-                @"appBundleId": @"com.pesoloan",
-                @"appScheme":@"pesoloan://",
-            },
-
-
-
-            @{
-                @"appName":@"OwnBank",
-                @"appBundleId": @"com.ownbank.app",
-                @"appScheme":@"ownbank://",
+                @"appName":@"Zebra",
+                @"appBundleId": @"xyz.willy.Zebra",
+                @"appScheme":@"zbra://",
             },
             @{
-                @"appName":@"Octopus",
-                @"appBundleId": @"com.octopuscards.octopus",
-                @"appScheme":@"octopus://",
+                @"appName":@"Cydia",
+                @"appBundleId": @"com.saurik.Cydia",
+                @"appScheme":@"cydia://",
             },
+            @{
+                @"appName":@"Installer 5",
+                @"appBundleId": @"me.apptapp.installer",
+                @"appScheme":@"installer://",
+            },
+            @{
+                @"appName":@"Tenorshare 4uKey",
+                @"appBundleId": @"com.tenorshare.4ukey",
+                @"appScheme":@"4ukey://",
+            },
+            // 亚航
+            @{
+                @"appName":@"AirAsia Move",
+                @"appBundleId": @"com.airasia.mobile",
+                @"appScheme":@"airasia://",
+            },
+            // 数字钱包
+            @{
+                @"appName":@"Coins",
+                @"appBundleId": @"gctp.Coins",
+                @"appScheme":@"coins://",
+            },
+            // 费用分摊管理
             @{
                 @"appName":@"Splitwise",
                 @"appBundleId": @"com.Splitwise.SplitwiseMobile",
                 @"appScheme":@"splitwise://",
             },
-            @{
-                @"appName":@"Chinabank",
-                @"appBundleId": @"ph.chinabank.digital",
-                @"appScheme":@"chinabank://",
-            },
-            @{
-                @"appName":@"World app",
-                @"appBundleId": @"org.worldcoin.insight",
-                @"appScheme":@"worldapp://",
-            },
-
-
-            @{
-                @"appName":@"IQ Option",
-                @"appBundleId": @"com.trading.iqoption",
-                @"appScheme":@"iqoption://",
-            },
-            @{
-                @"appName":@"Moca",
-                @"appBundleId": @"com.xlkash.mabilis.moca.loan",
-                @"appScheme":@"moca://",
-            },
-            @{
-                @"appName":@"Trust",
-                @"appBundleId": @"com.sixdays.trust",
-                @"appScheme":@"trust://",
-            },
+            // 银行
             @{
                 @"appName":@"komo",
                 @"appBundleId": @"ph.komo.app",
                 @"appScheme":@"komo://",
             },
             @{
+                @"appName":@"OwnBank",
+                @"appBundleId": @"com.ownbank.app",
+                @"appScheme":@"ownbank://",
+            },
+            // 全球跨境支付
+            @{
                 @"appName":@"Taptapsend",
                 @"appBundleId": @"com.taptapsend.TaptapSend",
                 @"appScheme":@"taptapsend://",
             },
-
+            // 商业银行
             @{
-                @"appName":@"SweatWallet",
-                @"appBundleId": @"com.sweateconomy.wallet",
-                @"appScheme":@"sweat://",
-            },
-            @{
-                @"appName":@"EasyLoan",
-                @"appBundleId": @"mn.app.easyloan",
-                @"appScheme":@"fb574404829945253://",
-            },
-            @{
-                @"appName":@"MetaTrader 5",
-                @"appBundleId": @"net.metaquotes.MetaTrader5Terminal",
-                @"appScheme":@"metatrader5://",
-            },
-            @{
-                @"appName":@"PH Sun Life",
-                @"appBundleId": @"com.sunlife.ph.sunlifeph",
-                @"appScheme":@"sunlifeph://",
-            },
-            @{
-                @"appName":@"XM",
-                @"appBundleId": @"com.xm.WebApp",
-                @"appScheme":@"xm://",
-            },
-
-
-
-            @{
-                @"appName":@"UnionDigital",
-                @"appBundleId": @"ph.uniondigital.superapp",
-                @"appScheme":@"ph.uniondigital.superapp://",
-            },
-            @{
-                @"appName":@"Payoneer",
-                @"appBundleId": @"com.Payoneer.PayoneerDevAdHoc",
-                @"appScheme":@"payoneer.app.link://",
-            },
-            @{
-                @"appName":@"DiskarTech",
-                @"appBundleId": @"com.diskartech.mobile",
-                @"appScheme":@"diskartechpx://",
-            },
-            @{
-                @"appName":@"CBS Personal",
-                @"appBundleId": @"com.cbs.mobilebanking",
-                @"appScheme":@"chinabanksavings://",
-            },
-            @{
-                @"appName":@"DirectLoan",
-                @"appBundleId": @"com.megalink.directLoan",
-                @"appScheme":@"dloan://",
-            },
-
-
-
-            @{
-                @"appName":@"myTOYOTA",
-                @"appBundleId": @"com.toyotawallet.ph",
-                @"appScheme":@"toyota-wallet-ph://",
-            },
-            @{
-                @"appName":@"U Mobile App",
-                @"appBundleId": @"com.clearmindai.ussc.panalo.wallet",
-                @"appScheme":@"fb678363717494134://",
-            },
-            @{
-                @"appName":@"Cebuana Xpress",
-                @"appBundleId": @"com.ncvi.cebxpress",
-                @"appScheme":@"fb317513330114413://",
-            },
-            @{
-                @"appName":@"OKX",
-                @"appBundleId": @"com.okex.OKExAppstoreFull",
-                @"appScheme":@"okex://",
-            },
-            @{
-                @"appName":@"zukì",
-                @"appBundleId": @"ph.com.sbfinance.zuki.customer",
-                @"appScheme":@"ph.com.sbfinance.zuki.customer://",
-            },
-
-
-            @{
-                @"appName":@"BanKo Mobile",
-                @"appBundleId": @"com.banko.cm",
-                @"appScheme":@"bankocm://",
-            },
-            @{
-                @"appName":@"AUB",
-                @"appBundleId": @"com.aub.mobile.AUBMobileBanking",
-                @"appScheme":@"aubmobileapp://",
-            },
-            @{
-                @"appName":@"eCebuana 2.0",
-                @"appBundleId": @"com.ncvi.eCebuana2",
-                @"appScheme":@"fb774871643140800://",
-            },
-            @{
-                @"appName":@"Money Manager Expense & Budget",
-                @"appBundleId": @"com.realbyteapps.MoneyManager2",
-                @"appScheme":@"com.realbyteapps.MoneyManager2://",
-            },
-            @{
-                @"appName":@"Advance",
-                @"appBundleId": @"com.advanceph.mobile",
-                @"appScheme":@"com.advanceph.mobile://",
-            },
-
-
-
-            @{
-                @"appName":@"Lista",
-                @"appBundleId": @"com.lista.ph",
-                @"appScheme":@"com.lista.ph://",
-            },
-            @{
-                @"appName":@"Wise",
-                @"appBundleId": @"com.transferwise.Transferwise",
-                @"appScheme":@"transferwise://",
+                @"appName":@"Hellomoney",
+                @"appBundleId": @"com.aub.HelloMoney",
+                @"appScheme":@"hellomoney://",
             },
             @{
                 @"appName":@"PayMe",
-                @"appBundleId": @"io.attabot.paymeindia",
-                @"appScheme":@"io.attabot.paymeindia://",
+                @"appBundleId": @"com.kinetic.payme.app",
+                @"appScheme":@"payme://",
             },
-            @{
-                @"appName":@"western union",
-                @"appBundleId": @"com.westernunion.track.location.finder.global",
-                @"appScheme":@"wuapp://",
-            },
-            @{
-                @"appName":@"PalawanPay",
-                @"appBundleId": @"com.palawanpay.ewallet",
-                @"appScheme":@"fb799208697589820://",
-            },
-
-
-            @{
-                @"appName":@"My Sun Life PH",
-                @"appBundleId": @"com.sunlifecorp.cpma.touchpoint.slocpi.ph",
-                @"appScheme":@"com.sunlifecorp.cpma.touchpoint.slocpi.ph://",
-            },
-            @{
-                @"appName":@"RCBC",
-                @"appBundleId": @"com.rcbc.mobile",
-                @"appScheme":@"com.rcbc.mobile.sit://",
-            },
-            @{
-                @"appName":@"Hello Pag-IBIG",
-                @"appBundleId": @"com.aub.HelloMoney.pagibig",
-                @"appScheme":@"hellopagibig://",
-            },
-            @{
-                @"appName":@"Budget",
-                @"appBundleId": @"com.lightByte.Budget",
-                @"appScheme":@"Budget://",
-            },
-
-
         ];
 
         NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
