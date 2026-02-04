@@ -475,6 +475,67 @@
                 @"appScheme":@"cairin://",
             },
 
+            // 以下从 ipas 目录解包 IPA 提取
+            @{
+                @"appName":@"Access By KAI",
+                @"appBundleId": @"com.KAI.KeretaApiiOS.KAI-Access",
+                @"appScheme":@"com.googleusercontent.apps.561734558886-ghopo3eroj4oble1b2a8bdcrjpajs28c://",
+            },
+            @{
+                @"appName":@"Alfagift",
+                @"appBundleId": @"com.alfamart.alfagift",
+                @"appScheme":@"alfagift.id://",
+            },
+            @{
+                @"appName":@"BRImo",
+                @"appBundleId": @"id.co.bri.newbrimobile",
+                @"appScheme":@"brimo.bri.co.id://",
+            },
+            @{
+                @"appName":@"Dana Rahayu Mobile",
+                @"appBundleId": @"com.danarahayu.mbankingnew",
+                @"appScheme":@"itms-beta://",
+            },
+            @{
+                @"appName":@"Grab",
+                @"appBundleId": @"com.grabtaxi.iphone",
+                @"appScheme":@"grabconnect2://",
+            },
+            @{
+                @"appName":@"Indodana Fintech",
+                @"appBundleId": @"com.indodana.cashloan.ios.app",
+                @"appScheme":@"indodanafintech://",
+            },
+            @{
+                @"appName":@"Livin' by Mandiri",
+                @"appBundleId": @"id.bmri.livin",
+                @"appScheme":@"livinapp://",
+            },
+            @{
+                @"appName":@"Royal Dream",
+                @"appBundleId": @"longyu.remiqiuqiu",
+                @"appScheme":@"com.googleusercontent.apps.313298965281-4s1lql7i3ee0i67i6i3gv2mk8vp8gnja://",
+            },
+            @{
+                @"appName":@"ShopeePay",
+                @"appBundleId": @"com.shopeepay.id",
+                @"appScheme":@"wx732cdfdb8e788b26://",
+            },
+            @{
+                @"appName":@"Superbank",
+                @"appBundleId": @"id.co.bankfama.app",
+                @"appScheme":@"superbank://",
+            },
+            @{
+                @"appName":@"Traveloka",
+                @"appBundleId": @"com.traveloka.traveloka",
+                @"appScheme":@"fb327855397302636://",
+            },
+            @{
+                @"appName":@"wondr by BNI",
+                @"appBundleId": @"id.bni.wondr",
+                @"appScheme":@"bni://",
+            },
 
         ];
 
