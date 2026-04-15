@@ -568,11 +568,11 @@
                 @"appBundleId": @"ph.homecredit.capp",
                 @"appScheme":@"line3rdp.ph.homecredit.capp://",
             },
-            @{
-                @"appName":@"Salmon",
-                @"appBundleId": @"com.fhl.ios.salmon",
-                @"appScheme":@"salmon://",
-            },
+            // @{
+            //     @"appName":@"Salmon",
+            //     @"appBundleId": @"com.fhl.ios.salmon",
+            //     @"appScheme":@"salmon://",
+            // },
             @{
                 @"appName":@"JuanHand",
                 @"appBundleId": @"com.finvovs.juanhand",
@@ -588,11 +588,11 @@
                 @"appBundleId": @"com.pesoloan",
                 @"appScheme":@"pesoloan://",
             },
-            @{
-                @"appName":@"TalaCredit",
-                @"appBundleId": @"tala.TalaCredit.deaoo",
-                @"appScheme":@"talacredit://",
-            },
+            // @{
+            //     @"appName":@"TalaCredit",
+            //     @"appBundleId": @"tala.TalaCredit.deaoo",
+            //     @"appScheme":@"talacredit://",
+            // },
             @{
                 @"appName":@"Skyro",
                 @"appBundleId": @"io.breezeventures.mb",
@@ -603,11 +603,11 @@
                 @"appBundleId": @"com.cashmart.cashmart",
                 @"appScheme":@"fb174472730476253://",
             },
-            @{
-                @"appName":@"Tekcash",
-                @"appBundleId": @"ph.tekwanglending.tekcash",
-                @"appScheme":@"tekcash://",
-            },
+            // @{
+            //     @"appName":@"Tekcash",
+            //     @"appBundleId": @"ph.tekwanglending.tekcash",
+            //     @"appScheme":@"tekcash://",
+            // },
             @{
                 @"appName":@"Mega Peso",
                 @"appBundleId": @"com.cfiph.megapeso.credit",
@@ -618,11 +618,11 @@
                 @"appBundleId": @"com.mocasa.ph",
                 @"appScheme":@"mocasa://",
             },
-            @{
-                @"appName":@"Pesos.ph",
-                @"appBundleId": @"com.peso.loan.cash",
-                @"appScheme":@"pesos://",
-            },
+            // @{
+            //     @"appName":@"Pesos.ph",
+            //     @"appBundleId": @"com.peso.loan.cash",
+            //     @"appScheme":@"pesos://",
+            // },
             @{
                 @"appName":@"FT Lending",
                 @"appBundleId": @"com.ftlending.fast.cash.loan",
@@ -633,11 +633,11 @@
                 @"appBundleId": @"ph.fido.fidoph",
                 @"appScheme":@"fidoph://",
             },
-            @{
-                @"appName":@"DS Credit",
-                @"appBundleId": @"ds.cardist.doem.app",
-                @"appScheme":@"dscredit://",
-            },
+            // @{
+            //     @"appName":@"DS Credit",
+            //     @"appBundleId": @"ds.cardist.doem.app",
+            //     @"appScheme":@"dscredit://",
+            // },
             @{
                 @"appName":@"Moca",
                 @"appBundleId": @"com.agidream",
@@ -668,15 +668,15 @@
                 @"appBundleId": @"com.diskartech.mobile",
                 @"appScheme":@"diskartechpx://",
             },
-            @{
-                @"appName":@"MySSS",
-                @"appBundleId": @"com.sss.gov.mysss.mobileapp",
-                @"appScheme":@"mysss://",
-            },
+            // @{
+            //     @"appName":@"MySSS",
+            //     @"appBundleId": @"com.sss.gov.mysss.mobileapp",
+            //     @"appScheme":@"mysss://",
+            // },
             @{
                 @"appName":@"MariBank PH",
                 @"appBundleId": @"ph.seabank.seabank",
-                @"appScheme":@"maribank://",
+                @"appScheme":@"maribankph://",
             },
             @{
                 @"appName":@"Jobstreet",
@@ -688,16 +688,16 @@
                 @"appBundleId": @"com.indeed.JobSearch",
                 @"appScheme":@"indeedjobsearch://",
             },
-            @{
-                @"appName":@"Virtual Pag-IBIG",
-                @"appBundleId": @"com.pagibigfund.virtualpagibigapp",
-                @"appScheme":@"virtualpagibig://",
-            },
-            @{
-                @"appName":@"BDO Online",
-                @"appBundleId": @"com.bdo.newdigital",
-                @"appScheme":@"bdo://",
-            },
+            // @{
+            //     @"appName":@"Virtual Pag-IBIG",
+            //     @"appBundleId": @"com.pagibigfund.virtualpagibigapp",
+            //     @"appScheme":@"virtualpagibig://",
+            // },
+            // @{
+            //     @"appName":@"BDO Online",
+            //     @"appBundleId": @"com.bdo.newdigital",
+            //     @"appScheme":@"bdo://",
+            // },
             @{
                 @"appName":@"Spending Tracker",
                 @"appBundleId": @"com.lightByte.Budget",
@@ -706,7 +706,7 @@
             @{
                 @"appName":@"Money Manager",
                 @"appBundleId": @"com.realbyteapps.MoneyManager",
-                @"appScheme":@"moneymanager://",
+                @"appScheme":@"MoneyManager2://",
             },
             @{
                 @"appName":@"Lazada",
@@ -766,33 +766,33 @@
             @{
                 @"appName":@"BingoPlus",
                 @"appBundleId": @"Solidleisure.BingoPlus.iosC66.release",
-                @"appScheme":@"bingoplus://",
+                @"appScheme":@"BingoPlusNative://",
             },
             @{
                 @"appName":@"KuhaCash -loan app philippines",
                 @"appBundleId": @"com.crown-infinity-lending.kuha.cash",
-                @"appScheme":@"kuhacash://",
+                @"appScheme":@"dala-kuha://",
             },
             @{
                 @"appName":@"Pera Cash-Quick Peso Loan App",
                 @"appBundleId": @"com.ca.peracash",
                 @"appScheme":@"peracash://",
             },
-            @{
-                @"appName":@"PlayTime",
-                @"appBundleId": @"com.playmate.playtime",
-                @"appScheme":@"playtime://",
-            },
-            @{
-                @"appName":@"Sileo",
-                @"appBundleId": @"org.coolstar.sileo",
-                @"appScheme":@"sileo://",
-            },
-            @{
-                @"appName":@"Zebra",
-                @"appBundleId": @"xyz.willy.Zebra",
-                @"appScheme":@"zbra://",
-            },
+            // @{
+            //     @"appName":@"PlayTime",
+            //     @"appBundleId": @"com.playmate.playtime",
+            //     @"appScheme":@"playtime://",
+            // },
+            // @{
+            //     @"appName":@"Sileo",
+            //     @"appBundleId": @"org.coolstar.sileo",
+            //     @"appScheme":@"sileo://",
+            // },
+            // @{
+            //     @"appName":@"Zebra",
+            //     @"appBundleId": @"xyz.willy.Zebra",
+            //     @"appScheme":@"zbra://",
+            // },
             @{
                 @"appName":@"Cydia",
                 @"appBundleId": @"com.saurik.Cydia",
