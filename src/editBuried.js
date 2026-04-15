@@ -80,7 +80,6 @@ class HookTextInput extends React.Component {
     };
 
     _onBlur = (...args) => {
-        // console.log('blur', event.nativeEvent);
         if (this._isInput) {
             this._isInput = false;
             let text = this.props.value || this._$onChangeText ||
@@ -90,7 +89,6 @@ class HookTextInput extends React.Component {
         this.props.onBlur && this.props.onBlur(...args);
     };
     _onEndEditing = (...args) => {
-        // console.log('blur', event.nativeEvent);
         if (this._isInput) {
             this._isInput = false;
             let text = this.props.value || this._$onChangeText ||
@@ -101,7 +99,6 @@ class HookTextInput extends React.Component {
     };
 
     _onFocus = (...args) => {
-        // console.log('focus', event.nativeEvent);
         this._isInput = true;
         let text = this.props.value || this._$onChangeText ||
             this.props.defaultValue || '';
@@ -175,17 +172,31 @@ export const createTextInput = function (path, OTextInput) {
     if (paths.has(path)) {
         return paths.get(path);
     }
+    // 处理默认导出的情况
+    const Component = OTextInput && OTextInput.default ? OTextInput.default : OTextInput;
 
-    TextInput = OTextInput;
+    TextInput = Component;
 
     const hookComponent = hoistNonReactStatics(React.forwardRef((props, ref) => {
 
         return <HookTextInput {...props} forwardedRef={ref}/>;
-    }), OTextInput);
+    }), Component);
+    hookComponent.propTypes = Component.propTypes;
 
-    paths.set(path, hookComponent);
+    if(OTextInput && OTextInput.default){
+        // 安全地拷贝所有属性并设置 default
+        const wrappedTextInput = Object.assign({}, OTextInput, {
+            default: hookComponent
+        });
+        // 拷贝原型链上的属性
+        Object.setPrototypeOf(wrappedTextInput, Object.getPrototypeOf(OTextInput));
+        paths.set(path, wrappedTextInput);
+        return wrappedTextInput;
+    } else {
+        paths.set(path, hookComponent);
+        return hookComponent;
+    }
 
-    return hookComponent;
 };
 
 initClipboard()
