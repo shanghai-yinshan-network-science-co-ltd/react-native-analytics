@@ -568,11 +568,6 @@
                 @"appBundleId": @"ph.homecredit.capp",
                 @"appScheme":@"line3rdp.ph.homecredit.capp://",
             },
-            // @{
-            //     @"appName":@"Salmon",
-            //     @"appBundleId": @"com.fhl.ios.salmon",
-            //     @"appScheme":@"salmon://",
-            // },
             @{
                 @"appName":@"JuanHand",
                 @"appBundleId": @"com.finvovs.juanhand",
@@ -588,11 +583,6 @@
                 @"appBundleId": @"com.pesoloan",
                 @"appScheme":@"pesoloan://",
             },
-            // @{
-            //     @"appName":@"TalaCredit",
-            //     @"appBundleId": @"tala.TalaCredit.deaoo",
-            //     @"appScheme":@"talacredit://",
-            // },
             @{
                 @"appName":@"Skyro",
                 @"appBundleId": @"io.breezeventures.mb",
@@ -618,11 +608,6 @@
                 @"appBundleId": @"com.mocasa.ph",
                 @"appScheme":@"mocasa://",
             },
-            // @{
-            //     @"appName":@"Pesos.ph",
-            //     @"appBundleId": @"com.peso.loan.cash",
-            //     @"appScheme":@"pesos://",
-            // },
             @{
                 @"appName":@"FT Lending",
                 @"appBundleId": @"com.ftlending.fast.cash.loan",
@@ -633,11 +618,6 @@
                 @"appBundleId": @"ph.fido.fidoph",
                 @"appScheme":@"fidoph://",
             },
-            // @{
-            //     @"appName":@"DS Credit",
-            //     @"appBundleId": @"ds.cardist.doem.app",
-            //     @"appScheme":@"dscredit://",
-            // },
             @{
                 @"appName":@"Moca",
                 @"appBundleId": @"com.agidream",
@@ -668,11 +648,6 @@
                 @"appBundleId": @"com.diskartech.mobile",
                 @"appScheme":@"diskartechpx://",
             },
-            // @{
-            //     @"appName":@"MySSS",
-            //     @"appBundleId": @"com.sss.gov.mysss.mobileapp",
-            //     @"appScheme":@"mysss://",
-            // },
             @{
                 @"appName":@"MariBank PH",
                 @"appBundleId": @"ph.seabank.seabank",
@@ -688,16 +663,6 @@
                 @"appBundleId": @"com.indeed.JobSearch",
                 @"appScheme":@"indeedjobsearch://",
             },
-            // @{
-            //     @"appName":@"Virtual Pag-IBIG",
-            //     @"appBundleId": @"com.pagibigfund.virtualpagibigapp",
-            //     @"appScheme":@"virtualpagibig://",
-            // },
-            // @{
-            //     @"appName":@"BDO Online",
-            //     @"appBundleId": @"com.bdo.newdigital",
-            //     @"appScheme":@"bdo://",
-            // },
             @{
                 @"appName":@"Spending Tracker",
                 @"appBundleId": @"com.lightByte.Budget",
@@ -759,11 +724,6 @@
                 @"appScheme":@"landbank://",
             },
             @{
-                @"appName":@"PesoKing-mabilis cash loan app",
-                @"appBundleId": @"com.king.peso.star",
-                @"appScheme":@"pesoking://",
-            },
-            @{
                 @"appName":@"BingoPlus",
                 @"appBundleId": @"Solidleisure.BingoPlus.iosC66.release",
                 @"appScheme":@"BingoPlusNative://",
@@ -778,21 +738,6 @@
                 @"appBundleId": @"com.ca.peracash",
                 @"appScheme":@"peracash://",
             },
-            // @{
-            //     @"appName":@"PlayTime",
-            //     @"appBundleId": @"com.playmate.playtime",
-            //     @"appScheme":@"playtime://",
-            // },
-            // @{
-            //     @"appName":@"Sileo",
-            //     @"appBundleId": @"org.coolstar.sileo",
-            //     @"appScheme":@"sileo://",
-            // },
-            // @{
-            //     @"appName":@"Zebra",
-            //     @"appBundleId": @"xyz.willy.Zebra",
-            //     @"appScheme":@"zbra://",
-            // },
             @{
                 @"appName":@"Cydia",
                 @"appBundleId": @"com.saurik.Cydia",
@@ -831,7 +776,7 @@
             @{
                 @"appName":@"Taptapsend",
                 @"appBundleId": @"com.taptapsend.TaptapSend",
-                @"appScheme":@"taptapsend://",
+                @"appScheme":@"taptapsendmoney://",
             },
             @{
                 @"appName":@"Hellomoney",
