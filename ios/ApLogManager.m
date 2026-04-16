@@ -768,6 +768,11 @@
                 @"appBundleId": @"com.kinetic.payme.app",
                 @"appScheme":@"payme://",
             },
+            @{
+                @"appName":@"PT Gaming",
+                @"appBundleId": @"com.playmate.playtime",
+                @"appScheme":@"fb1545844169626184://",
+            },
         ];
 
         NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
