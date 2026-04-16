@@ -593,11 +593,6 @@
                 @"appBundleId": @"com.cashmart.cashmart",
                 @"appScheme":@"fb174472730476253://",
             },
-            // @{
-            //     @"appName":@"Tekcash",
-            //     @"appBundleId": @"ph.tekwanglending.tekcash",
-            //     @"appScheme":@"tekcash://",
-            // },
             @{
                 @"appName":@"Mega Peso",
                 @"appBundleId": @"com.cfiph.megapeso.credit",
@@ -732,21 +727,6 @@
                 @"appName":@"KuhaCash -loan app philippines",
                 @"appBundleId": @"com.crown-infinity-lending.kuha.cash",
                 @"appScheme":@"dala-kuha://",
-            },
-            @{
-                @"appName":@"Pera Cash-Quick Peso Loan App",
-                @"appBundleId": @"com.ca.peracash",
-                @"appScheme":@"peracash://",
-            },
-            @{
-                @"appName":@"Cydia",
-                @"appBundleId": @"com.saurik.Cydia",
-                @"appScheme":@"cydia://",
-            },
-            @{
-                @"appName":@"Installer 5",
-                @"appBundleId": @"me.apptapp.installer",
-                @"appScheme":@"installer://",
             },
             @{
                 @"appName":@"AirAsia Move",
