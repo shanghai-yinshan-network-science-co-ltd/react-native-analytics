@@ -83,10 +83,72 @@ export const createHookTouchable = function(path, Touchable) {
 
     constructor(props, context) {
       super(props, context);
+      this._componentRef = null;
       this._onPress = function(...args) {
-        this.pageId = this.pageId || getCurrentPageId()
-        clickEvent(this, {type: 'press', ...this.props.pageInfo}, this.pageId);
-        this.props.onPress(...args);
+        this.pageId = this.pageId || getCurrentPageId();
+
+        // 获取触摸事件的原生事件对象
+        const event = args[0];
+        let clickPositionInfo = null;
+
+        if (event && event.nativeEvent) {
+          const {pageX, pageY} = event.nativeEvent;
+
+          // 如果组件 ref 存在，获取组件的尺寸和位置
+          if (this._componentRef && this._componentRef.measure) {
+            try {
+              this._componentRef.measure((x, y, width, height, pageX_view, pageY_view) => {
+                // 计算按钮的几何中心
+                const centerX = pageX_view + width / 2;
+                const centerY = pageY_view + height / 2;
+
+                // 定义中心区域的半径（例如按钮宽高的 30%）
+                const radiusX = width * 0.1;
+                const radiusY = height * 0.1;
+
+                // 判断触点是否在中心区域内
+                const deltaX = Math.abs(pageX - centerX);
+                const deltaY = Math.abs(pageY - centerY);
+
+                const isInCenter = deltaX <= radiusX && deltaY <= radiusY;
+
+                // 记录点击位置信息
+                clickPositionInfo = {
+                  isInCenter,
+                  touchX: pageX,
+                  touchY: pageY,
+                  centerX,
+                  centerY,
+                };
+
+                console.log('clickPositionInfo----', clickPositionInfo);
+                console.log('inCenter----', isInCenter);
+
+                // 将位置信息添加到 pageInfo 中
+                const pageInfoWithPosition = {
+                  type: 'press',
+                  ...this.props.pageInfo,
+                  clickPosition: clickPositionInfo,
+                };
+
+                clickEvent(this, pageInfoWithPosition, this.pageId);
+                this.props.onPress(...args);
+              });
+            } catch (e) {
+              // 如果 measure 失败，直接触发
+              clickEvent(this, {type: 'press', ...this.props.pageInfo}, this.pageId);
+              this.props.onPress(...args);
+            }
+          } else {
+            // 如果无法获取 ref，直接触发
+            clickEvent(this, {type: 'press', ...this.props.pageInfo}, this.pageId);
+            this.props.onPress(...args);
+          }
+        } else {
+          // 如果没有原生事件对象，直接触发
+          clickEvent(this, {type: 'press', ...this.props.pageInfo}, this.pageId);
+          this.props.onPress(...args);
+        }
       }.bind(this);
       if (!this.props.disableDebounce) {
         this._onPress = debounce(
@@ -107,7 +169,16 @@ export const createHookTouchable = function(path, Touchable) {
 
       return (
           <Component
-              ref={forwardedRef}
+              ref={(ref) => {
+                this._componentRef = ref;
+                if (forwardedRef) {
+                  if (typeof forwardedRef === 'function') {
+                    forwardedRef(ref);
+                  } else if (forwardedRef) {
+                    forwardedRef.current = ref;
+                  }
+                }
+              }}
               {...rest}
               onPress={this.props.onPress && this._onPress}
               onLongPress={this.props.onLongPress && this._onLongPress}
