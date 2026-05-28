@@ -80,6 +80,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
   // 3.开始更新
   [self.motionManager startAccelerometerUpdates];
+  [self.motionManager startGyroUpdates];
+
 }
 
 //获取idfa
