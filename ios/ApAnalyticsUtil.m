@@ -65,22 +65,6 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 }
 
 - (void)accelerometerPull{
-  // 1.初始化运动管理对象
-  self.motionManager = [[CMMotionManager alloc] init];
-  // 2.判断加速计是否可用
-  if (![self.motionManager isAccelerometerAvailable]) {
-    NSLog(@"加速计不可用");
-    return;
-  }
-
-  if (![self.motionManager isGyroAvailable]) {
-    NSLog(@"陀螺仪不可用");
-    return;
-  }
-
-  // 3.开始更新
-  [self.motionManager startAccelerometerUpdates];
-//   [self.motionManager startGyroUpdates];
 
 }
 
@@ -105,16 +89,12 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 //加速计数据
 - (NSString *)getAccelerometerData{
-  CMAcceleration acceleration = self.motionManager.accelerometerData.acceleration;
-  NSLog(@"加速度 == x:%f, y:%f, z:%f", acceleration.x, acceleration.y, acceleration.z);
-  return [NSString stringWithFormat:@"%f,%f,%f", acceleration.x, acceleration.y, acceleration.z];
+  return [NSString stringWithFormat:@"%f,%f,%f", 0, 0, 0];
 }
 
 //陀螺仪数据
 - (NSString *)getGyroData{
-  CMRotationRate rotationRate = self.motionManager.gyroData.rotationRate;
-  NSLog(@"加速度 == x:%f, y:%f, z:%f", rotationRate.x, rotationRate.y, rotationRate.z);
-  return [NSString stringWithFormat:@"%f,%f,%f", rotationRate.x, rotationRate.y, rotationRate.z];
+  return [NSString stringWithFormat:@"%f,%f,%f", 0, 0, 0];
 }
 
 //判断是否设置了代理
