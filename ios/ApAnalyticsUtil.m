@@ -69,12 +69,12 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   self.motionManager = [[CMMotionManager alloc] init];
   // 2.判断加速计是否可用
   if (![self.motionManager isAccelerometerAvailable]) {
-    NSLog(@"加速计不可用");
+    NSLog(@"accelerometer invalidate");
     return;
   }
 
   if (![self.motionManager isGyroAvailable]) {
-    NSLog(@"陀螺仪不可用");
+    NSLog(@"gyro invalidate");
     return;
   }
 
