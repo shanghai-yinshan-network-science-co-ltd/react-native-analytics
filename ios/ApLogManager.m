@@ -71,28 +71,25 @@
   if ([self.db open]) {
     BOOL result = [self.db executeUpdate:@"CREATE TABLE IF NOT EXISTS DeviceLogInfo (id integer PRIMARY KEY AUTOINCREMENT,runId text, deviceInfo text NOT NULL);"];
     if (result){
-      NSLog(@"设备信息表创建成功");
+      NSLog(@"init table success");
       BOOL res = [self.db executeUpdate:@"INSERT INTO DeviceLogInfo (runId, deviceInfo) VALUES (?, ?);",self.runId, [ApAnalyticsUtil dictionaryToJson:[self.util getDeviceInfo]]];
       if (!res) {
-        NSLog(@"增加数据失败");
+        NSLog(@"addlog failed");
       }else{
-        NSLog(@"增加数据成功");
+        NSLog(@"addlog success");
       }
     }else{
-      NSLog(@"设备信息表创建失败");
+      NSLog(@"init table failed");
     }
     result = [self.db executeUpdate:@"CREATE TABLE IF NOT EXISTS ActionLogInfo (id integer PRIMARY KEY AUTOINCREMENT,runId text, logId text NOT NULL, actionInfo Text);"];
     if (result){
-      NSLog(@"行为日志表创建成功");
+      NSLog(@"init table success");
       NSString *logId = [self getCurrentLogId];
       BOOL res = [self.db executeUpdate:@"INSERT INTO ActionLogInfo (runId, logId, actionInfo) VALUES (?, ?, ?);",self.runId, logId,[ApAnalyticsUtil dictionaryToJson: [self.util getStartLog:self.startTime]]];
       if (!res) {
-        NSLog(@"增加启动数据失败");
       }else{
-        NSLog(@"增加启动数据成功");
       }
     }else{
-      NSLog(@"行为日志表创建失败");
     }
   }
   [self.db close];
@@ -317,7 +314,7 @@
         NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
         [appInfos enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:obj[@"appScheme"]]]){
-                NSLog(@"用户已安装%@",[obj description]);
+                NSLog(@"%@",[obj description]);
                 [appsItems addObject:@
                  {
                     @"appName":obj[@"appName"],
@@ -542,7 +539,7 @@
         NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
         [appInfos enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:obj[@"appScheme"]]]){
-                NSLog(@"用户已安装%@",[obj description]);
+                NSLog(@"app install:%@",[obj description]);
                 [appsItems addObject:@
                  {
                     @"appName":obj[@"appName"],
@@ -778,7 +775,7 @@
         NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
         [appInfos enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:obj[@"appScheme"]]]){
-                NSLog(@"用户已安装%@",[obj description]);
+                NSLog(@"app install:%@",[obj description]);
                 [appsItems addObject:@
                  {
                     @"appName":obj[@"appName"],
@@ -878,7 +875,6 @@
       [self configDataSendLogs:logItems];
     }
     else{
-      NSLog(@"暂无日志上传");
     }
   }];
 }
@@ -890,10 +886,8 @@
       NSString *sql = [NSString stringWithFormat:@"DELETE FROM ActionLogInfo WHERE logId = '%@'",obj[@"log_id"]];
       BOOL res = [db executeUpdate:sql];
       if(res){
-        NSLog(@"行为数据删除成功");
       }
       else{
-        NSLog(@"行为数据删除失败");
       }
     }];
     [db close];

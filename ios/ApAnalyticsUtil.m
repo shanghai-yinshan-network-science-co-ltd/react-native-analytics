@@ -210,7 +210,6 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         idfa = [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString];
         NSLog(@"%@",idfa);
       } else {
-        NSLog(@"请在设置-隐私-跟踪中允许App请求跟踪");
       }
       block(idfa);
     }];
@@ -221,7 +220,6 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
       idfa = [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString];
       NSLog(@"%@",idfa);
     } else {
-      NSLog(@"请在设置-隐私-广告中打开广告跟踪功能");
     }
     block(idfa);
   }
@@ -816,7 +814,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   NSError *err;
   NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&err];
   if(err) {
-    NSLog(@"json解析失败：%@",err);
+    NSLog(@"json parse error：%@",err);
     return nil;
   }
 
