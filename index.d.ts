@@ -36,6 +36,20 @@ declare module 'react-native-analytics' {
 
   export function updateLocation(longitude: string, latitude: string, locationType?: string): void;
 
+  export function updateGpsAddress(
+    country?: string,
+    province?: string,
+    region?: string,
+    city?: string,
+  ): void;
+
+  export function refreshCommonDeviceProperties(): void;
+
+  export function getCommonDeviceProperties(): Promise<Record<string, any>>;
+
+  export function setClickPositionIsCenterListener(
+    listener: ((isInCenter: boolean) => void) | null,
+  ): void;
 
   type Action = (...args: any[]) => void;
   export function useAnalyticsScreen(actions?: Action[]): {

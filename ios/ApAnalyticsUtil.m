@@ -411,6 +411,69 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   self.longitude = longitude;
 }
 
+- (void)updateGpsAddress:(NSString *)country province:(NSString *)province region:(NSString *)region city:(NSString *)city{
+  self.gpsCountry = country ?: @"";
+  self.gpsProvince = province ?: @"";
+  self.gpsRegion = region ?: @"";
+  self.gpsCity = city ?: @"";
+}
+
+- (void)refreshCommonDeviceProperties{
+  // Snapshot language/air_mode/root/gyro with existing iOS capabilities for Sensors public properties
+  @try {
+    NSArray *languageArray = [NSLocale preferredLanguages];
+    self.snapLanguage = languageArray.count > 0 ? languageArray[0] : @"";
+    self.snapLatitude = self.latitude ?: @"";
+    self.snapLongitude = self.longitude ?: @"";
+    self.snapWifiSsid = @"";
+    self.snapWifiBssid = @"";
+    self.snapWifiMac = @"";
+    self.snapWifiList = @"[]";
+    self.snapAccelerationInfo = [self getAccelerometerData] ?: @"";
+    self.snapGyroInfo = [self getGyroData] ?: @"";
+    self.snapAirMode = NO; // No public iOS API; keep consistent with historical analytics behavior
+    self.snapIsRoot = [ApAnalyticsUtil isJailBreak];
+    self.commonPropsReady = YES;
+  } @catch (NSException *exception) {
+  }
+}
+
+- (NSString *)getCommonDevicePropertiesJson{
+  if (!self.commonPropsReady) {
+    [self refreshCommonDeviceProperties];
+  }
+  return [ApAnalyticsUtil dictionaryToJson:[self getCommonDevicePropertiesDictionary]] ?: @"{}";
+}
+
+- (NSDictionary *)getCommonDevicePropertiesDictionary{
+  if (!self.commonPropsReady) {
+    [self refreshCommonDeviceProperties];
+  }
+  return @{
+    @"language": self.snapLanguage ?: @"",
+    // lat/long/GPS use live values (updated via updateLocation / updateGpsAddress)
+    @"latitude": self.latitude ?: @"",
+    @"Longitude": self.longitude ?: @"",
+    @"GPS_country": self.gpsCountry ?: @"",
+    @"GPS_province": self.gpsProvince ?: @"",
+    @"GPS_region": self.gpsRegion ?: @"",
+    @"GPS_city": self.gpsCity ?: @"",
+    @"WIFI_SSID": self.snapWifiSsid ?: @"",
+    @"WIFI_BSSID": self.snapWifiBssid ?: @"",
+    @"WIFI_mac": self.snapWifiMac ?: @"",
+    @"WIFI_LIST": self.snapWifiList ?: @"[]",
+    @"acceleration_info": self.snapAccelerationInfo ?: @"",
+    @"gyro_info": self.snapGyroInfo ?: @"",
+    @"air_mode": @(self.snapAirMode),
+    @"is_root": @(self.snapIsRoot),
+    @"click_position_iscenter": @(self.snapClickPositionIsCenter),
+  };
+}
+
+- (void)updateClickPositionIsCenter:(BOOL)isInCenter{
+  self.snapClickPositionIsCenter = isInCenter;
+}
+
 //内网ip
 + (NSString *)IPAddress{
     @try {
@@ -758,6 +821,10 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
         [dic setObject:self.latitude ? self.latitude : @"" forKey:@"latitude"];
         [dic setObject:self.longitude ? self.longitude : @"" forKey:@"longitude"];
+        [dic setObject:self.gpsCountry ? self.gpsCountry : @"" forKey:@"GPS_country"];
+        [dic setObject:self.gpsProvince ? self.gpsProvince : @"" forKey:@"GPS_province"];
+        [dic setObject:self.gpsRegion ? self.gpsRegion : @"" forKey:@"GPS_region"];
+        [dic setObject:self.gpsCity ? self.gpsCity : @"" forKey:@"GPS_city"];
 
         NSDate* date = [NSDate dateWithTimeIntervalSinceNow:0];
         NSTimeInterval time=[date timeIntervalSince1970]*1000;

@@ -16,6 +16,22 @@ let lastClickId;
 
 let hostNode;
 
+let clickPositionIsCenterListener = null;
+
+export function setClickPositionIsCenterListener(listener) {
+  clickPositionIsCenterListener = typeof listener === 'function' ? listener : null;
+}
+
+function notifyClickPositionIsCenter(isInCenter) {
+  if (clickPositionIsCenterListener) {
+    try {
+      clickPositionIsCenterListener(!!isInCenter);
+    } catch (e) {
+      // ignore
+    }
+  }
+}
+
 export function clickEvent(instance, pageInfo, pageId) {
   let {path: viewPath, description, vId} = getViewPathByComponent(
       instance._reactInternals || instance._reactInternalFiber,
@@ -50,6 +66,10 @@ function onClickEvent({viewPath, description, vId, pageInfo, pageId}) {
   };
   if (pageInfo) {
     clickData.page_info = pageInfo;
+    if (pageInfo.clickPosition && typeof pageInfo.clickPosition.isInCenter === 'boolean') {
+      clickData.click_position_iscenter = pageInfo.clickPosition.isInCenter;
+      notifyClickPositionIsCenter(pageInfo.clickPosition.isInCenter);
+    }
   }
   if (description) {
     clickData.page_info = clickData.page_info ?

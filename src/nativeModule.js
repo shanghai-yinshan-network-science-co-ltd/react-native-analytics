@@ -98,3 +98,46 @@ export function updateLocation(longitude, latitude, locationType = '') {
         }
     }
 }
+
+
+/**
+ * Update reverse-geocoded GPS address fields.
+ * No new permissions; the app writes values after reverse geocoding.
+ */
+export function updateGpsAddress(country = '', province = '', region = '', city = '') {
+    if (RNAnalytics && RNAnalytics.updateGpsAddress) {
+        RNAnalytics.updateGpsAddress(
+            country || '',
+            province || '',
+            region || '',
+            city || '',
+        );
+    }
+}
+
+/**
+ * Manually refresh the common-property snapshot (language / WiFi / gyro, etc.).
+ */
+export function refreshCommonDeviceProperties() {
+    if (RNAnalytics && RNAnalytics.refreshCommonDeviceProperties) {
+        RNAnalytics.refreshCommonDeviceProperties();
+    }
+}
+
+/**
+ * Get Sensors-named common properties (JSON string parsed to an object).
+ */
+export async function getCommonDeviceProperties() {
+    if (!RNAnalytics || !RNAnalytics.getCommonDeviceProperties) {
+        return {};
+    }
+    try {
+        const json = await RNAnalytics.getCommonDeviceProperties();
+        if (!json) {
+            return {};
+        }
+        return typeof json === 'string' ? JSON.parse(json) : json;
+    } catch (e) {
+        return {};
+    }
+}

@@ -19,6 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 //更新位置
 - (void)updateLatitude:(NSString *)latitude longitude:(NSString *)longitude;
 
+// Update reverse-geocoded GPS address
+- (void)updateGpsAddress:(NSString *)country province:(NSString *)province region:(NSString *)region city:(NSString *)city;
+
+// Refresh / get common-property snapshot
+- (void)refreshCommonDeviceProperties;
+- (NSString *)getCommonDevicePropertiesJson;
+- (void)updateClickPositionIsCenter:(BOOL)isInCenter;
+
 //更新用户id
 - (void)updateUserId:(NSString *)uId;
 

@@ -1,4 +1,4 @@
-import {setBuried,createHookTouchable,clickEvent} from './src/clickBuried';
+import {setBuried,createHookTouchable,clickEvent,setClickPositionIsCenterListener} from './src/clickBuried';
 import {
   getCurrentPageId,
   useAnalyticsScreen,
@@ -15,7 +15,10 @@ import {
   saveBusinessEvent,
   setOtaVersion,
   uploadLogImmediately,
-  updateLocation
+  updateLocation,
+  updateGpsAddress,
+  refreshCommonDeviceProperties,
+  getCommonDeviceProperties
 } from './src/nativeModule';
 import {createTextInput} from './src/editBuried';
 import {NetworkLogger} from './src/network/NetworkLogger';
@@ -38,6 +41,10 @@ export {
   setOtaVersion,
   uploadLogImmediately,
   updateLocation,
+  updateGpsAddress,
+  refreshCommonDeviceProperties,
+  getCommonDeviceProperties,
+  setClickPositionIsCenterListener,
   trackScreenshot,
   initRecordingState,
   endRecordingAndTrack,

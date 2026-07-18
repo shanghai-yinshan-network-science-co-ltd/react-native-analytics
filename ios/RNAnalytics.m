@@ -41,6 +41,30 @@ RCT_EXPORT_METHOD(setLatitude:(NSString *)latitude setLongitude:(NSString *)long
   [[ApLogManager sharedInstance] updateLatitude:latitude longitude:longitude];
 }
 
+RCT_EXPORT_METHOD(updateGpsAddress:(NSString *)country province:(NSString *)province region:(NSString *)region city:(NSString *)city)
+{
+  [[ApLogManager sharedInstance] updateGpsAddress:country province:province region:region city:city];
+}
+
+RCT_EXPORT_METHOD(refreshCommonDeviceProperties)
+{
+  [[ApLogManager sharedInstance] refreshCommonDeviceProperties];
+}
+
+RCT_EXPORT_METHOD(updateClickPositionIsCenter:(BOOL)isInCenter)
+{
+  [[ApLogManager sharedInstance] updateClickPositionIsCenter:isInCenter];
+}
+
+RCT_EXPORT_METHOD(getCommonDeviceProperties:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+  @try {
+    NSString *json = [[ApLogManager sharedInstance] getCommonDevicePropertiesJson];
+    resolve(json ?: @"{}");
+  } @catch (NSException *exception) {
+    reject(@"get_common_props_error", exception.reason, nil);
+  }
+}
 
 RCT_EXPORT_METHOD(uploadLogImmediately)
 {

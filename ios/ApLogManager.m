@@ -63,6 +63,9 @@
     [_instance configDataBase];
     [_instance configTimerCheck];
     [_instance checkApplist];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+      [_instance refreshCommonDeviceProperties];
+    });
   });
   return _instance;
 }
@@ -916,6 +919,22 @@
 - (void)updateLatitude:(NSString *)latitude longitude:(NSString *)longitude{
   self.util.longitude = longitude;
   self.util.latitude = latitude;
+}
+
+- (void)updateGpsAddress:(NSString *)country province:(NSString *)province region:(NSString *)region city:(NSString *)city{
+  [self.util updateGpsAddress:country province:province region:region city:city];
+}
+
+- (void)refreshCommonDeviceProperties{
+  [self.util refreshCommonDeviceProperties];
+}
+
+- (NSString *)getCommonDevicePropertiesJson{
+  return [self.util getCommonDevicePropertiesJson];
+}
+
+- (void)updateClickPositionIsCenter:(BOOL)isInCenter{
+  [self.util updateClickPositionIsCenter:isInCenter];
 }
 
 //更新用户id

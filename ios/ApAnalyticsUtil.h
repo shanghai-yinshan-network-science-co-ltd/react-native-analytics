@@ -17,10 +17,26 @@ NS_ASSUME_NONNULL_BEGIN
 //经纬度
 @property (nonatomic, copy) NSString *latitude;
 @property (nonatomic, copy) NSString *longitude;
-
+@property (nonatomic, copy) NSString *gpsCountry;
+@property (nonatomic, copy) NSString *gpsProvince;
+@property (nonatomic, copy) NSString *gpsRegion;
+@property (nonatomic, copy) NSString *gpsCity;
 
 //更新经纬度
 - (void)updateLatitude:(NSString *)latitude longitude:(NSString *)longitude;
+
+// Update reverse-geocoded GPS address (country / province / region / city)
+- (void)updateGpsAddress:(NSString *)country province:(NSString *)province region:(NSString *)region city:(NSString *)city;
+
+// Refresh common-property snapshot (once on startup / manual refresh)
+- (void)refreshCommonDeviceProperties;
+
+// Sensors-named common properties as JSON / dictionary
+- (NSString *)getCommonDevicePropertiesJson;
+- (NSDictionary *)getCommonDevicePropertiesDictionary;
+
+// Update last click-position-is-center flag for behavior logs
+- (void)updateClickPositionIsCenter:(BOOL)isInCenter;
 
 //判断是否开启代理
 - (BOOL)getProxyStatus ;

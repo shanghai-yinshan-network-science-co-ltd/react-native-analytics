@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import cn.yinshantech.analytics.MZLogAgent;
@@ -66,6 +67,25 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void updateLocation(String longitude, String latitude, String locationType) {
         MZLogAgent.updateLocation(longitude, latitude, locationType);
+    }
+
+    @ReactMethod
+    public void updateGpsAddress(String country, String province, String region, String city) {
+        MZLogAgent.updateGpsAddress(country, province, region, city);
+    }
+
+    @ReactMethod
+    public void refreshCommonDeviceProperties() {
+        MZLogAgent.refreshCommonDeviceProperties();
+    }
+
+    @ReactMethod
+    public void getCommonDeviceProperties(Promise promise) {
+        try {
+            promise.resolve(MZLogAgent.getCommonDevicePropertiesJson());
+        } catch (Exception e) {
+            promise.reject("get_common_props_error", e);
+        }
     }
 
 
