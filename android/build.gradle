@@ -36,7 +36,7 @@ android {
 repositories {
     mavenCentral()
     maven {
-        url 'https://maven.yinshantech.cn/repository/maven-public/'
+        url 'https://i-nexus.adapundi.com/repository/maven-public/'
         allowInsecureProtocol = true
         credentials {
             username 'admin'
