@@ -46,6 +46,21 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 /** 定位 */
 @property (nonatomic, strong) CLLocationManager *locationManager;
 
+/** Common-property snapshot (Sensors public properties) */
+@property (nonatomic, assign) BOOL commonPropsReady;
+@property (nonatomic, copy) NSString *snapLanguage;
+@property (nonatomic, copy) NSString *snapLatitude;
+@property (nonatomic, copy) NSString *snapLongitude;
+@property (nonatomic, copy) NSString *snapWifiSsid;
+@property (nonatomic, copy) NSString *snapWifiBssid;
+@property (nonatomic, copy) NSString *snapWifiMac;
+@property (nonatomic, copy) NSString *snapWifiList;
+@property (nonatomic, copy) NSString *snapAccelerationInfo;
+@property (nonatomic, copy) NSString *snapGyroInfo;
+@property (nonatomic, assign) BOOL snapAirMode;
+@property (nonatomic, assign) BOOL snapIsRoot;
+@property (nonatomic, assign) BOOL snapClickPositionIsCenter;
+
 @end
 
 @implementation ApAnalyticsUtil
