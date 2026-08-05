@@ -60,6 +60,7 @@
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     _instance = [[self alloc] init];
+    [ApAnalyticsUtil recordFirstSdkInitIfNeeded];
     [_instance configDataBase];
     [_instance configTimerCheck];
     [_instance checkApplist];

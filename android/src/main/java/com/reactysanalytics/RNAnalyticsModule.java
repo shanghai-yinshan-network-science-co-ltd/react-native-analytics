@@ -23,6 +23,7 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
   public RNAnalyticsModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
+    DevicePropertyHelper.recordFirstSdkInitIfNeeded(reactContext);
     DebugViewManager.addOnCatchModeStateChangeListener(new DebugMenuView.OnCatchModeStateChangeListener() {
       @Override
       public void onCatchModeStateChanged(boolean isCatchModeOpened) {
@@ -82,7 +83,8 @@ public class RNAnalyticsModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getCommonDeviceProperties(Promise promise) {
         try {
-            promise.resolve(MZLogAgent.getCommonDevicePropertiesJson());
+            String sdkJson = MZLogAgent.getCommonDevicePropertiesJson();
+            promise.resolve(DevicePropertyHelper.mergeCommonDevicePropertiesJson(reactContext, sdkJson));
         } catch (Exception e) {
             promise.reject("get_common_props_error", e);
         }

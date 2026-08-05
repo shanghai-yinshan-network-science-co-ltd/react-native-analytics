@@ -22,14 +22,19 @@
 //计算内存大小
 #import <mach/mach.h>
 #import <mach/mach_host.h>
+#include <sys/sysctl.h>
 
 #import <CoreLocation/CoreLocation.h>
+#import <AVFoundation/AVFoundation.h>
+#import <CoreNFC/CoreNFC.h>
 
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 #include <net/if.h>
 
 #import "sys/utsname.h"
+#include <mach-o/dyld.h>
+#include <unistd.h>
 #import "DeviceUID.h"
 
 NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotification";
@@ -49,6 +54,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 /** Common-property snapshot (Sensors public properties) */
 @property (nonatomic, assign) BOOL commonPropsReady;
 @property (nonatomic, copy) NSString *snapLanguage;
+@property (nonatomic, copy) NSString *snapTimezoneDisplayName;
 @property (nonatomic, copy) NSString *snapLatitude;
 @property (nonatomic, copy) NSString *snapLongitude;
 @property (nonatomic, copy) NSString *snapWifiSsid;
@@ -438,6 +444,7 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   @try {
     NSArray *languageArray = [NSLocale preferredLanguages];
     self.snapLanguage = languageArray.count > 0 ? languageArray[0] : @"";
+    self.snapTimezoneDisplayName = [ApAnalyticsUtil getTimezoneDisplayName];
     self.snapLatitude = self.latitude ?: @"";
     self.snapLongitude = self.longitude ?: @"";
     self.snapWifiSsid = @"";
@@ -464,8 +471,9 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   if (!self.commonPropsReady) {
     [self refreshCommonDeviceProperties];
   }
-  return @{
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithDictionary:@{
     @"language": self.snapLanguage ?: @"",
+    @"timezone_display_name": self.snapTimezoneDisplayName ?: @"",
     // lat/long/GPS use live values (updated via updateLocation / updateGpsAddress)
     @"latitude": self.latitude ?: @"",
     @"Longitude": self.longitude ?: @"",
@@ -482,7 +490,9 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
     @"air_mode": @(self.snapAirMode),
     @"is_root": @(self.snapIsRoot),
     @"click_position_iscenter": @(self.snapClickPositionIsCenter),
-  };
+  }];
+  [ApAnalyticsUtil applyLanguageAndBootPropertiesToDictionary:properties];
+  return [properties copy];
 }
 
 - (void)updateClickPositionIsCenter:(BOOL)isInCenter{
@@ -683,6 +693,870 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
 }
 
++ (NSString *)getTimezoneDisplayName {
+  @try {
+    NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+    if (timeZone == nil) {
+      return @"";
+    }
+    if (@available(iOS 10.0, *)) {
+      NSString *localizedName = [timeZone localizedName:NSTimeZoneNameStyleStandard locale:[NSLocale currentLocale]];
+      if (localizedName.length > 0) {
+        return localizedName;
+      }
+    }
+    NSString *name = [timeZone name];
+    return name.length > 0 ? name : @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (long long)getBootTimestampMillis {
+  @try {
+    struct timeval boottime;
+    size_t len = sizeof(boottime);
+    int mib[2] = {CTL_KERN, KERN_BOOTTIME};
+    if (sysctl(mib, 2, &boottime, &len, NULL, 0) != 0) {
+      return 0;
+    }
+    return (long long)boottime.tv_sec * 1000;
+  } @catch (NSException *exception) {
+    return 0;
+  }
+}
+
++ (NSString *)getBootTimeString {
+  long long bootTimestampMillis = [self getBootTimestampMillis];
+  if (bootTimestampMillis <= 0) {
+    return @"";
+  }
+  NSDate *bootDate = [NSDate dateWithTimeIntervalSince1970:bootTimestampMillis / 1000.0];
+  return [self getFormateLocalDate:bootDate] ?: @"";
+}
+
++ (NSDictionary *)languageAndBootPropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:7];
+  @try {
+    NSLocale *locale = [NSLocale currentLocale];
+    NSString *languageCode = @"";
+    NSString *countryCode = @"";
+    if (@available(iOS 10.0, *)) {
+      languageCode = locale.languageCode ?: @"";
+      countryCode = locale.countryCode ?: @"";
+    } else {
+      languageCode = [locale objectForKey:NSLocaleLanguageCode] ?: @"";
+      countryCode = [locale objectForKey:NSLocaleCountryCode] ?: @"";
+    }
+
+    // iOS 无公开 ISO639-2 / ISO3166 alpha-3 API，采集不到传空
+    [properties setObject:@"" forKey:@"language_iso3"];
+    [properties setObject:countryCode forKey:@"language_country"];
+    [properties setObject:@"" forKey:@"language_iso3_country"];
+    [properties setObject:(languageCode.length > 0 ? ([locale displayNameForKey:NSLocaleLanguageCode value:languageCode] ?: @"") : @"") forKey:@"language_display"];
+    [properties setObject:(countryCode.length > 0 ? ([locale displayNameForKey:NSLocaleCountryCode value:countryCode] ?: @"") : @"") forKey:@"language_display_country"];
+
+    long long bootTimestampMillis = [self getBootTimestampMillis];
+    if (bootTimestampMillis > 0) {
+      [properties setObject:@(bootTimestampMillis) forKey:@"boot_timestamp"];
+      [properties setObject:[self getBootTimeString] forKey:@"boot_time"];
+    } else {
+      [properties setObject:@"" forKey:@"boot_timestamp"];
+      [properties setObject:@"" forKey:@"boot_time"];
+    }
+  } @catch (NSException *exception) {
+    [properties setObject:@"" forKey:@"language_iso3"];
+    [properties setObject:@"" forKey:@"language_country"];
+    [properties setObject:@"" forKey:@"language_iso3_country"];
+    [properties setObject:@"" forKey:@"language_display"];
+    [properties setObject:@"" forKey:@"language_display_country"];
+    [properties setObject:@"" forKey:@"boot_timestamp"];
+    [properties setObject:@"" forKey:@"boot_time"];
+  }
+  return [properties copy];
+}
+
++ (void)applyLanguageAndBootPropertiesToDictionary:(NSMutableDictionary *)dictionary {
+  if (dictionary == nil) {
+    return;
+  }
+  [[self languageAndBootPropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+  [[self miscCompliancePropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+  [[self screenCapabilityPropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+  [[self cpuDiskMemoryPropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+  [[self buildSystemHardwarePropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+  [[self environmentRiskPropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+  [[self versionChannelAppPropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+  [[self deviceFingerprintCollectTimePropertyDictionary] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    [dictionary setObject:obj forKey:key];
+  }];
+}
+
++ (id)getBatteryIsChargingValue {
+  @try {
+    UIDeviceBatteryState state = [UIDevice currentDevice].batteryState;
+    if (state == UIDeviceBatteryStateUnknown) {
+      return @"";
+    }
+    return @(state == UIDeviceBatteryStateCharging || state == UIDeviceBatteryStateFull);
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (id)getAdidLimitTrackingEnableValue {
+  @try {
+    if (@available(iOS 14, *)) {
+      ATTrackingManagerAuthorizationStatus status = [ATTrackingManager trackingAuthorizationStatus];
+      if (status == ATTrackingManagerAuthorizationStatusNotDetermined) {
+        return @"";
+      }
+      return @(status != ATTrackingManagerAuthorizationStatusAuthorized);
+    }
+    return @(![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]);
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSDictionary *)miscCompliancePropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:14];
+  @try {
+    [properties setObject:[self getBatteryIsChargingValue] forKey:@"battery_is_charging"];
+    [properties setObject:@"" forKey:@"user_agent"];
+    [properties setObject:@"" forKey:@"oaid"];
+    [properties setObject:@"" forKey:@"oaid_sdk_name"];
+    [properties setObject:@"" forKey:@"oaid_support"];
+    [properties setObject:@NO forKey:@"is_harmony_os"];
+    [properties setObject:@"" forKey:@"harmony_os_version"];
+    [properties setObject:@"" forKey:@"heap_size"];
+    [properties setObject:@"" forKey:@"heap_start_size"];
+    [properties setObject:@"" forKey:@"heap_growth_limit"];
+    [properties setObject:[ApAnalyticsUtil getDeviceModel] ?: @"" forKey:@"market_name"];
+    [properties setObject:@"model" forKey:@"market_name_type"];
+    [properties setObject:[self getAdidLimitTrackingEnableValue] forKey:@"adid_limit_tracking_enable"];
+  } @catch (NSException *exception) {
+    [properties setObject:@"" forKey:@"battery_is_charging"];
+    [properties setObject:@"" forKey:@"user_agent"];
+    [properties setObject:@"" forKey:@"oaid"];
+    [properties setObject:@"" forKey:@"oaid_sdk_name"];
+    [properties setObject:@"" forKey:@"oaid_support"];
+    [properties setObject:@NO forKey:@"is_harmony_os"];
+    [properties setObject:@"" forKey:@"harmony_os_version"];
+    [properties setObject:@"" forKey:@"heap_size"];
+    [properties setObject:@"" forKey:@"heap_start_size"];
+    [properties setObject:@"" forKey:@"heap_growth_limit"];
+    [properties setObject:@"" forKey:@"market_name"];
+    [properties setObject:@"" forKey:@"market_name_type"];
+    [properties setObject:@"" forKey:@"adid_limit_tracking_enable"];
+  }
+  return [properties copy];
+}
+
++ (NSString *)getScreenOrientationName {
+  @try {
+    UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
+    if (@available(iOS 13.0, *)) {
+      NSSet *scenes = [UIApplication sharedApplication].connectedScenes;
+      for (UIScene *scene in scenes) {
+        if ([scene isKindOfClass:[UIWindowScene class]]) {
+          orientation = ((UIWindowScene *)scene).interfaceOrientation;
+          break;
+        }
+      }
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+      orientation = [UIApplication sharedApplication].statusBarOrientation;
+#pragma clang diagnostic pop
+    }
+    if (UIInterfaceOrientationIsPortrait(orientation)) {
+      return @"portrait";
+    }
+    if (UIInterfaceOrientationIsLandscape(orientation)) {
+      return @"landscape";
+    }
+    return @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (BOOL)hasTelephonySupport {
+  NSString *model = [[UIDevice currentDevice] model];
+  return model != nil && [model rangeOfString:@"iPhone"].location != NSNotFound;
+}
+
++ (NSString *)getCameraCharacteristicsJson {
+  @try {
+    if (@available(iOS 10.0, *)) {
+      AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+          discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
+                                mediaType:AVMediaTypeVideo
+                                 position:AVCaptureDevicePositionUnspecified];
+      NSMutableArray *cameras = [NSMutableArray arrayWithCapacity:session.devices.count];
+      for (AVCaptureDevice *device in session.devices) {
+        [cameras addObject:@{
+          @"position": @(device.position),
+          @"modelID": device.modelID ?: @"",
+          @"localizedName": device.localizedName ?: @""
+        }];
+      }
+      return cameras.count > 0 ? ([self dataToJson:cameras] ?: @"") : @"";
+    }
+    return @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSDictionary *)screenCapabilityPropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:15];
+  @try {
+    UIScreen *screen = [UIScreen mainScreen];
+    CGFloat scale = screen.scale;
+    CGRect bounds = screen.bounds;
+    CGFloat pixelWidth = bounds.size.width * scale;
+    CGFloat pixelHeight = bounds.size.height * scale;
+
+    [properties setObject:[NSString stringWithFormat:@"%.2f", scale] forKey:@"screen_density"];
+    [properties setObject:[NSString stringWithFormat:@"%.0f", scale * 163.0] forKey:@"screen_density_dpi"];
+    [properties setObject:[NSString stringWithFormat:@"%.0fx%.0f", pixelWidth, pixelHeight] forKey:@"resolution"];
+    [properties setObject:[self getScreenOrientationName] forKey:@"screen_orientation"];
+    [properties setObject:[NSString stringWithFormat:@"%.4f", screen.brightness] forKey:@"screen_brightness"];
+
+    [properties setObject:@YES forKey:@"has_wifi"];
+    [properties setObject:@([self hasTelephonySupport] || [CLLocationManager significantLocationChangeMonitoringAvailable]) forKey:@"has_gps"];
+    if (@available(iOS 11.0, *)) {
+      [properties setObject:@([NFCNDEFReaderSession readingAvailable]) forKey:@"has_nfc"];
+    } else {
+      [properties setObject:@NO forKey:@"has_nfc"];
+    }
+    [properties setObject:@NO forKey:@"has_nfc_host"];
+    [properties setObject:@NO forKey:@"has_wifi_direct"];
+    [properties setObject:@YES forKey:@"has_bluetooth"];
+    [properties setObject:@([self hasTelephonySupport]) forKey:@"has_telephony"];
+    [properties setObject:@NO forKey:@"has_otg"];
+    [properties setObject:@NO forKey:@"has_aoa"];
+    [properties setObject:[self getCameraCharacteristicsJson] forKey:@"camera_characteristics"];
+  } @catch (NSException *exception) {
+    [properties setObject:@"" forKey:@"screen_density"];
+    [properties setObject:@"" forKey:@"screen_density_dpi"];
+    [properties setObject:@"" forKey:@"resolution"];
+    [properties setObject:@"" forKey:@"screen_orientation"];
+    [properties setObject:@"" forKey:@"screen_brightness"];
+    [properties setObject:@"" forKey:@"has_wifi"];
+    [properties setObject:@"" forKey:@"has_gps"];
+    [properties setObject:@"" forKey:@"has_nfc"];
+    [properties setObject:@"" forKey:@"has_nfc_host"];
+    [properties setObject:@"" forKey:@"has_wifi_direct"];
+    [properties setObject:@"" forKey:@"has_bluetooth"];
+    [properties setObject:@"" forKey:@"has_telephony"];
+    [properties setObject:@"" forKey:@"has_otg"];
+    [properties setObject:@"" forKey:@"has_aoa"];
+    [properties setObject:@"" forKey:@"camera_characteristics"];
+  }
+  return [properties copy];
+}
+
++ (long long)getTotalDiskSizeBytes {
+  @try {
+    struct statfs buf;
+    if (statfs("/var", &buf) >= 0) {
+      return (long long)(buf.f_bsize * buf.f_blocks);
+    }
+  } @catch (NSException *exception) {
+  }
+  return 0;
+}
+
++ (long long)getAvailableDiskSizeBytes {
+  @try {
+    struct statfs buf;
+    if (statfs("/var", &buf) >= 0) {
+      return (long long)(buf.f_bsize * buf.f_bavail);
+    }
+  } @catch (NSException *exception) {
+  }
+  return 0;
+}
+
++ (NSString *)getCpuArchitecture {
+  @try {
+    struct utsname systemInfo;
+    if (uname(&systemInfo) != 0) {
+      return @"";
+    }
+    return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding] ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSString *)getCpuAbisJson {
+  @try {
+    NSString *architecture = [self getCpuArchitecture];
+    if (architecture.length == 0) {
+      return @"";
+    }
+    return [self dataToJson:@[architecture]] ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSDictionary *)cpuDiskMemoryPropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:8];
+  @try {
+    [properties setObject:@"" forKey:@"cpu_abi"];
+    [properties setObject:@"" forKey:@"cpu_abi2"];
+    [properties setObject:[self getCpuAbisJson] forKey:@"cpu_abis"];
+    [properties setObject:[self getCpuArchitecture] forKey:@"cpu_architecture"];
+    [properties setObject:@"" forKey:@"cpu_serial"];
+
+    long long cpuCores = [NSProcessInfo processInfo].processorCount;
+    [properties setObject:cpuCores > 0 ? @(cpuCores) : @"" forKey:@"cpu_cores"];
+
+    long long totalDisk = [self getTotalDiskSizeBytes];
+    long long availableDisk = [self getAvailableDiskSizeBytes];
+    if (totalDisk > 0 && availableDisk >= 0 && totalDisk >= availableDisk) {
+      [properties setObject:@(totalDisk - availableDisk) forKey:@"disk_used_space"];
+    } else {
+      [properties setObject:@"" forKey:@"disk_used_space"];
+    }
+
+    long long totalMemory = [self getTotalMemorySize];
+    long long availableMemory = [self getAvailableMemorySize];
+    if (totalMemory > 0 && availableMemory > 0 && availableMemory <= totalMemory) {
+      [properties setObject:@(totalMemory - availableMemory) forKey:@"memory_used"];
+    } else {
+      [properties setObject:@"" forKey:@"memory_used"];
+    }
+  } @catch (NSException *exception) {
+    [properties setObject:@"" forKey:@"cpu_abi"];
+    [properties setObject:@"" forKey:@"cpu_abi2"];
+    [properties setObject:@"" forKey:@"cpu_abis"];
+    [properties setObject:@"" forKey:@"cpu_architecture"];
+    [properties setObject:@"" forKey:@"cpu_serial"];
+    [properties setObject:@"" forKey:@"cpu_cores"];
+    [properties setObject:@"" forKey:@"disk_used_space"];
+    [properties setObject:@"" forKey:@"memory_used"];
+  }
+  return [properties copy];
+}
+
++ (NSString *)getSystemUnameField:(const char *)field {
+  @try {
+    struct utsname systemInfo;
+    if (uname(&systemInfo) != 0 || field == NULL) {
+      return @"";
+    }
+    return [NSString stringWithUTF8String:field] ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSString *)getSystemCharacteristicJson {
+  @try {
+    struct utsname systemInfo;
+    if (uname(&systemInfo) != 0) {
+      return @"";
+    }
+    NSDictionary *characteristic = @{
+      @"sysname": [NSString stringWithUTF8String:systemInfo.sysname] ?: @"",
+      @"nodename": [NSString stringWithUTF8String:systemInfo.nodename] ?: @"",
+      @"release": [NSString stringWithUTF8String:systemInfo.release] ?: @"",
+      @"version": [NSString stringWithUTF8String:systemInfo.version] ?: @"",
+      @"machine": [NSString stringWithUTF8String:systemInfo.machine] ?: @"",
+    };
+    return [self dictionaryToJson:characteristic] ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (void)applyEmptyBuildSystemHardwareProperties:(NSMutableDictionary *)properties {
+  [properties setObject:@"" forKey:@"base_band_version"];
+  [properties setObject:@"" forKey:@"board"];
+  [properties setObject:@"" forKey:@"boot_loader"];
+  [properties setObject:@"" forKey:@"finger_print"];
+  [properties setObject:@"" forKey:@"display"];
+  [properties setObject:@"" forKey:@"hardware"];
+  [properties setObject:@"" forKey:@"host"];
+  [properties setObject:@"" forKey:@"build_id"];
+  [properties setObject:@"" forKey:@"device"];
+  [properties setObject:@"" forKey:@"incremental"];
+  [properties setObject:@"" forKey:@"radio_version"];
+  [properties setObject:@"" forKey:@"characteristic"];
+  [properties setObject:@"" forKey:@"signatures"];
+  [properties setObject:@"" forKey:@"tags"];
+  [properties setObject:@"" forKey:@"sys_build_time"];
+  [properties setObject:@"" forKey:@"sys_build_type"];
+  [properties setObject:@"" forKey:@"sys_build_user"];
+  [properties setObject:@"" forKey:@"sys_code_name"];
+}
+
++ (NSDictionary *)buildSystemHardwarePropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:18];
+  @try {
+    struct utsname systemInfo;
+    if (uname(&systemInfo) != 0) {
+      [self applyEmptyBuildSystemHardwareProperties:properties];
+      return [properties copy];
+    }
+
+    NSString *machine = [NSString stringWithUTF8String:systemInfo.machine] ?: @"";
+    NSString *release = [NSString stringWithUTF8String:systemInfo.release] ?: @"";
+    NSString *version = [NSString stringWithUTF8String:systemInfo.version] ?: @"";
+    NSString *nodename = [NSString stringWithUTF8String:systemInfo.nodename] ?: @"";
+
+    [properties setObject:@"" forKey:@"base_band_version"];
+    [properties setObject:machine forKey:@"board"];
+    [properties setObject:@"" forKey:@"boot_loader"];
+    [properties setObject:@"" forKey:@"finger_print"];
+    [properties setObject:[[UIDevice currentDevice] systemVersion] ?: @"" forKey:@"display"];
+    [properties setObject:machine forKey:@"hardware"];
+    [properties setObject:nodename forKey:@"host"];
+    [properties setObject:version forKey:@"build_id"];
+    [properties setObject:machine forKey:@"device"];
+    [properties setObject:@"" forKey:@"incremental"];
+    [properties setObject:@"" forKey:@"radio_version"];
+    [properties setObject:[self getSystemCharacteristicJson] forKey:@"characteristic"];
+    [properties setObject:@"" forKey:@"signatures"];
+    [properties setObject:@"" forKey:@"tags"];
+    [properties setObject:@"" forKey:@"sys_build_time"];
+    [properties setObject:@"" forKey:@"sys_build_type"];
+    [properties setObject:@"" forKey:@"sys_build_user"];
+    [properties setObject:release forKey:@"sys_code_name"];
+  } @catch (NSException *exception) {
+    [self applyEmptyBuildSystemHardwareProperties:properties];
+  }
+  return [properties copy];
+}
+
++ (BOOL)isFirstLaunch {
+  @try {
+    NSString *key = @"ApAnalyticsHasLaunchedBefore";
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults boolForKey:key]) {
+      return NO;
+    }
+    [defaults setBool:YES forKey:key];
+    return YES;
+  } @catch (NSException *exception) {
+    return NO;
+  }
+}
+
++ (BOOL)isGpsOpen {
+  @try {
+    return [CLLocationManager locationServicesEnabled];
+  } @catch (NSException *exception) {
+    return NO;
+  }
+}
+
++ (NSString *)getRootDescription {
+  @try {
+    return [self isJailBreak] ? @"jailbroken" : @"not_jailbroken";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (BOOL)isEmulator {
+  @try {
+#if TARGET_OS_SIMULATOR
+    return YES;
+#else
+    NSString *model = [self getDeviceModel] ?: @"";
+    return [model rangeOfString:@"Simulator" options:NSCaseInsensitiveSearch].location != NSNotFound;
+#endif
+  } @catch (NSException *exception) {
+    return NO;
+  }
+}
+
++ (NSString *)getEmulatorDescription {
+  @try {
+    return [self isEmulator] ? @"simulator" : @"physical_device";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (BOOL)isDebuggerAttached {
+  @try {
+    int mib[4];
+    struct kinfo_proc info;
+    size_t size = sizeof(info);
+    info.kp_proc.p_flag = 0;
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROC;
+    mib[2] = KERN_PROC_PID;
+    mib[3] = getpid();
+    if (sysctl(mib, 4, &info, &size, NULL, 0) != 0) {
+      return NO;
+    }
+    return (info.kp_proc.p_flag & P_TRACED) != 0;
+  } @catch (NSException *exception) {
+    return NO;
+  }
+}
+
++ (BOOL)hasSuspiciousDylib {
+  @try {
+    uint32_t count = _dyld_image_count();
+    NSArray *needles = @[@"Frida", @"frida", @"Substrate", @"cycript", @"SSLKillSwitch"];
+    for (uint32_t i = 0; i < count; i++) {
+      const char *name = _dyld_get_image_name(i);
+      if (name == NULL) {
+        continue;
+      }
+      NSString *imageName = [NSString stringWithUTF8String:name];
+      for (NSString *needle in needles) {
+        if ([imageName rangeOfString:needle].location != NSNotFound) {
+          return YES;
+        }
+      }
+    }
+    return NO;
+  } @catch (NSException *exception) {
+    return NO;
+  }
+}
+
++ (BOOL)isHookDetected {
+  @try {
+    return [self isDebuggerAttached] || [self hasSuspiciousDylib];
+  } @catch (NSException *exception) {
+    return NO;
+  }
+}
+
++ (NSString *)getHookDescription {
+  @try {
+    NSMutableArray *reasons = [NSMutableArray arrayWithCapacity:2];
+    if ([self isDebuggerAttached]) {
+      [reasons addObject:@"debugger_attached"];
+    }
+    if ([self hasSuspiciousDylib]) {
+      [reasons addObject:@"suspicious_dylib"];
+    }
+    if (reasons.count == 0) {
+      return @"not_hooked";
+    }
+    return [reasons componentsJoinedByString:@","];
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (BOOL)isCloneApp {
+  return NO;
+}
+
++ (NSString *)getCloneDescription {
+  @try {
+    return [self isCloneApp] ? @"cloned_app" : @"normal_app";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (BOOL)isDebugBuildEnabled {
+#if DEBUG
+  return YES;
+#else
+  return NO;
+#endif
+}
+
++ (void)applyEmptyEnvironmentRiskProperties:(NSMutableDictionary *)properties {
+  [properties setObject:@NO forKey:@"is_first_launch"];
+  [properties setObject:@NO forKey:@"is_open_gps"];
+  [properties setObject:@"" forKey:@"is_root_desc"];
+  [properties setObject:@NO forKey:@"is_emulator"];
+  [properties setObject:@"" forKey:@"is_emulator_desc"];
+  [properties setObject:@NO forKey:@"is_hook"];
+  [properties setObject:@"" forKey:@"is_hook_desc"];
+  [properties setObject:@NO forKey:@"is_clone"];
+  [properties setObject:@"" forKey:@"is_clone_desc"];
+  [properties setObject:@NO forKey:@"enable_debug"];
+  [properties setObject:@NO forKey:@"is_debug"];
+  [properties setObject:@NO forKey:@"adb_enabled"];
+  [properties setObject:@NO forKey:@"development_settings_enable"];
+}
+
++ (NSDictionary *)environmentRiskPropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:13];
+  @try {
+    [properties setObject:@([self isFirstLaunch]) forKey:@"is_first_launch"];
+    [properties setObject:@([self isGpsOpen]) forKey:@"is_open_gps"];
+    [properties setObject:[self getRootDescription] forKey:@"is_root_desc"];
+    [properties setObject:@([self isEmulator]) forKey:@"is_emulator"];
+    [properties setObject:[self getEmulatorDescription] forKey:@"is_emulator_desc"];
+    [properties setObject:@([self isHookDetected]) forKey:@"is_hook"];
+    [properties setObject:[self getHookDescription] forKey:@"is_hook_desc"];
+    [properties setObject:@([self isCloneApp]) forKey:@"is_clone"];
+    [properties setObject:[self getCloneDescription] forKey:@"is_clone_desc"];
+    [properties setObject:@([self isDebugBuildEnabled]) forKey:@"enable_debug"];
+    [properties setObject:@([self isDebuggerAttached]) forKey:@"is_debug"];
+    [properties setObject:@NO forKey:@"adb_enabled"];
+    [properties setObject:@NO forKey:@"development_settings_enable"];
+  } @catch (NSException *exception) {
+    [self applyEmptyEnvironmentRiskProperties:properties];
+  }
+  return [properties copy];
+}
+
++ (NSString *)getAppVersionCodeString {
+  @try {
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSString *)getAppName {
+  @try {
+    NSString *name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    if (name.length == 0) {
+      name = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+    }
+    return name ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSString *)getManufacturerName {
+  return @"Apple";
+}
+
++ (NSString *)getProductName {
+  @try {
+    struct utsname systemInfo;
+    if (uname(&systemInfo) != 0) {
+      return @"";
+    }
+    return [NSString stringWithUTF8String:systemInfo.machine] ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (NSString *)getDeviceNameValue {
+  @try {
+    return [[UIDevice currentDevice] name] ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (id)getOsVersionIntValue {
+  @try {
+    if (@available(iOS 8.0, *)) {
+      NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+      return @(version.majorVersion);
+    }
+    NSString *systemVersion = [[UIDevice currentDevice] systemVersion] ?: @"";
+    NSArray *components = [systemVersion componentsSeparatedByString:@"."];
+    if (components.count > 0) {
+      return @([components[0] integerValue]);
+    }
+    return @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (id)getAppVersionCodeValue {
+  @try {
+    NSString *versionCode = [self getAppVersionCodeString];
+    if (versionCode.length == 0) {
+      return @"";
+    }
+    return @([versionCode longLongValue]);
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (void)applyEmptyVersionChannelAppProperties:(NSMutableDictionary *)properties {
+  [properties setObject:@"" forKey:@"app_version_code"];
+  [properties setObject:@"" forKey:@"app_name"];
+  [properties setObject:@"" forKey:@"manufacturer"];
+  [properties setObject:@"" forKey:@"product"];
+  [properties setObject:@"" forKey:@"device_name"];
+  [properties setObject:@"" forKey:@"os_version_int"];
+}
+
++ (NSDictionary *)versionChannelAppPropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:6];
+  @try {
+    [properties setObject:[self getAppVersionCodeValue] forKey:@"app_version_code"];
+    [properties setObject:[self getAppName] forKey:@"app_name"];
+    [properties setObject:[self getManufacturerName] forKey:@"manufacturer"];
+    [properties setObject:[self getProductName] forKey:@"product"];
+    [properties setObject:[self getDeviceNameValue] forKey:@"device_name"];
+    [properties setObject:[self getOsVersionIntValue] forKey:@"os_version_int"];
+  } @catch (NSException *exception) {
+    [self applyEmptyVersionChannelAppProperties:properties];
+  }
+  return [properties copy];
+}
+
+static NSString * const kApAnalyticsClientIdGenerateTimestampKey = @"ApAnalyticsClientIdGenerateTimestamp";
+static NSString * const kApAnalyticsClientIdGenerateTimeKey = @"ApAnalyticsClientIdGenerateTime";
+static NSString * const kApAnalyticsClientIdLevelKey = @"ApAnalyticsClientIdLevel";
+static NSString * const kApAnalyticsClientIdAlgorithmKey = @"ApAnalyticsClientIdAlgorithm";
+static NSString * const kApAnalyticsFirstInitSdkTimestampKey = @"ApAnalyticsFirstInitSdkTimestamp";
+static NSString * const kApAnalyticsFirstInitSdkTimeKey = @"ApAnalyticsFirstInitSdkTime";
+
++ (void)recordFirstSdkInitIfNeeded {
+  @try {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:kApAnalyticsFirstInitSdkTimestampKey] != nil) {
+      return;
+    }
+    NSDate *now = [NSDate date];
+    long long timestamp = (long long)([now timeIntervalSince1970] * 1000.0);
+    [defaults setObject:@(timestamp) forKey:kApAnalyticsFirstInitSdkTimestampKey];
+    [defaults setObject:[self getFormateLocalDate:now] forKey:kApAnalyticsFirstInitSdkTimeKey];
+  } @catch (NSException *exception) {
+  }
+}
+
++ (NSString *)getClientId {
+  @try {
+    NSString *clientId = [DeviceUID uid];
+    if (clientId.length > 0) {
+      return clientId;
+    }
+    clientId = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    return clientId ?: @"";
+  } @catch (NSException *exception) {
+    return @"";
+  }
+}
+
++ (void)ensureClientIdMetadataRecorded:(NSString *)clientId {
+  @try {
+    if (clientId.length == 0) {
+      return;
+    }
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:kApAnalyticsClientIdGenerateTimestampKey] != nil) {
+      return;
+    }
+    NSDate *now = [NSDate date];
+    long long timestamp = (long long)([now timeIntervalSince1970] * 1000.0);
+    NSString *algorithm = [[DeviceUID uid] length] > 0 ? @"device_uid" : @"idfv";
+    [defaults setObject:@(timestamp) forKey:kApAnalyticsClientIdGenerateTimestampKey];
+    [defaults setObject:[self getFormateLocalDate:now] forKey:kApAnalyticsClientIdGenerateTimeKey];
+    [defaults setObject:@"app" forKey:kApAnalyticsClientIdLevelKey];
+    [defaults setObject:algorithm forKey:kApAnalyticsClientIdAlgorithmKey];
+  } @catch (NSException *exception) {
+  }
+}
+
++ (NSDictionary *)getClientIdMetadata {
+  @try {
+    NSString *clientId = [self getClientId];
+    [self ensureClientIdMetadataRecorded:clientId];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSNumber *timestamp = [defaults objectForKey:kApAnalyticsClientIdGenerateTimestampKey];
+    return @{
+      @"cllient_id_generate_time": [defaults stringForKey:kApAnalyticsClientIdGenerateTimeKey] ?: @"",
+      @"cllient_id_generate_timestan": timestamp ?: @"",
+      @"cllient_id_level": [defaults stringForKey:kApAnalyticsClientIdLevelKey] ?: @"",
+      @"cllient_id_generate_algorithn": [defaults stringForKey:kApAnalyticsClientIdAlgorithmKey] ?: @""
+    };
+  } @catch (NSException *exception) {
+    return @{
+      @"cllient_id_generate_time": @"",
+      @"cllient_id_generate_timestan": @"",
+      @"cllient_id_level": @"",
+      @"cllient_id_generate_algorithn": @""
+    };
+  }
+}
+
++ (NSDictionary *)getFirstInitSdkMetadata {
+  @try {
+    [self recordFirstSdkInitIfNeeded];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSNumber *timestamp = [defaults objectForKey:kApAnalyticsFirstInitSdkTimestampKey];
+    return @{
+      @"first_init_sdk_time": [defaults stringForKey:kApAnalyticsFirstInitSdkTimeKey] ?: @"",
+      @"first_init_sdk_timestamp": timestamp ?: @""
+    };
+  } @catch (NSException *exception) {
+    return @{
+      @"first_init_sdk_time": @"",
+      @"first_init_sdk_timestamp": @""
+    };
+  }
+}
+
++ (void)applyEmptyDeviceFingerprintCollectTimeProperties:(NSMutableDictionary *)properties {
+  [properties setObject:@"" forKey:@"client_id"];
+  [properties setObject:@"" forKey:@"relation_client_id"];
+  [properties setObject:@"" forKey:@"cllient_id_generate_time"];
+  [properties setObject:@"" forKey:@"cllient_id_generate_timestan"];
+  [properties setObject:@"" forKey:@"cllient_id_level"];
+  [properties setObject:@"" forKey:@"cllient_id_generate_algorithn"];
+  [properties setObject:@"" forKey:@"collect_time"];
+  [properties setObject:@"" forKey:@"collect_timestamp"];
+  [properties setObject:@"" forKey:@"server_time"];
+  [properties setObject:@"" forKey:@"storage_time"];
+  [properties setObject:@"" forKey:@"first_init_sdk_time"];
+  [properties setObject:@"" forKey:@"first_init_sdk_timestamp"];
+}
+
++ (NSDictionary *)deviceFingerprintCollectTimePropertyDictionary {
+  NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithCapacity:12];
+  @try {
+    NSString *clientId = [self getClientId];
+    NSDictionary *clientIdMetadata = [self getClientIdMetadata];
+    NSDictionary *firstInitMetadata = [self getFirstInitSdkMetadata];
+    NSDate *now = [NSDate date];
+    long long collectTimestamp = (long long)([now timeIntervalSince1970] * 1000.0);
+
+    [properties setObject:clientId forKey:@"client_id"];
+    [properties setObject:@"" forKey:@"relation_client_id"];
+    [properties setObject:clientIdMetadata[@"cllient_id_generate_time"] forKey:@"cllient_id_generate_time"];
+    [properties setObject:clientIdMetadata[@"cllient_id_generate_timestan"] forKey:@"cllient_id_generate_timestan"];
+    [properties setObject:clientIdMetadata[@"cllient_id_level"] forKey:@"cllient_id_level"];
+    [properties setObject:clientIdMetadata[@"cllient_id_generate_algorithn"] forKey:@"cllient_id_generate_algorithn"];
+    [properties setObject:[self getFormateLocalDate:now] forKey:@"collect_time"];
+    [properties setObject:@(collectTimestamp) forKey:@"collect_timestamp"];
+    [properties setObject:@"" forKey:@"server_time"];
+    [properties setObject:@"" forKey:@"storage_time"];
+    [properties setObject:firstInitMetadata[@"first_init_sdk_time"] forKey:@"first_init_sdk_time"];
+    [properties setObject:firstInitMetadata[@"first_init_sdk_timestamp"] forKey:@"first_init_sdk_timestamp"];
+  } @catch (NSException *exception) {
+    [self applyEmptyDeviceFingerprintCollectTimeProperties:properties];
+  }
+  return [properties copy];
+}
+
 - (NSString *)getUid{
 #warning 用户登录设置，登出清空？？？
   if(_uid){
@@ -770,6 +1644,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         NSArray*languageArray = [NSLocale preferredLanguages];
         NSString*language = [languageArray objectAtIndex:0];
         [dic setObject:language forKey:@"locale"];
+        [dic setObject:[ApAnalyticsUtil getTimezoneDisplayName] forKey:@"timezone_display_name"];
+        [ApAnalyticsUtil applyLanguageAndBootPropertiesToDictionary:dic];
 
         [dic setObject:@"HIGH" forKey:@"location_type"];
 
@@ -847,6 +1723,8 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         [dic setObject:[NSNumber numberWithLong:timeString.integerValue] forKey:@"local_time"];
 
         [dic setObject:@"" forKey:@"time_offset"];
+        [dic setObject:[ApAnalyticsUtil getTimezoneDisplayName] forKey:@"timezone_display_name"];
+        [ApAnalyticsUtil applyLanguageAndBootPropertiesToDictionary:dic];
 
         [dic setObject:runId forKey:@"run_id"];
     } @catch (NSException *exception) {

@@ -82,6 +82,12 @@ NS_ASSUME_NONNULL_BEGIN
 //获取机型
 + (NSString *)getDeviceModel;
 
+// 时区标准时间名称（采集失败返回空字符串）
++ (NSString *)getTimezoneDisplayName;
+
+// Record first SDK init time once (call from SDK bootstrap)
++ (void)recordFirstSdkInitIfNeeded;
+
 //formatter Date
 +(NSString*)getFormateLocalDate:(NSDate *)date;
 //将本地日期字符串转为UTC日期字符串
