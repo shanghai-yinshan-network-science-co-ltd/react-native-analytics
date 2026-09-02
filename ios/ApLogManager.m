@@ -834,6 +834,21 @@
                 @"appBundleId": @"my.nimbura",
                 @"appScheme":@"my.nimbura://",
             },
+            @{
+                @"appName":@"Adacash",
+                @"appBundleId": @"com.adacashmobile",
+                @"appScheme":@"adacash://",
+            },
+            @{
+                @"appName":@"BigPay Later",
+                @"appBundleId": @"com.bigpaylater.app",
+                @"appScheme":@"bigpaylater://",
+            },
+            @{
+                @"appName":@"Pay&Go",
+                @"appBundleId": @"com.FAME.payandgo",
+                @"appScheme":@"sarawakpay://",
+            },
             // 2. 还款能力（电商、钱包、出行、银行等）
             @{
                 @"appName":@"ShopeePay",
