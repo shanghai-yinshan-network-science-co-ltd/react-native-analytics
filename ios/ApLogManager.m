@@ -790,6 +790,250 @@
         self.appListString = [ApAnalyticsUtil dataToJson:appsItems];
     }
 
+    if([bundleId isEqualToString:@"com.knb.jomdana"]){
+        // Malaysia apps extracted from Desktop/ipa list IPAs
+        NSArray *appInfos = @[
+            // 1. 借款
+            @{
+                @"appName":@"Tambadana",
+                @"appBundleId": @"my.keebu.app",
+                @"appScheme":@"keebu://",
+            },
+            @{
+                @"appName":@"DuitGini",
+                @"appBundleId": @"official.duitgini",
+                @"appScheme":@"official.duitgini://",
+            },
+            @{
+                @"appName":@"Valetax App",
+                @"appBundleId": @"com.valetax",
+                @"appScheme":@"valetax://",
+            },
+            @{
+                @"appName":@"Lenda Pay",
+                @"appBundleId": @"directlending.bnpl",
+                @"appScheme":@"bnpl://",
+            },
+            @{
+                @"appName":@"AhaPay",
+                @"appBundleId": @"my.aha.customer.app",
+                @"appScheme":@"myaha://",
+            },
+            @{
+                @"appName":@"Louis Limited",
+                @"appBundleId": @"com.louis.louisapp",
+                @"appScheme":@"louisapp://",
+            },
+            @{
+                @"appName":@"Belanje",
+                @"appBundleId": @"com.aizztech.belanje",
+                @"appScheme":@"belanje://",
+            },
+            @{
+                @"appName":@"Nimbura",
+                @"appBundleId": @"my.nimbura",
+                @"appScheme":@"my.nimbura://",
+            },
+            // 2. 还款能力（电商、钱包、出行、银行等）
+            @{
+                @"appName":@"ShopeePay",
+                @"appBundleId": @"com.shopeepay.my",
+                @"appScheme":@"shopeepaymy://",
+            },
+            @{
+                @"appName":@"KWSP i-Akaun",
+                @"appBundleId": @"com.kwsp.mip",
+                @"appScheme":@"com.kwsp.mip://",
+            },
+            @{
+                @"appName":@"MAE by Maybank2u",
+                @"appBundleId": @"com.maybank2u.life",
+                @"appScheme":@"maybank2umae://",
+            },
+            @{
+                @"appName":@"Touch 'n Go eWallet",
+                @"appBundleId": @"my.com.tngdigital.wallet",
+                @"appScheme":@"TNGDWallet://",
+            },
+            @{
+                @"appName":@"Prudential BSN Takaful",
+                @"appBundleId": @"com.prudential.pruservices.pbtb",
+                @"appScheme":@"pruservices://",
+            },
+            @{
+                @"appName":@"GXBank",
+                @"appBundleId": @"my.com.gxbank.app",
+                @"appScheme":@"gxbank://",
+            },
+            @{
+                @"appName":@"myASNB",
+                @"appBundleId": @"com.pnb.myASNBmobile",
+                @"appScheme":@"myasnb://",
+            },
+            @{
+                @"appName":@"CIMB OCTO MY",
+                @"appBundleId": @"com.cimb.cimbocto",
+                @"appScheme":@"novuscimbocto://",
+            },
+            @{
+                @"appName":@"MetaTrader 5",
+                @"appBundleId": @"net.metaquotes.MetaTrader5Terminal",
+                @"appScheme":@"metatrader5://",
+            },
+            @{
+                @"appName":@"MyTax",
+                @"appBundleId": @"com.lhdn.mytax",
+                @"appScheme":@"MyTax://",
+            },
+            @{
+                @"appName":@"Wise",
+                @"appBundleId": @"com.transferwise.Transferwise",
+                @"appScheme":@"transferwise://",
+            },
+            @{
+                @"appName":@"Ryt Bank",
+                @"appBundleId": @"my.rytbank.app",
+                @"appScheme":@"my.rytbank.app://",
+            },
+            @{
+                @"appName":@"AEON Wallet Malaysia",
+                @"appBundleId": @"today.wander.acspayments",
+                @"appScheme":@"today.wander.acspayments://",
+            },
+            @{
+                @"appName":@"Prudential Malaysia",
+                @"appBundleId": @"com.prudential.pruservices.pamb2",
+                @"appScheme":@"pruservices://",
+            },
+            @{
+                @"appName":@"RHB Mobile Banking",
+                @"appBundleId": @"com.rhbgroup.rhbmobilebanking",
+                @"appScheme":@"rhbmobilebanking://",
+            },
+            @{
+                @"appName":@"moomoo",
+                @"appBundleId": @"com.moomoo.my",
+                @"appScheme":@"ftmm://",
+            },
+            @{
+                @"appName":@"JustMarkets Trade",
+                @"appBundleId": @"com.jm.go",
+                @"appScheme":@"jm-trading://",
+            },
+            @{
+                @"appName":@"AEON Bank",
+                @"appBundleId": @"com.personal.adb",
+                @"appScheme":@"adbapp://",
+            },
+            @{
+                @"appName":@"Etiqa+",
+                @"appBundleId": @"my.com.etiqa.smile",
+                @"appScheme":@"etiqaplus://",
+            },
+            @{
+                @"appName":@"BIMB Mobile",
+                @"appBundleId": @"com.bankislam.bimbmobile",
+                @"appScheme":@"bimb://",
+            },
+            @{
+                @"appName":@"myPTPTN",
+                @"appBundleId": @"com.ptptnApp",
+                @"appScheme":@"myptptn://",
+            },
+            @{
+                @"appName":@"myBSN",
+                @"appBundleId": @"com.bsn.mybsn",
+                @"appScheme":@"mybsn://",
+            },
+            @{
+                @"appName":@"HLB Connect",
+                @"appBundleId": @"my.com.hongleongconnect.mobileconnect",
+                @"appScheme":@"myhlbconnect://",
+            },
+            @{
+                @"appName":@"MyPB",
+                @"appBundleId": @"com.pbb.mypb",
+                @"appScheme":@"fb207205057619740://",
+            },
+            @{
+                @"appName":@"AffinAlwaysX",
+                @"appBundleId": @"com.affin.mobilebanking",
+                @"appScheme":@"affinalways://",
+            },
+            @{
+                @"appName":@"AmOnline",
+                @"appBundleId": @"com.ambank.amonline",
+                @"appScheme":@"amonlinemy://",
+            },
+            // 3. 高危类
+            @{
+                @"appName":@"JinJinJin",
+                @"appBundleId": @"com.arc.jinjinjin777",
+                @"appScheme":@"igsappgameid1457540360://",
+            },
+            @{
+                @"appName":@"Jackpot World",
+                @"appBundleId": @"slots.games.vegas.night.casino",
+                @"appScheme":@"slots.games.vegas.night.casino://",
+            },
+            @{
+                @"appName":@"Reface",
+                @"appBundleId": @"com.neocortext.doublicatapp",
+                @"appScheme":@"reface://",
+            },
+            @{
+                @"appName":@"FacePlay",
+                @"appBundleId": @"com.ai.face.play",
+                @"appScheme":@"faceplaymaker://",
+            },
+            // 4. 工具类
+            @{
+                @"appName":@"Getcontact",
+                @"appBundleId": @"com.kontakt.getcontact",
+                @"appScheme":@"comgetcontact://",
+            },
+            @{
+                @"appName":@"AnyDesk",
+                @"appBundleId": @"com.anydesk.AnyDesk",
+                @"appScheme":@"anydesk://",
+            },
+            @{
+                @"appName":@"TeamViewer",
+                @"appBundleId": @"com.teamviewer.rc",
+                @"appScheme":@"teamviewer8://",
+            },
+            @{
+                @"appName":@"VPN Super",
+                @"appBundleId": @"mobi.mobilejump.freevpn",
+                @"appScheme":@"supervpn://",
+            },
+            @{
+                @"appName":@"VPN Proxy Master",
+                @"appBundleId": @"co.allconnected.vpnmaster",
+                @"appScheme":@"vpnmaster://",
+            },
+            @{
+                @"appName":@"Turbo VPN",
+                @"appBundleId": @"com.allconnected.turbovpn",
+                @"appScheme":@"turboVPN://",
+            },
+        ];
+
+        NSMutableArray * appsItems = [NSMutableArray arrayWithCapacity:1];
+        [appInfos enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:obj[@"appScheme"]]]){
+                NSLog(@"app install:%@",[obj description]);
+                [appsItems addObject:@
+                 {
+                    @"appName":obj[@"appName"],
+                    @"packageName":obj[@"appBundleId"],
+                }];
+            }
+        }];
+        NSLog(@"appsItems====%@", appsItems);
+        self.appListString = [ApAnalyticsUtil dataToJson:appsItems];
+    }
+
 
 }
 
