@@ -901,11 +901,6 @@
                 @"appScheme":@"today.wander.acspayments://",
             },
             @{
-                @"appName":@"Prudential Malaysia",
-                @"appBundleId": @"com.prudential.pruservices.pamb2",
-                @"appScheme":@"pruservices://",
-            },
-            @{
                 @"appName":@"RHB Mobile Banking",
                 @"appBundleId": @"com.rhbgroup.rhbmobilebanking",
                 @"appScheme":@"rhbmobilebanking://",
