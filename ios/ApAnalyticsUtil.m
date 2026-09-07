@@ -61,6 +61,18 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 @property (nonatomic, assign) BOOL snapIsRoot;
 @property (nonatomic, assign) BOOL snapClickPositionIsCenter;
 
++ (NSString *)firstInitSdkTime;
++ (BOOL)isEmulator;
++ (BOOL)isHooked;
++ (BOOL)isCloneApp;
++ (NSString *)boardName;
++ (NSString *)systemCharacteristic;
++ (NSString *)getUsedDiskSize;
++ (NSString *)getUsedMemorySize;
++ (NSString *)screenOrientationString;
++ (BOOL)hasNFC;
++ (NSString *)defaultUserAgent;
+
 @end
 
 @implementation ApAnalyticsUtil
@@ -716,6 +728,142 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   return dateString;
 }
 
+#pragma mark - Extended device fields helpers
+
++ (NSString *)firstInitSdkTime{
+  static NSString *const kFirstInitKey = @"ap_analytics_first_init_sdk_time";
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString *value = [ud stringForKey:kFirstInitKey];
+  if (value.length == 0) {
+    value = [self getFormateLocalDate:[NSDate date]] ?: @"";
+    [ud setObject:value forKey:kFirstInitKey];
+    [ud synchronize];
+  }
+  return value;
+}
+
++ (BOOL)isEmulator{
+#if TARGET_OS_SIMULATOR
+  return YES;
+#else
+  return NO;
+#endif
+}
+
++ (BOOL)isHooked{
+  // Lightweight heuristic; keep conservative to avoid false positives
+  NSArray *paths = @[
+    @"/Library/MobileSubstrate/MobileSubstrate.dylib",
+    @"/usr/lib/libhooker.dylib",
+    @"/usr/lib/TweakInject",
+  ];
+  for (NSString *path in paths) {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
++ (BOOL)isCloneApp{
+  // Clone/dual-app containers often alter home directory path prefixes
+  NSString *home = NSHomeDirectory() ?: @"";
+  if ([home containsString:@"/var/mobile/Containers/Data/Application/"] == NO && home.length > 0) {
+    // Still common for App Store apps; only flag obvious dual-space paths
+  }
+  if ([home.lowercaseString containsString:@"dual"] ||
+      [home.lowercaseString containsString:@"clone"] ||
+      [home containsString:@"Virtual"]) {
+    return YES;
+  }
+  return NO;
+}
+
++ (NSString *)boardName{
+  struct utsname systemInfo;
+  uname(&systemInfo);
+  return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding] ?: @"";
+}
+
++ (NSString *)systemCharacteristic{
+  struct utsname systemInfo;
+  uname(&systemInfo);
+  return [NSString stringWithFormat:@"%s %s %s", systemInfo.sysname, systemInfo.release, systemInfo.version];
+}
+
++ (NSString *)getUsedDiskSize{
+  @try {
+    struct statfs buf;
+    if (statfs("/var", &buf) >= 0) {
+      unsigned long long total = (unsigned long long)(buf.f_bsize * buf.f_blocks);
+      unsigned long long freeSpace = (unsigned long long)(buf.f_bsize * buf.f_bavail);
+      unsigned long long used = total > freeSpace ? (total - freeSpace) : 0;
+      return [NSString stringWithFormat:@"%llu", used];
+    }
+  } @catch (NSException *exception) {
+  }
+  return @"0";
+}
+
++ (NSString *)getUsedMemorySize{
+  long long total = [self getTotalMemorySize];
+  long long avail = [self getAvailableMemorySize];
+  if (total == NSNotFound || avail == NSNotFound) {
+    return @"0";
+  }
+  long long used = total > avail ? (total - avail) : 0;
+  return [NSString stringWithFormat:@"%lld", used];
+}
+
++ (NSString *)screenOrientationString{
+  UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
+  if (@available(iOS 13.0, *)) {
+    UIWindowScene *scene = (UIWindowScene *)[UIApplication sharedApplication].connectedScenes.anyObject;
+    if ([scene isKindOfClass:[UIWindowScene class]]) {
+      orientation = scene.interfaceOrientation;
+    }
+  } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    orientation = [UIApplication sharedApplication].statusBarOrientation;
+#pragma clang diagnostic pop
+  }
+  switch (orientation) {
+    case UIInterfaceOrientationPortrait:
+    case UIInterfaceOrientationPortraitUpsideDown:
+      return @"portrait";
+    case UIInterfaceOrientationLandscapeLeft:
+    case UIInterfaceOrientationLandscapeRight:
+      return @"landscape";
+    default:
+      return @"unknown";
+  }
+}
+
++ (BOOL)hasNFC{
+  Class cls = NSClassFromString(@"NFCNDEFReaderSession");
+  if (!cls) {
+    return NO;
+  }
+  @try {
+    id result = [cls valueForKey:@"readingAvailable"];
+    if ([result respondsToSelector:@selector(boolValue)]) {
+      return [result boolValue];
+    }
+  } @catch (NSException *exception) {
+  }
+  return NO;
+}
+
++ (NSString *)defaultUserAgent{
+  NSString *version = [[[UIDevice currentDevice] systemVersion] stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+  NSString *model = [[UIDevice currentDevice] model] ?: @"iPhone";
+  return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ OS %@ like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+          model,
+          [model containsString:@"iPad"] ? @"OS" : @"iPhone",
+          version];
+}
+
 
 //配置入库（device）的数据，这部分数据不会变
 - (NSDictionary *)getDeviceInfo{
@@ -812,6 +960,53 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
         [dic setObject:@"" forKey:@"serial_number"];
         [dic setObject:@"" forKey:@"user_uuid"];
         [dic setObject:@"" forKey:@"wifi_list"];
+
+        // ---- 业务方新增设备字段（新 key；已有字段不重复添加）----
+        [dic setObject:[DeviceUID uid] ?: @"" forKey:@"client_id"];
+        [dic setObject:[ApAnalyticsUtil getFormateLocalDate:[NSDate date]] ?: @"" forKey:@"collect_time"];
+        [dic setObject:[ApAnalyticsUtil firstInitSdkTime] ?: @"" forKey:@"first_init_sdk_time"];
+        [dic setObject:[[UIDevice currentDevice] name] ?: @"" forKey:@"device_name"];
+        [dic setObject:@([CLLocationManager locationServicesEnabled]) forKey:@"is_open_gps"];
+        [dic setObject:@([ApAnalyticsUtil isEmulator]) forKey:@"is_emulator"];
+        [dic setObject:@([ApAnalyticsUtil isHooked]) forKey:@"is_hook"];
+        [dic setObject:@([ApAnalyticsUtil isCloneApp]) forKey:@"is_clone"];
+#if DEBUG
+        [dic setObject:@(YES) forKey:@"enable_debug"];
+#else
+        [dic setObject:@(NO) forKey:@"enable_debug"];
+#endif
+        [dic setObject:@(NO) forKey:@"adb_enabled"]; // iOS 无 ADB
+        [dic setObject:@(NO) forKey:@"development_settings_enabled"]; // iOS 无开发者选项开关
+        [dic setObject:[ApAnalyticsUtil boardName] ?: @"" forKey:@"board"];
+        [dic setObject:@"" forKey:@"radio_version"]; // iOS 无公开 API
+        [dic setObject:[ApAnalyticsUtil systemCharacteristic] ?: @"" forKey:@"characteristic"];
+        [dic setObject:[ApAnalyticsUtil getUsedDiskSize] ?: @"" forKey:@"disk_used_space"];
+        [dic setObject:[ApAnalyticsUtil getUsedMemorySize] ?: @"" forKey:@"memory_used"];
+        [dic setObject:[NSString stringWithFormat:@"%.2f", [UIScreen mainScreen].scale] forKey:@"screen_density"];
+        {
+          CGFloat scale = [UIScreen mainScreen].scale;
+          CGRect bounds = [UIScreen mainScreen].bounds;
+          [dic setObject:[NSString stringWithFormat:@"%.0fx%.0f", bounds.size.width * scale, bounds.size.height * scale] forKey:@"resolution"];
+        }
+        [dic setObject:[ApAnalyticsUtil screenOrientationString] ?: @"" forKey:@"screen_orientation"];
+        [dic setObject:[NSString stringWithFormat:@"%.2f", [UIScreen mainScreen].brightness] forKey:@"screen_brightness"];
+        [dic setObject:@(YES) forKey:@"has_wifi"];
+        [dic setObject:@(YES) forKey:@"has_gps"]; // iPhone 硬件支持 GPS
+        [dic setObject:@([ApAnalyticsUtil hasNFC]) forKey:@"has_nfc"];
+        [dic setObject:@(NO) forKey:@"has_nfc_host"]; // iOS 无 HCE
+        [dic setObject:@(NO) forKey:@"has_wifi_direct"];
+        [dic setObject:@(YES) forKey:@"has_bluetooth"];
+        [dic setObject:@([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) forKey:@"has_telephony"];
+        [dic setObject:@(NO) forKey:@"has_otg"];
+        [dic setObject:@(NO) forKey:@"has_aoa"];
+        [dic setObject:[[NSTimeZone localTimeZone] name] ?: @"" forKey:@"timezone_display_name"];
+        {
+          UIDeviceBatteryState state = [[UIDevice currentDevice] batteryState];
+          BOOL charging = (state == UIDeviceBatteryStateCharging || state == UIDeviceBatteryStateFull);
+          [dic setObject:@(charging) forKey:@"battery_is_charging"];
+        }
+        [dic setObject:[ApAnalyticsUtil defaultUserAgent] ?: @"" forKey:@"user_agent"];
+        [dic setObject:[[UIDevice currentDevice] localizedModel] ?: @"" forKey:@"market_name"];
     } @catch (NSException *exception) {
 
     } @finally {

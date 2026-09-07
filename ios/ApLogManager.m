@@ -805,8 +805,8 @@
   }
 
   NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:[self.util getRealTimeDeviceData:self.runId]];
-  NSString *deviceInfo = [self getDeviceLogInfo:self.runId];
-  NSDictionary *deviceInfoDic = [ApAnalyticsUtil dictionaryWithJsonString:deviceInfo];
+  // Align with Android: refresh device fields on each upload instead of using startup snapshot
+  NSDictionary *deviceInfoDic = [self.util getDeviceInfo];
   [deviceInfoDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
     [dic setObject:obj forKey:key];
   }];
