@@ -24,6 +24,7 @@
 #import <mach/mach_host.h>
 
 #import <CoreLocation/CoreLocation.h>
+#import <AVFoundation/AVFoundation.h>
 
 #include <ifaddrs.h>
 #include <arpa/inet.h>
@@ -1013,6 +1014,227 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
 
     }
 
+
+  return [dic copy];
+}
+
+static NSInteger ApMsSince(CFAbsoluteTime start) {
+  return (NSInteger)MAX(0, (CFAbsoluteTimeGetCurrent() - start) * 1000.0);
+}
+
+- (NSDictionary *)getCollectorLogInfo{
+  NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+  NSDate *now = [NSDate date];
+  NSString *timeStr = [ApAnalyticsUtil getFormateLocalDate:now] ?: @"";
+  long long ts = (long long)([now timeIntervalSince1970] * 1000);
+  NSBundle *bundle = [NSBundle mainBundle];
+  NSString *pkg = [bundle bundleIdentifier] ?: @"";
+  NSString *appVer = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"";
+  NSString *appName = [bundle objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+  if (appName.length == 0) {
+    appName = [bundle objectForInfoDictionaryKey:@"CFBundleName"] ?: @"";
+  }
+
+  @try {
+    [dic setObject:[DeviceUID uid] ?: @"" forKey:@"client_id"];
+    [dic setObject:@"" forKey:@"unique_id"];
+    [dic setObject:@"" forKey:@"phone_number"];
+    [dic setObject:@"" forKey:@"phone_number_enc"];
+    [dic setObject:pkg forKey:@"app_code"];
+    [dic setObject:appVer forKey:@"app_version"];
+    [dic setObject:@"" forKey:@"sdk_version"];
+    [dic setObject:pkg forKey:@"package_name"];
+    [dic setObject:@"" forKey:@"channel_code"];
+    [dic setObject:@"ios" forKey:@"platform"];
+    [dic setObject:[[NSTimeZone localTimeZone] name] ?: @"" forKey:@"client_time_zone"];
+    [dic setObject:@"" forKey:@"ecode"];
+    [dic setObject:@"rn" forKey:@"event_source"];
+    [dic setObject:timeStr forKey:@"event_time"];
+    [dic setObject:@(ts) forKey:@"event_timestamp"];
+    [dic setObject:@"collector_event" forKey:@"event_type"];
+    [dic setObject:[self getUid] ?: @"" forKey:@"user_id"];
+    [dic setObject:timeStr forKey:@"collect_time"];
+    [dic setObject:@(ts) forKey:@"collect_timestamp"];
+    [dic setObject:@"" forKey:@"server_time"];
+    [dic setObject:@"" forKey:@"storage_time"];
+    [dic setObject:@"" forKey:@"server_properties"];
+    [dic setObject:@"{}" forKey:@"event_properties"];
+    [dic setObject:@"{}" forKey:@"session_properties"];
+    [dic setObject:@(0) forKey:@"terminal_stay_duration"];
+    [dic setObject:@(YES) forKey:@"is_bridge"];
+    [dic setObject:appName forKey:@"app_name"];
+    [dic setObject:@"manual" forKey:@"collect_mode"];
+    [dic setObject:@"" forKey:@"category"];
+    [dic setObject:@"" forKey:@"tp_open_id"];
+    [dic setObject:@"" forKey:@"tp_union_id"];
+    [dic setObject:@"" forKey:@"tp_public_code"];
+    [dic setObject:@"" forKey:@"tp_relation_client_id"];
+    [dic setObject:@"[\"env\",\"network\",\"loc\",\"did\",\"vs\",\"battery\",\"sr\",\"page\",\"notifi\"]" forKey:@"collector_items"];
+    [dic setObject:@"" forKey:@"outer_net_ip"];
+  } @catch (NSException *exception) {
+  }
+
+  CFAbsoluteTime locStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    NSString *lat = self.latitude ?: @"";
+    NSString *lng = self.longitude ?: @"";
+    NSString *country = self.gpsCountry ?: @"";
+    NSString *province = self.gpsProvince ?: @"";
+    NSString *city = self.gpsCity ?: @"";
+    NSString *district = self.gpsRegion ?: @"";
+    NSString *address = [[NSArray arrayWithObjects:country, province, city, district, nil] componentsJoinedByString:@""];
+    [dic setObject:lng forKey:@"loc_raw_lng"];
+    [dic setObject:lat forKey:@"loc_raw_lat"];
+    [dic setObject:@"WGS84" forKey:@"loc_raw_type"];
+    [dic setObject:@"WGS84" forKey:@"loc_type"];
+    [dic setObject:lng forKey:@"loc_lng"];
+    [dic setObject:lat forKey:@"loc_lat"];
+    [dic setObject:country forKey:@"loc_country"];
+    [dic setObject:@"" forKey:@"loc_country_code"];
+    [dic setObject:city forKey:@"loc_city"];
+    [dic setObject:@"" forKey:@"loc_city_code"];
+    [dic setObject:province forKey:@"loc_province"];
+    [dic setObject:district forKey:@"loc_district"];
+    [dic setObject:@"" forKey:@"loc_street"];
+    [dic setObject:@"" forKey:@"loc_street_number"];
+    [dic setObject:@"" forKey:@"loc_administrative_code"];
+    [dic setObject:@"" forKey:@"loc_accuracy"];
+    [dic setObject:address forKey:@"loc_address"];
+    [dic setObject:@"" forKey:@"loc_altitude"];
+    [dic setObject:@"" forKey:@"loc_altitude_accuracy"];
+    [dic setObject:timeStr forKey:@"loc_locating_time"];
+    [dic setObject:@(ts) forKey:@"loc_locating_timestamp"];
+    [dic setObject:@"" forKey:@"loc_error_code"];
+    [dic setObject:@"" forKey:@"loc_error_msg"];
+    [dic setObject:@(NO) forKey:@"loc_is_retry"];
+    [dic setObject:@"app" forKey:@"loc_sdk_name"];
+    [dic setObject:@"app" forKey:@"loc_provider"];
+    [dic setObject:@"" forKey:@"loc_precision"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(locStart)) forKey:@"loc_duration_time"];
+
+  CFAbsoluteTime netStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    [dic setObject:[ApAnalyticsUtil IPAddress] ?: @"" forKey:@"network_ip"];
+    [dic setObject:[ApAnalyticsUtil getNetWorkInfo] ?: @"" forKey:@"network_type"];
+    [dic setObject:@([self isVPNOn]) forKey:@"network_vpn_state"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(netStart)) forKey:@"network_duration_time"];
+
+  CFAbsoluteTime vsStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    NSMutableArray *outputs = [NSMutableArray array];
+    BOOL speaker = NO;
+    BOOL wired = NO;
+    BOOL bt = NO;
+    for (AVAudioSessionPortDescription *port in session.currentRoute.outputs) {
+      [outputs addObject:port.portType ?: @""];
+      if ([port.portType isEqualToString:AVAudioSessionPortBuiltInSpeaker]) speaker = YES;
+      if ([port.portType isEqualToString:AVAudioSessionPortHeadphones]) wired = YES;
+      if ([port.portType isEqualToString:AVAudioSessionPortBluetoothHFP] ||
+          [port.portType isEqualToString:AVAudioSessionPortBluetoothA2DP] ||
+          [port.portType isEqualToString:AVAudioSessionPortBluetoothLE]) bt = YES;
+    }
+    [dic setObject:@(session.isOtherAudioPlaying) forKey:@"vs_is_other_audio_playing"];
+    [dic setObject:@(session.isOtherAudioPlaying) forKey:@"vs_secondary_audio"];
+    [dic setObject:@(speaker) forKey:@"vs_is_speakerphone_on"];
+    [dic setObject:@(wired) forKey:@"vs_is_wired_headset_on"];
+    [dic setObject:@(bt) forKey:@"vs_is_bluetooth_sco"];
+    [dic setObject:@(bt) forKey:@"vs_is_bluetooth_sco_on"];
+    [dic setObject:@"" forKey:@"vs_prompt_style"];
+    [dic setObject:[ApAnalyticsUtil dataToJson:outputs] ?: @"[]" forKey:@"vs_current_audio_outputs"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(vsStart)) forKey:@"vs_duration_time"];
+
+  CFAbsoluteTime didStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    [dic setObject:[[[UIDevice currentDevice] identifierForVendor] UUIDString] ?: @"" forKey:@"did_idfv"];
+    [dic setObject:@"" forKey:@"did_android_id"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(didStart)) forKey:@"did_duration_time"];
+
+  CFAbsoluteTime srStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    NSArray *screens = [UIScreen screens];
+    [dic setObject:@(screens.count) forKey:@"sr_share_screen_size"];
+    NSMutableArray *infos = [NSMutableArray array];
+    for (UIScreen *screen in screens) {
+      [infos addObject:@{
+        @"bounds": NSStringFromCGRect(screen.bounds),
+        @"scale": @(screen.scale)
+      }];
+    }
+    [dic setObject:[ApAnalyticsUtil dataToJson:infos] ?: @"[]" forKey:@"sr_display_infos"];
+    BOOL recording = NO;
+    if (@available(iOS 11.0, *)) {
+      recording = [UIScreen mainScreen].isCaptured;
+    }
+    [dic setObject:@(recording) forKey:@"sr_screen_recording"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(srStart)) forKey:@"sr_duration_time"];
+
+  CFAbsoluteTime envStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    BOOL root = [ApAnalyticsUtil isJailBreak];
+    BOOL emulator = [ApAnalyticsUtil isEmulator];
+    BOOL hook = [ApAnalyticsUtil isHooked];
+    BOOL clone = [ApAnalyticsUtil isCloneApp];
+    [dic setObject:@(root) forKey:@"env_is_root"];
+    [dic setObject:root ? @"jailbreak" : @"" forKey:@"env_isroot_desc"];
+    [dic setObject:@(emulator) forKey:@"env_is_emulator"];
+    [dic setObject:emulator ? @"simulator" : @"" forKey:@"env_isemulator_desc"];
+    [dic setObject:@(hook) forKey:@"env_is_hook"];
+    [dic setObject:hook ? @"hook_path" : @"" forKey:@"env_ishook_desc"];
+    [dic setObject:@(clone) forKey:@"env_is_clone"];
+    [dic setObject:clone ? @"clone_path" : @"" forKey:@"env_is_clone_desc"];
+#if DEBUG
+    [dic setObject:@(YES) forKey:@"env_enable_debug"];
+    [dic setObject:@(YES) forKey:@"env_is_debug"];
+#else
+    [dic setObject:@(NO) forKey:@"env_enable_debug"];
+    [dic setObject:@(NO) forKey:@"env_is_debug"];
+#endif
+    [dic setObject:@(NO) forKey:@"env_adb_enabled"];
+    [dic setObject:@(NO) forKey:@"env_development_settings"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(envStart)) forKey:@"env_duration_time"];
+
+  CFAbsoluteTime batStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    [dic setObject:[NSString stringWithFormat:@"%.f", [[UIDevice currentDevice] batteryLevel] * 100] forKey:@"battery_level"];
+    UIDeviceBatteryState state = [[UIDevice currentDevice] batteryState];
+    BOOL charging = (state == UIDeviceBatteryStateCharging || state == UIDeviceBatteryStateFull);
+    [dic setObject:@(charging) forKey:@"battery_charging"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(batStart)) forKey:@"battery_duration_time"];
+
+  CFAbsoluteTime notiStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    [dic setObject:@"" forKey:@"notifi_disturb_mode"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(notiStart)) forKey:@"notifi_duration_time"];
+
+  CFAbsoluteTime pageStart = CFAbsoluteTimeGetCurrent();
+  @try {
+    [dic setObject:@"" forKey:@"page_native_tag"];
+    [dic setObject:@"" forKey:@"page_native_title"];
+    [dic setObject:@"" forKey:@"page_child_tag"];
+    [dic setObject:@"" forKey:@"page_child_title"];
+    [dic setObject:@"" forKey:@"page_web_path"];
+    [dic setObject:@"" forKey:@"page_web_title"];
+    [dic setObject:@"" forKey:@"page_web_url"];
+  } @catch (NSException *exception) {
+  }
+  [dic setObject:@(ApMsSince(pageStart)) forKey:@"page_duration_time"];
 
   return [dic copy];
 }

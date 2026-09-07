@@ -34,6 +34,10 @@ function saveBusinessEvent() {
   console.warn('react-native-analytics web no impl');
 }
 
+function saveNodeLog() {
+  console.warn('react-native-analytics web no impl');
+}
+
 function clickEvent() {
   console.warn('react-native-analytics web no impl');
 }
@@ -100,6 +104,7 @@ export {
   NetworkLogger,
   setWarning,
   saveBusinessEvent,
+  saveNodeLog,
   setOtaVersion,
   uploadLogImmediately,
   updateLocation,

@@ -31,6 +31,9 @@ declare module 'react-native-analytics' {
       data?: { infoData: Record<string, any>, needExtraData?: boolean },
   ): string;
 
+  /** Business triggers native collection and uploads one collector_event immediately. */
+  export function saveNodeLog(eventName?: string): void;
+
 
   export function uploadLogImmediately(delay?: number): Promise<void>;
 

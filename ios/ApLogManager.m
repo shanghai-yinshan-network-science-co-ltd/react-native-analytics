@@ -42,6 +42,8 @@
 
 @property (nonatomic, copy) NSString *appListString;
 
+- (void)flattenCollectorFieldsOntoLog:(NSMutableDictionary *)dic;
+
 @end
 
 @implementation ApLogManager
@@ -870,6 +872,7 @@
         [dic setObject:logId forKey:@"log_id"];
         [dic setObject:runId forKey:@"runId"];
         [dic setObject:[self.util getUid] forKey:@"user_uuid"];
+        [self flattenCollectorFieldsOntoLog:dic];
         [logItems addObject:dic];
       }
     }
@@ -937,9 +940,54 @@
   [self.util updateClickPositionIsCenter:isInCenter];
 }
 
+- (void)saveNodeLog:(NSString *)eventName{
+  if (![eventName isKindOfClass:[NSString class]]) {
+    eventName = @"";
+  }
+  NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:[self.util getCollectorLogInfo] ?: @{}];
+  NSString *name = eventName.length > 0 ? eventName : @"collector_event";
+  NSDate *now = [NSDate date];
+  NSString *timeStr = [ApAnalyticsUtil getFormateLocalDate:now] ?: @"";
+  [dic setObject:@"collector_event" forKey:@"action_type"];
+  [dic setObject:name forKey:@"event_name"];
+  [dic setObject:name forKey:@"ecode"];
+  [dic setObject:timeStr forKey:@"log_time"];
+  [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:timeStr] ?: @"" forKey:@"log_time_z"];
+  [dic setObject:timeStr forKey:@"start_time"];
+  [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:timeStr] ?: @"" forKey:@"start_time_z"];
+  [dic setObject:@"rn" forKey:@"log_source"];
+  NSString *json = [ApAnalyticsUtil dictionaryToJson:dic];
+  [self addActionLog:json directUpload:YES];
+}
+
 //更新用户id
 - (void)updateUserId:(NSString *)uId{
   self.util.uid = uId;
+}
+
+// collector_event：把业务传入的 page_info 字段摊平到单条 log，不写入设备包
+- (void)flattenCollectorFieldsOntoLog:(NSMutableDictionary *)dic{
+  if (![dic[@"action_type"] isEqualToString:@"collector_event"]) {
+    return;
+  }
+  id pageInfo = dic[@"page_info"];
+  NSDictionary *extra = nil;
+  if ([pageInfo isKindOfClass:[NSString class]]) {
+    extra = [ApAnalyticsUtil dictionaryWithJsonString:pageInfo];
+  } else if ([pageInfo isKindOfClass:[NSDictionary class]]) {
+    extra = pageInfo;
+  }
+  if (extra.count == 0) {
+    return;
+  }
+  [extra enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    if ([key isEqualToString:@"otaVersion"] || dic[key] != nil) {
+      return;
+    }
+    if (obj) {
+      [dic setObject:obj forKey:key];
+    }
+  }];
 }
 
 

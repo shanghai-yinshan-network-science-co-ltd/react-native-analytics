@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)getCommonDevicePropertiesJson;
 - (void)updateClickPositionIsCenter:(BOOL)isInCenter;
 
+// 关键节点即时单条 log
+- (void)saveNodeLog:(NSString *)eventName;
+
 //更新用户id
 - (void)updateUserId:(NSString *)uId;
 

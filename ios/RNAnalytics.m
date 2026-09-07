@@ -29,6 +29,11 @@ RCT_EXPORT_METHOD(saveBusinessEvent:(NSString *)event)
 
 }
 
+RCT_EXPORT_METHOD(saveNodeLog:(NSString *)eventName)
+{
+  [[ApLogManager sharedInstance] saveNodeLog:eventName ?: @""];
+}
+
 
 RCT_EXPORT_METHOD(clearUserId:(NSString *)useId)
 {

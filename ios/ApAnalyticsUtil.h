@@ -91,6 +91,9 @@ NS_ASSUME_NONNULL_BEGIN
 //配置入库（device）的数据，这部分数据不会变
 - (NSDictionary *)getDeviceInfo;
 
+// 关键节点单条 log：原生采集对照表字段（不写入设备包）
+- (NSDictionary *)getCollectorLogInfo;
+
 //获取最新的设备数据，这部分数据会变
 - (NSDictionary *)getRealTimeDeviceData:(NSString *)runId;
 
