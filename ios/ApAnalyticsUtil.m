@@ -729,6 +729,17 @@ NSString *const kRRVPNStatusChangedNotification = @"kRRVPNStatusChangedNotificat
   return dateString;
 }
 
++(NSString *)getISO8601LocalDate:(NSDate *)date{
+  if (!date) {
+    return @"";
+  }
+  NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+  [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+  [formatter setTimeZone:[NSTimeZone localTimeZone]];
+  [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSXXX"];
+  return [formatter stringFromDate:date] ?: @"";
+}
+
 #pragma mark - Extended device fields helpers
 
 + (NSString *)firstInitSdkTime{
@@ -1036,7 +1047,9 @@ static NSInteger ApMsSince(CFAbsoluteTime start) {
   }
 
   @try {
-    [dic setObject:[DeviceUID uid] ?: @"" forKey:@"client_id"];
+    NSString *deviceId = [DeviceUID uid] ?: @"";
+    [dic setObject:deviceId forKey:@"android_id"];
+    [dic setObject:deviceId forKey:@"client_id"];
     [dic setObject:@"" forKey:@"unique_id"];
     [dic setObject:@"" forKey:@"phone_number"];
     [dic setObject:@"" forKey:@"phone_number_enc"];
@@ -1055,8 +1068,6 @@ static NSInteger ApMsSince(CFAbsoluteTime start) {
     [dic setObject:[self getUid] ?: @"" forKey:@"user_id"];
     [dic setObject:timeStr forKey:@"collect_time"];
     [dic setObject:@(ts) forKey:@"collect_timestamp"];
-    [dic setObject:@"" forKey:@"server_time"];
-    [dic setObject:@"" forKey:@"storage_time"];
     [dic setObject:@"" forKey:@"server_properties"];
     [dic setObject:@"{}" forKey:@"event_properties"];
     [dic setObject:@"{}" forKey:@"session_properties"];
@@ -1069,8 +1080,7 @@ static NSInteger ApMsSince(CFAbsoluteTime start) {
     [dic setObject:@"" forKey:@"tp_union_id"];
     [dic setObject:@"" forKey:@"tp_public_code"];
     [dic setObject:@"" forKey:@"tp_relation_client_id"];
-    [dic setObject:@"[\"env\",\"network\",\"loc\",\"did\",\"vs\",\"battery\",\"sr\",\"page\",\"notifi\"]" forKey:@"collector_items"];
-    [dic setObject:@"" forKey:@"outer_net_ip"];
+    [dic setObject:@"env,network,loc,did,vs,battery,sr,page,notifi" forKey:@"collector_items"];
   } @catch (NSException *exception) {
   }
 

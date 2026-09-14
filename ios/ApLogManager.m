@@ -1202,16 +1202,18 @@
   NSString *name = eventName.length > 0 ? eventName : @"collector_event";
   NSDate *now = [NSDate date];
   NSString *timeStr = [ApAnalyticsUtil getFormateLocalDate:now] ?: @"";
+  NSString *timeZ = [ApAnalyticsUtil getISO8601LocalDate:now] ?: @"";
   [dic setObject:@"collector_event" forKey:@"action_type"];
   [dic setObject:name forKey:@"event_name"];
   [dic setObject:name forKey:@"ecode"];
   [dic setObject:timeStr forKey:@"log_time"];
-  [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:timeStr] ?: @"" forKey:@"log_time_z"];
+  [dic setObject:timeZ forKey:@"log_time_z"];
   [dic setObject:timeStr forKey:@"start_time"];
-  [dic setObject:[ApAnalyticsUtil getUTCFormateLocalDate:timeStr] ?: @"" forKey:@"start_time_z"];
+  [dic setObject:timeZ forKey:@"start_time_z"];
   [dic setObject:@"rn" forKey:@"log_source"];
-  NSString *json = [ApAnalyticsUtil dictionaryToJson:dic];
-  [self addActionLog:json directUpload:YES];
+  [dic setObject:[self getCurrentLogId] ?: @"" forKey:@"log_id"];
+  [dic setObject:[self.util getUid] ?: @"" forKey:@"user_uuid"];
+  [[ApNeworkManager sharedInstance] sendEventTrigger:dic completionHandler:nil];
 }
 
 //更新用户id

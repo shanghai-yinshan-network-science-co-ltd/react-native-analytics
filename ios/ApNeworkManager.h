@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 //上传日志
 - (void)sendLog:(NSDictionary *)dicData completionHandler:(void (^)(BOOL success))block;
 
+// 关键节点单独上报（不压缩、不批量）
+- (void)sendEventTrigger:(NSDictionary *)dicData completionHandler:(nullable void (^)(BOOL success))block;
 
 @end
 

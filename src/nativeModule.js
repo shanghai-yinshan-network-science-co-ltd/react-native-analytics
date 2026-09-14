@@ -82,8 +82,8 @@ export function saveBusinessEvent(businessName,{infoData,needExtraData= false} =
 }
 
 /**
- * 业务方在关键节点调用：由 iOS/Android 自行采集对照表字段，并立即上传一条 collector_event。
- * JS 不采集、不传这些字段。
+ * 业务方在关键节点调用：原生采集对照表字段，单独 POST 到 eventTrigger，
+ * 不写入行为日志队列、不跟设备包一起批量上报。
  */
 export function saveNodeLog(eventName = '') {
     if (RNAnalytics && RNAnalytics.saveNodeLog) {

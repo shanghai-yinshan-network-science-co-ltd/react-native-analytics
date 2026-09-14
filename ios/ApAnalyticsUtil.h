@@ -86,6 +86,8 @@ NS_ASSUME_NONNULL_BEGIN
 +(NSString*)getFormateLocalDate:(NSDate *)date;
 //将本地日期字符串转为UTC日期字符串
 +(NSString *)getUTCFormateLocalDate:(NSString *)localDate;
+// 本地时区 ISO8601，如 2026-09-10T14:22:33.123+08:00
++(NSString *)getISO8601LocalDate:(NSDate *)date;
 
 
 //配置入库（device）的数据，这部分数据不会变
